@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Film, Tv, Star, Calendar, Clock, Users } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import Image from 'next/image';
 
@@ -270,6 +270,7 @@ const TMDBResult = ({ result }: TMDBResultProps) => {
       ) : (
         <Dialog open={showDetails} onOpenChange={setShowDetails}>
           <DialogContent className="max-w-3xl! p-0 overflow-hidden font-sans">
+            <DialogTitle className="sr-only">{result?.result ? (result.result.title || result.result.name || 'Media Details') : 'Media Details'}</DialogTitle>
             <DetailContent />
           </DialogContent>
         </Dialog>

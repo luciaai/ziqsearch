@@ -6,11 +6,34 @@ import { User } from '@/lib/db/schema';
 export function useUserData() {
   return useQuery({
     queryKey: ['user'],
-    queryFn: getCurrentUser,
+    queryFn: async () => {
+      try {
+        console.log('Fetching user data...');
+        const user = await getCurrentUser();
+        console.log('User data received:', user);
+        // Ensure we never return undefined - React Query requires a value
+        const result = user === undefined ? null : user;
+        console.log('Final user data result:', result);
+        return result;
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        console.log('Returning null due to error');
+        return null; // Return null instead of undefined
+      }
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes - user data doesn't change often
     gcTime: 1000 * 60 * 10, // 10 minutes cache retention
     refetchOnWindowFocus: false, // Don't refetch on focus
     retry: 2, // Retry failed requests twice
+    // Add this to ensure we never return undefined
+    select: (data) => {
+      console.log('Select function received:', data);
+      const result = data === undefined ? null : data;
+      console.log('Select function returning:', result);
+      return result;
+    },
+    // Set a default value to prevent undefined errors
+    placeholderData: null,
   });
 }
 

@@ -455,6 +455,10 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
         }
       }
 
+      // Add key to paragraph element when children is an array
+      if (Array.isArray(children)) {
+        return <p className="my-5 leading-relaxed text-neutral-700 dark:text-neutral-300" key={generateKey()}>{children}</p>;
+      }
       return <p className="my-5 leading-relaxed text-neutral-700 dark:text-neutral-300">{children}</p>;
     },
     code(children, language) {

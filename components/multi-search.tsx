@@ -425,15 +425,12 @@ const LoadingState: React.FC<{
                   {totalResults || '0'}
                 </Badge>
                 {totalResults > 0 && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-7 px-2 text-xs opacity-50 cursor-not-allowed"
-                    disabled
+                  <div 
+                    className="inline-flex items-center justify-center whitespace-nowrap text-xs h-7 px-2 opacity-50 cursor-not-allowed"
                   >
                     View all
                     <ArrowUpRight className="w-3 h-3 ml-1" />
-                  </Button>
+                  </div>
                 )}
               </div>
             </div>
@@ -580,10 +577,8 @@ const MultiSearch: React.FC<{
                   {totalResults}
                 </Badge>
                 {totalResults > 0 && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-7 px-2 text-xs"
+                  <div 
+                    className="inline-flex items-center justify-center whitespace-nowrap text-xs h-7 px-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md"
                     onClick={(e) => {
                       e.stopPropagation();
                       setSourcesOpen(true);
@@ -591,7 +586,7 @@ const MultiSearch: React.FC<{
                   >
                     View all
                     <ArrowUpRight className="w-3 h-3 ml-1" />
-                  </Button>
+                  </div>
                 )}
               </div>
             </div>

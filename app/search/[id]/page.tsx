@@ -19,9 +19,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const id = (await params).id;
   const chat = await getChatById({ id });
   const user = await getUser();
-  // if not chat, return Scira Chat
+  // if not chat, return Ziq Chat
   if (!chat) {
-    return { title: 'Scira Chat' };
+    return { title: 'Ziq Chat' };
   }
   let title;
   // if chat is public, return title
@@ -31,24 +31,24 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   // if chat is private, return title
   if (chat.visibility === 'private') {
     if (!user) {
-      title = 'Scira Chat';
+      title = 'Ziq Chat';
     }
     if (user!.id !== chat.userId) {
-      title = 'Scira Chat';
+      title = 'Ziq Chat';
     }
     title = chat.title;
   }
   return {
     title: title,
-    description: 'A search in scira.ai',
+    description: 'A search in ziq',
     openGraph: {
       title: title,
-      url: `https://scira.ai/search/${id}`,
-      description: 'A search in scira.ai',
-      siteName: 'scira.ai',
+      url: `https://ziqsearch.com/search/${id}`,
+      description: 'A search in ziq',
+      siteName: 'ziqsearch.com',
       images: [
         {
-          url: `https://scira.ai/api/og/chat/${id}`,
+          url: `https://ziqsearch.com/api/og/chat/${id}`,
           width: 1200,
           height: 630,
         },
@@ -57,20 +57,20 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     twitter: {
       card: 'summary_large_image',
       title: title,
-      url: `https://scira.ai/search/${id}`,
-      description: 'A search in scira.ai',
-      siteName: 'scira.ai',
-      creator: '@sciraai',
+      url: `https://ziqsearch.com/search/${id}`,
+      description: 'A search in ziq',
+      siteName: 'ziqsearch.com',
+      creator: '@ziqsearch',
       images: [
         {
-          url: `https://scira.ai/api/og/chat/${id}`,
+          url: `https://ziqsearch.com/api/og/chat/${id}`,
           width: 1200,
           height: 630,
         },
       ],
     },
     alternates: {
-      canonical: `https://scira.ai/search/${id}`,
+      canonical: `https://ziqsearch.com/search/${id}`,
     },
   } as Metadata;
 }

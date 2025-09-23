@@ -16,8 +16,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const bgImageData = await fs.promises.readFile(bgImagePath);
     const bgImageBase64 = `data:image/png;base64,${bgImageData.toString('base64')}`;
 
-    // Read the Scira logo
-    const logoPath = path.join(process.cwd(), 'public', 'scira.png');
+    // Read the Ziq logo
+    const logoPath = path.join(process.cwd(), 'public', 'logo.png');
     const logoData = await fs.promises.readFile(logoPath);
     const logoBase64 = `data:image/png;base64,${logoData.toString('base64')}`;
 
@@ -72,7 +72,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
                 src={logoBase64}
                 width={140}
                 height={140}
-                alt="Scira AI"
+                alt="Ziq"
                 style={{
                   objectFit: 'contain',
                   marginBottom: 28,
@@ -87,7 +87,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
                   fontFamily: 'Syne',
                 }}
               >
-                Scira AI
+                Ziq
               </div>
             </div>
           </div>
@@ -169,7 +169,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
                 src={logoBase64}
                 width={80}
                 height={80}
-                alt="Scira AI"
+                alt="Ziq"
                 style={{
                   objectFit: 'contain',
                 }}
@@ -185,7 +185,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
                     lineHeight: 1,
                   }}
                 >
-                  Scira AI
+                  Ziq
                 </div>
                 <div
                   style={{
@@ -276,7 +276,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
                   fontFamily: 'Syne',
                 }}
               >
-                Start your search at scira.ai
+                Start your search at ziqsearch.com
               </div>
             </div>
           </div>

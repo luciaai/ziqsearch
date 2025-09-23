@@ -218,7 +218,7 @@ const UserProfile = memo(
                           <Crown size={14} className="text-foreground" />
                         </div>
                         <div className="flex flex-col">
-                          <span className="font-medium text-foreground text-sm">Scira Pro</span>
+                          <span className="font-medium text-foreground text-sm">Ziq Pro</span>
                           <span className="text-[10px] text-muted-foreground">Unlimited access to all features</span>
                         </div>
                       </div>
@@ -288,7 +288,7 @@ const UserProfile = memo(
             {/* Social and External Links */}
             <DropdownMenuItem className="cursor-pointer" asChild>
               <a
-                href={'https://git.new/scira'}
+                href={'https://git.new/ziq'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center gap-2"
@@ -299,7 +299,7 @@ const UserProfile = memo(
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer" asChild>
               <a
-                href={'https://x.com/sciraai'}
+                href={'https://x.com/ziqsearch'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center gap-2"
@@ -310,7 +310,7 @@ const UserProfile = memo(
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer" asChild>
               <a
-                href={'https://www.instagram.com/scira.ai'}
+                href={'https://www.instagram.com/ziqsearch'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center gap-2"
@@ -332,7 +332,7 @@ const UserProfile = memo(
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer" asChild>
               <a
-                href={'https://scira.userjot.com'}
+                href={'https://ziq.userjot.com'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center gap-2"

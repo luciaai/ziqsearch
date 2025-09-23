@@ -176,12 +176,27 @@ export default function PricingTable({ subscriptionDetails }: PricingTableProps)
       {/* Header */}
       <div className="max-w-3xl mx-auto px-6 pt-8 pb-16">
         <div className="text-center">
-          <h1 className="text-[2.5rem] font-black font-be-vietnam-pro text-zinc-900 dark:text-zinc-100 mb-6 tracking-[-0.02em] leading-tight">
-            Pricing
-          </h1>
-          <p className="text-zinc-600 dark:text-zinc-400 text-lg font-medium font-be-vietnam-pro leading-relaxed">
-            Choose the plan that works best for you
-          </p>
+          <div className="flex flex-col items-center justify-center mb-8 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 p-10 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg">
+            <div className="relative h-24 w-24 mb-4 animate-pulse-subtle">
+              <img 
+                src="/logo.png" 
+                alt="Ziq Logo" 
+                className="w-full h-full object-contain drop-shadow-md"
+              />
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300 mb-3">
+              Pricing Plans
+            </h1>
+            <p className="text-slate-600 dark:text-slate-400 text-lg mb-4 max-w-md">
+              Choose the plan that works best for you
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Flexible Plans</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">No Hidden Fees</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Cancel Anytime</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Student Discounts</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -276,7 +291,7 @@ export default function PricingTable({ subscriptionDetails }: PricingTableProps)
       <div className="max-w-4xl mx-auto px-6 pb-24">
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Free Plan */}
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-xl p-10 relative hover:border-zinc-300/80 dark:hover:border-zinc-700/80 transition-colors duration-200">
+          <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-slate-900 dark:to-blue-950/10 border border-slate-200 dark:border-slate-700 rounded-xl p-10 relative hover:border-blue-200 dark:hover:border-blue-800 transition-colors duration-200 shadow-sm">
             <div className="mb-10">
               <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-3 tracking-[-0.01em]">Free</h3>
               <p className="text-zinc-500 dark:text-zinc-400 text-sm mb-8 leading-relaxed">
@@ -291,40 +306,42 @@ export default function PricingTable({ subscriptionDetails }: PricingTableProps)
             <div className="mb-10">
               <ul className="space-y-4">
                 <li className="flex items-center text-[15px]">
-                  <div className="w-1 h-1 bg-zinc-300 dark:bg-zinc-600 rounded-full mr-4 flex-shrink-0"></div>
+                  <div className="w-1 h-1 bg-blue-400 dark:bg-blue-500 rounded-full mr-4 flex-shrink-0"></div>
                   <span className="text-zinc-700 dark:text-zinc-300">
                     {SEARCH_LIMITS.DAILY_SEARCH_LIMIT} searches per day (other models)
                   </span>
                 </li>
                 <li className="flex items-center text-[15px]">
-                  <div className="w-1 h-1 bg-zinc-300 dark:bg-zinc-600 rounded-full mr-4 flex-shrink-0"></div>
+                  <div className="w-1 h-1 bg-blue-400 dark:bg-blue-500 rounded-full mr-4 flex-shrink-0"></div>
                   <span className="text-zinc-700 dark:text-zinc-300">Unlimited Grok 3 Mini & Grok 2 Vision</span>
                 </li>
                 <li className="flex items-center text-[15px]">
-                  <div className="w-1 h-1 bg-zinc-300 dark:bg-zinc-600 rounded-full mr-4 flex-shrink-0"></div>
+                  <div className="w-1 h-1 bg-blue-400 dark:bg-blue-500 rounded-full mr-4 flex-shrink-0"></div>
                   <span className="text-zinc-700 dark:text-zinc-300">
                     {SEARCH_LIMITS.EXTREME_SEARCH_LIMIT} extreme searches per month
                   </span>
                 </li>
                 <li className="flex items-center text-[15px]">
-                  <div className="w-1 h-1 bg-zinc-300 dark:bg-zinc-600 rounded-full mr-4 flex-shrink-0"></div>
+                  <div className="w-1 h-1 bg-blue-400 dark:bg-blue-500 rounded-full mr-4 flex-shrink-0"></div>
                   <span className="text-zinc-700 dark:text-zinc-300">Search history</span>
                 </li>
               </ul>
             </div>
 
             {!subscriptionDetails.hasSubscription || subscriptionDetails.subscription?.status !== 'active' ? (
-              <Button
-                variant="outline"
-                className="w-full h-9 border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 font-normal text-sm tracking-[-0.01em]"
-                disabled
-              >
-                Current plan
-              </Button>
+              <div className="relative">
+                <Button
+                  variant="outline"
+                  className="w-full h-10 border-2 border-blue-500 dark:border-blue-400 text-blue-700 dark:text-blue-300 bg-gradient-to-r from-blue-100 to-blue-50 dark:from-blue-900/40 dark:to-blue-800/40 font-medium text-sm tracking-[-0.01em] shadow-sm"
+                  disabled
+                >
+                  ✓ Current Plan
+                </Button>
+              </div>
             ) : (
               <Button
                 variant="outline"
-                className="w-full h-9 border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 font-normal text-sm tracking-[-0.01em]"
+                className="w-full h-9 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20 font-normal text-sm tracking-[-0.01em]"
                 disabled
               >
                 Free plan
@@ -336,19 +353,19 @@ export default function PricingTable({ subscriptionDetails }: PricingTableProps)
           <div className="relative">
             {isCurrentPlan(STARTER_TIER) && (
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                <Badge className="bg-black dark:bg-white text-white dark:text-black px-4 py-1.5 text-xs font-normal tracking-wide">
+                <Badge className="bg-gradient-to-r from-blue-600 to-teal-500 text-white px-4 py-1.5 text-xs font-normal tracking-wide shadow-md">
                   CURRENT PLAN
                 </Badge>
               </div>
             )}
 
-            <div className="bg-white dark:bg-zinc-900 border-[1.5px] border-black dark:border-white rounded-xl p-10 relative shadow-sm">
+            <div className="bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-950/20 dark:to-teal-950/20 border-[1.5px] border-blue-200 dark:border-blue-800 rounded-xl p-10 relative shadow-lg">
               <div className="mb-10">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 tracking-[-0.01em]">Scira Pro</h3>
+                  <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 tracking-[-0.01em]">Ziq Pro</h3>
                   <Badge
                     variant="secondary"
-                    className="bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-normal px-2.5 py-1"
+                    className="bg-gradient-to-r from-blue-100 to-teal-100 dark:from-blue-900 dark:to-teal-900 text-blue-800 dark:text-blue-200 text-xs font-normal px-2.5 py-1 border border-blue-200 dark:border-blue-700"
                   >
                     Popular
                   </Badge>
@@ -409,10 +426,10 @@ export default function PricingTable({ subscriptionDetails }: PricingTableProps)
                 </div>
               ) : (
                 <Button
-                  className="w-full h-9 bg-black dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-black group font-normal text-sm tracking-[-0.01em] transition-all duration-200"
+                  className="w-full h-9 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white group font-normal text-sm tracking-[-0.01em] transition-all duration-200 shadow-md hover:shadow-lg"
                   onClick={() => handleCheckout(STARTER_TIER, STARTER_SLUG)}
                 >
-                  {isAuthenticated === false ? 'Sign in to upgrade' : 'Upgrade to Scira Pro'}
+                  {isAuthenticated === false ? 'Sign in to upgrade' : 'Upgrade to Ziq Pro'}
                   <ArrowRight className="w-3.5 h-3.5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
                 </Button>
               )}
@@ -440,7 +457,7 @@ export default function PricingTable({ subscriptionDetails }: PricingTableProps)
           <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
             Have questions?{' '}
             <a
-              href="mailto:zaid@scira.ai"
+              href="mailto:ziqsearch@gmail.com"
               className="text-black dark:text-white hover:underline underline-offset-4 decoration-zinc-400 dark:decoration-zinc-600 transition-colors duration-200"
             >
               Get in touch

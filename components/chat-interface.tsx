@@ -13,6 +13,7 @@ import { Crown, Sparkle } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
 import { parseAsString, useQueryState } from 'nuqs';
 import { toast } from 'sonner';
+import { enableMaintenanceMode, redirectToMaintenance } from '@/lib/maintenance';
 import { v4 as uuidv4 } from 'uuid';
 
 // Internal app imports
@@ -24,7 +25,7 @@ import Messages from '@/components/messages';
 import { Navbar } from '@/components/navbar';
 import { SignInPromptDialog } from '@/components/sign-in-prompt-dialog';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import FormComponent from '@/components/ui/form-component';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
@@ -51,6 +52,8 @@ const ChangelogDialog = ({ open, onOpenChange }: { open: boolean; onOpenChange: 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[420px] p-0 gap-0 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 shadow-2xl">
+        {/* Add DialogTitle for accessibility */}
+        <DialogTitle className="sr-only">Changelog Updates</DialogTitle>
         <div className="p-8">
           {/* Header */}
           <div className="text-center space-y-4 mb-8">
@@ -117,7 +120,7 @@ const LaunchBadge = ({ open, onOpenChange }: { open: boolean; onOpenChange: (ope
         </div>
         <div className="mt-3 flex gap-2">
           <a
-            href="https://peerlist.io/zaidmukaddam/project/scira-ai-20"
+            href="https://peerlist.io/zaidmukaddam/project/ziq-ai-20"
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 text-center px-3 py-1.5 text-xs font-medium bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-neutral-200 text-neutral-100 dark:text-neutral-900 rounded-md transition-colors"
@@ -136,6 +139,8 @@ const PostMessageUpgradeDialog = ({ open, onOpenChange }: { open: boolean; onOpe
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[420px] p-0 gap-0 border border-neutral-200/60 dark:border-neutral-800/60 shadow-xl">
+        {/* Add DialogTitle for accessibility */}
+        <DialogTitle className="sr-only">Upgrade to Ziq Pro</DialogTitle>
         <div className="p-6 space-y-5">
           {/* Header */}
           <div className="space-y-3">
@@ -144,7 +149,7 @@ const PostMessageUpgradeDialog = ({ open, onOpenChange }: { open: boolean; onOpe
                 <Crown className="w-4 h-4 text-white dark:text-black" weight="fill" />
               </div>
               <div>
-                <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">Upgrade to Scira Pro</h2>
+                <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">Upgrade to Ziq Pro</h2>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">Get unlimited access to all features</p>
               </div>
             </div>
@@ -227,7 +232,7 @@ const ChatInterface = memo(
     const [q] = useQueryState('q', parseAsString.withDefault(''));
 
     // Use localStorage hook directly for model selection with a default
-    const [selectedModel, setSelectedModel] = useLocalStorage('scira-selected-model', 'scira-default');
+    const [selectedModel, setSelectedModel] = useLocalStorage('ziq-selected-model', 'ziq-default');
     const {
       user,
       subscriptionData,
@@ -251,7 +256,7 @@ const ChatInterface = memo(
     const fileInputRef = useRef<HTMLInputElement>(null!);
     const inputRef = useRef<HTMLTextAreaElement>(null!);
     const initializedRef = useRef(false);
-    const [selectedGroup, setSelectedGroup] = useLocalStorage<SearchGroupId>('scira-selected-group', 'web');
+    const [selectedGroup, setSelectedGroup] = useLocalStorage<SearchGroupId>('ziq-selected-group', 'web');
     const [hasSubmitted, setHasSubmitted] = React.useState(false);
     const [hasManuallyScrolled, setHasManuallyScrolled] = useState(false);
     const isAutoScrollingRef = useRef(false);
@@ -261,19 +266,20 @@ const ChatInterface = memo(
 
     // Add upgrade dialog state
     const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
-    const [hasShownUpgradeDialog, setHasShownUpgradeDialog] = useLocalStorage('scira-upgrade-prompt-shown', false);
+    const [hasShownUpgradeDialog, setHasShownUpgradeDialog] = useLocalStorage('ziq-upgrade-prompt-shown', false);
 
     // Add changelog dialog state
     const [showChangelogDialog, setShowChangelogDialog] = useState(false);
-    const [hasShownChangelogDialog, setHasShownChangelogDialog] = useLocalStorage('scira-changelog-shown', false);
+    const [hasShownChangelogDialog, setHasShownChangelogDialog] = useLocalStorage('ziq-changelog-shown', false);
 
     // Add launch badge state
+    // Launch badge disabled for this application
     const [showLaunchBadge, setShowLaunchBadge] = useState(false);
-    const [hasShownLaunchBadge, setHasShownLaunchBadge] = useLocalStorage('scira-launch-badge-shown', false);
+    const [hasShownLaunchBadge, setHasShownLaunchBadge] = useLocalStorage('ziq-launch-badge-shown', false);
 
     // Sign-in prompt dialog state
     const [showSignInPrompt, setShowSignInPrompt] = useState(false);
-    const [hasShownSignInPrompt, setHasShownSignInPrompt] = useLocalStorage('scira-signin-prompt-shown', false);
+    const [hasShownSignInPrompt, setHasShownSignInPrompt] = useLocalStorage('ziq-signin-prompt-shown', false);
     const signInTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     // Generate a consistent ID for new chats
@@ -338,15 +344,15 @@ const ChatInterface = memo(
       }
     }, [user, isUserPro, hasShownChangelogDialog, proStatusLoading]);
 
-    // Show launch badge to all users who haven't seen it yet
-    useEffect(() => {
-      if (!hasShownLaunchBadge) {
-        // Small delay to ensure UI is ready
-        setTimeout(() => {
-          setShowLaunchBadge(true);
-        }, 1000);
-      }
-    }, [hasShownLaunchBadge]);
+    // Launch badge popup disabled for this application
+    // useEffect(() => {
+    //   if (!hasShownLaunchBadge) {
+    //     // Small delay to ensure UI is ready
+    //     setTimeout(() => {
+    //       setShowLaunchBadge(true);
+    //     }, 1000);
+    //   }
+    // }, [hasShownLaunchBadge]);
 
     type VisibilityType = 'public' | 'private';
 
@@ -410,7 +416,7 @@ const ChatInterface = memo(
             setSuggestedQuestions(questions);
           }
         },
-        onError: (error) => {
+        onError: (error: unknown) => {
           // Don't show toast for ChatSDK errors as they will be handled by the enhanced error display
           if (error instanceof ChatSDKError) {
             console.log('ChatSDK Error:', error.type, error.surface, error.message);
@@ -421,10 +427,94 @@ const ChatInterface = memo(
               });
             }
           } else {
-            console.error('Chat error:', error.cause, error.message);
-            toast.error('An error occurred.', {
-              description: `Oops! An error occurred while processing your request. ${error.cause || error.message}`,
-            });
+            // Get a meaningful error message regardless of error type
+            let errorMessage = 'An unknown error occurred';
+            let isCriticalError = false;
+            
+            try {
+              if (typeof error === 'string') {
+                errorMessage = error;
+                // Check if it's a critical error that requires maintenance page
+                isCriticalError = error.includes('API') || error.includes('service') || error.includes('unavailable');
+              } else if (error instanceof Error) {
+                // Ensure we have a message even if error.message is undefined or empty
+                errorMessage = error.message ? error.message : `Error of type ${error.constructor.name}`;
+                // Check if it's a critical error that requires maintenance page
+                isCriticalError = errorMessage.includes('API') || errorMessage.includes('service') || errorMessage.includes('unavailable');
+              } else if (error && typeof error === 'object') {
+                // Use type assertion for object access
+                const errorObj = error as Record<string, any>;
+                // Provide more context if message is missing
+                if (errorObj.message) {
+                  errorMessage = errorObj.message;
+                } else {
+                  // Try to extract useful information from the error object
+                  try {
+                    errorMessage = JSON.stringify(error);
+                  } catch {
+                    errorMessage = 'Complex error object (cannot stringify)';
+                  }
+                }
+                // Check if it's a critical error that requires maintenance page
+                isCriticalError = errorMessage.includes('API') || errorMessage.includes('service') || errorMessage.includes('unavailable');
+              }
+            } catch (e) {
+              console.error('Error while processing error:', e);
+              isCriticalError = true; // Assume critical if we can't process the error
+            }
+            
+            console.error('Chat error:', errorMessage);
+            
+            // For critical errors, redirect to maintenance page
+            if (isCriticalError) {
+              try {
+                // Only enable maintenance mode in development or with explicit errors
+                const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+                const isExplicitError = errorMessage.includes('API') || errorMessage.includes('service') || errorMessage.includes('unavailable');
+                
+                // In production, only enable for explicit service errors
+                if (!isProduction || isExplicitError) {
+                  // Enable maintenance mode - force in production only for explicit errors
+                  const success = enableMaintenanceMode(isExplicitError);
+                  
+                  if (success) {
+                    toast.error('Search service unavailable', {
+                      description: 'Our search service is currently experiencing issues. You will be redirected to the maintenance page.',
+                      action: {
+                        label: 'Go to Maintenance',
+                        onClick: () => redirectToMaintenance(true) // Save current path
+                      },
+                    });
+                    
+                    // Redirect after a short delay to allow the toast to be seen
+                    setTimeout(() => {
+                      redirectToMaintenance(true); // Save current path
+                    }, 3000);
+                  } else {
+                    // If enabling maintenance mode failed, just show an error toast
+                    toast.error('Search service error', {
+                      description: `An error occurred: ${errorMessage}`,
+                    });
+                  }
+                } else {
+                  // For non-explicit errors in production, just show a toast
+                  toast.error('Search error', {
+                    description: `An error occurred: ${errorMessage}`,
+                  });
+                }
+              } catch (e) {
+                console.error('Error handling critical error:', e);
+                // Fallback error handling
+                toast.error('An error occurred', {
+                  description: errorMessage,
+                });
+              }
+            } else {
+              // For non-critical errors, just show a toast
+              toast.error('An error occurred.', {
+                description: `Oops! An error occurred while processing your request. ${errorMessage}`,
+              });
+            }
           }
         },
         initialMessages: initialMessages,
@@ -452,7 +542,14 @@ const ChatInterface = memo(
     if (error) {
       console.log('[useChat error]:', error);
       console.log('[error type]:', typeof error);
-      console.log('[error message]:', error.message);
+      // Safely log error message if it exists
+      if (error instanceof Error) {
+        console.log('[error message]:', error.message || '(No message)');
+        console.log('[error name]:', error.name);
+        console.log('[error stack]:', error.stack);
+      } else if (typeof error === 'object') {
+        console.log('[error properties]:', Object.keys(error as object).join(', '));
+      }
       console.log('[error instance]:', error instanceof Error, error instanceof ChatSDKError);
     }
 
@@ -697,16 +794,7 @@ const ChatInterface = memo(
           }}
         />
 
-        {/* Launch Badge */}
-        <LaunchBadge
-          open={showLaunchBadge}
-          onOpenChange={(open) => {
-            setShowLaunchBadge(open);
-            if (!open) {
-              setHasShownLaunchBadge(true);
-            }
-          }}
-        />
+        {/* Launch Badge - removed */}
 
         <div
           className={`w-full p-2 sm:p-4 ${
@@ -717,10 +805,28 @@ const ChatInterface = memo(
         >
           <div className={`w-full max-w-[95%] sm:max-w-2xl space-y-6 p-0 mx-auto transition-all duration-300`}>
             {status === 'ready' && messages.length === 0 && (
-              <div className="text-center m-0 mb-2">
-                <h1 className="text-3xl sm:text-5xl !mb-0 text-neutral-800 dark:text-neutral-100 font-be-vietnam-pro! font-light tracking-tighter">
-                  scira
-                </h1>
+              <div className="text-center m-0 mb-8">
+                <div className="flex flex-col items-center justify-center mb-6 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg">
+                  <div className="relative h-32 w-32 mb-4 animate-pulse-subtle">
+                    <img 
+                      src="/logo.png" 
+                      alt="Ziq Logo" 
+                      className="w-full h-full object-contain drop-shadow-md"
+                    />
+                  </div>
+                  <h1 className="text-3xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300 mb-3">
+                    Welcome to Ziq
+                  </h1>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm mb-4 max-w-md">
+                    Get to the point. Find quality info without the noise.
+                  </p>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Deep Research</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Quality Sources</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Smart Synthesis</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Instant Insights</span>
+                  </div>
+                </div>
               </div>
             )}
 

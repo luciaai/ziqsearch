@@ -35,6 +35,11 @@ export const auth = betterAuth({
         enabled: true,
         maxAge: 5 * 60,
     },
+    session: {
+        cookieCache: {
+            maxAge: 5 * 60, // 5 minutes
+        },
+    },
     database: drizzleAdapter(db, {
         provider: "pg",
     }),
@@ -46,6 +51,18 @@ export const auth = betterAuth({
         google: {
             clientId: serverEnv.GOOGLE_CLIENT_ID,
             clientSecret: serverEnv.GOOGLE_CLIENT_SECRET,
+            // Add explicit authorization parameters to match Google Cloud Console configuration
+            authorization: {
+                params: {
+                    prompt: "select_account",
+                    access_type: "offline",
+                    response_type: "code"
+                }
+            },
+            // Add explicit callbackURL to match what's registered in Google Cloud Console
+            callbackURL: process.env.NODE_ENV === 'production'
+                ? 'https://ziqsearch.com/api/auth/callback/google'
+                : 'http://localhost:3000/api/auth/callback/google'
         },
         twitter: {
             clientId: serverEnv.TWITTER_CLIENT_ID,
@@ -194,6 +211,24 @@ export const auth = betterAuth({
         }),
         nextCookies(),
     ],
-    trustedOrigins: ["https://localhost:3000", "https://scira.ai", "https://www.scira.ai"],
-    allowedOrigins: ["https://localhost:3000", "https://scira.ai", "https://www.scira.ai"],
+    trustedOrigins: [
+        // Always include development origins for testing
+        ...Array.from({ length: 6 }, (_, i) => `http://localhost:${3000 + i}`),
+        // Include production domains only in production environment
+        ...(process.env.NODE_ENV === 'production' ? [
+            "https://ziqsearch.com", 
+            "https://www.ziqsearch.com",
+            "https://ziqsearch.vercel.app"
+        ] : [])
+    ],
+    allowedOrigins: [
+        // Always include development origins for testing
+        ...Array.from({ length: 6 }, (_, i) => `http://localhost:${3000 + i}`),
+        // Include production domains only in production environment
+        ...(process.env.NODE_ENV === 'production' ? [
+            "https://ziqsearch.com", 
+            "https://www.ziqsearch.com",
+            "https://ziqsearch.vercel.app"
+        ] : [])
+    ],
 });

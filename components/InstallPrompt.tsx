@@ -50,7 +50,7 @@ export function InstallPrompt() {
             />
 
             <div className="flex-grow">
-              <p className="text-sm font-semibold text-foreground">Install Scira on your device</p>
+              <p className="text-sm font-semibold text-foreground">Install Ziq on your device</p>
               <p className="mt-0.5 text-xs text-muted-foreground inline-flex items-center gap-1">
                 Tap <Share className="w-3 h-3 text-primary" /> then &quot;Add to Home Screen&quot;{' '}
                 <span role="img" aria-label="plus icon" className="text-primary font-medium">

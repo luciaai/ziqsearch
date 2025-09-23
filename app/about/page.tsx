@@ -12,6 +12,7 @@ import {
   FileText,
   ShieldCheck,
   ArrowUpRight,
+  ArrowLeft,
   Check,
   Bot,
 } from 'lucide-react';
@@ -112,7 +113,7 @@ export default function AboutPage() {
                 Terms of Service
               </h3>
               <p className="text-xs text-muted-foreground">
-                By using Scira, you agree to our Terms of Service which outline the rules for using our platform. This
+                By using Ziq, you agree to our Terms of Service which outline the rules for using our platform. This
                 includes guidelines on acceptable use, intellectual property rights, and limitations of liability.
               </p>
               <Link href="/terms" className="text-xs text-primary hover:underline inline-flex items-center">
@@ -164,14 +165,14 @@ export default function AboutPage() {
         <div className="container max-w-screen-xl mx-auto py-4 px-4 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/scira.png"
-              alt="Scira"
+              src="/logo.png"
+              alt="Ziq"
               width={100}
               height={100}
               className="size-7 invert dark:invert-0"
               quality={100}
             />
-            <span className="font-normal font-be-vietnam-pro">Scira</span>
+            <span className="font-normal font-be-vietnam-pro">Ziq</span>
           </Link>
 
           <nav className="flex items-center gap-8">
@@ -188,7 +189,7 @@ export default function AboutPage() {
               Privacy
             </Link>
             <Link
-              href="https://git.new/scira"
+              href="https://git.new/ziq"
               className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
               target="_blank"
               rel="noopener noreferrer"
@@ -200,8 +201,19 @@ export default function AboutPage() {
         </div>
       </header>
 
+      {/* Back to Home Link */}
+      <div className="container max-w-screen-xl mx-auto px-4 pt-8">
+        <Link
+          href="/"
+          className="inline-flex items-center text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-200 mb-4"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5" />
+          Back to Home
+        </Link>
+      </div>
+
       {/* Hero Section */}
-      <section className="relative py-24">
+      <section className="relative py-16"> {/* Reduced from py-24 to py-16 since we added the back link */}
         <div className="absolute inset-0 bg-gradient-to-b from-gray-50/40 to-transparent dark:from-gray-950/40" />
         <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02]" />
         <div className="relative container max-w-screen-xl mx-auto px-4">
@@ -213,26 +225,30 @@ export default function AboutPage() {
           >
             {/* Logo */}
             <motion.div variants={item}>
-              <Link href="/" className="inline-flex items-center gap-3">
-                <Image
-                  src="/scira.png"
-                  alt="Scira"
-                  width={100}
-                  height={100}
-                  className="size-14 invert dark:invert-0"
-                  quality={100}
-                />
-                <span className="text-4xl font-medium tracking-tight font-be-vietnam-pro">Scira</span>
-              </Link>
+              <div className="flex flex-col items-center justify-center mb-6 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 p-10 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg">
+                <div className="relative h-32 w-32 mb-4 animate-pulse-subtle">
+                  <Image
+                    src="/logo.png"
+                    alt="Ziq"
+                    fill
+                    className="object-contain drop-shadow-md"
+                    quality={100}
+                  />
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300 mb-3">
+                  AI-Powered Search
+                </h1>
+                <p className="text-xl text-slate-600 dark:text-slate-400 text-center mb-4 max-w-2xl">
+                  Minimalistic Open Source AI-Powered Search Engine
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Open Source</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">AI-Powered</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">RAG Technology</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Search Grounding</span>
+                </div>
+              </div>
             </motion.div>
-
-            {/* Headline */}
-            <motion.h1
-              variants={item}
-              className="text-2xl sm:text-3xl font-normal tracking-tight text-balance font-be-vietnam-pro"
-            >
-              Minimalistic Open Source AI-Powered Search Engine
-            </motion.h1>
 
             {/* Description */}
             <motion.p variants={item} className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -267,25 +283,6 @@ export default function AboutPage() {
               </div>
             </motion.form>
 
-            {/* CTA Buttons */}
-            <motion.div variants={item} className="flex flex-wrap items-center justify-center gap-4">
-              <Link
-                href="https://git.new/scira"
-                className="inline-flex h-11 items-center gap-2 px-5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-all"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GithubLogo className="h-5 w-5" />
-                <span className="font-medium">View Source</span>
-              </Link>
-              <Link
-                href="/"
-                className="inline-flex h-11 items-center gap-2 px-5 rounded-lg bg-secondary text-secondary-foreground border border-input hover:border-ring transition-all"
-              >
-                <span className="font-medium">Try Now</span>
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -302,7 +299,7 @@ export default function AboutPage() {
             <div className="text-center space-y-4">
               <h2 className="text-3xl font-medium tracking-tight">RAG & Search Grounding</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Scira combines RAG and search grounding to deliver accurate, up-to-date answers from reliable sources.
+                Ziq combines RAG and search grounding to deliver accurate, up-to-date answers from reliable sources.
               </p>
             </div>
 
@@ -610,7 +607,7 @@ export default function AboutPage() {
             <div className="text-center space-y-4">
               <h2 className="text-3xl font-medium tracking-tight">Community Recognition</h2>
               <p className="text-muted-foreground">
-                Join thousands of developers and researchers who trust Scira
+                Join thousands of developers and researchers who trust Ziq
               </p>
             </div>
 
@@ -696,7 +693,7 @@ export default function AboutPage() {
             <div className="text-center space-y-4">
               <h2 className="text-3xl font-medium tracking-tight">Built For Everyone</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Whether you need quick answers or in-depth research, Scira adapts to your needs
+                Whether you need quick answers or in-depth research, Ziq adapts to your needs
               </p>
             </div>
 
@@ -914,7 +911,7 @@ export default function AboutPage() {
 
                 <div className="mb-8">
                   <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-3 tracking-[-0.01em]">
-                    Scira Pro
+                    Ziq Pro
                   </h3>
                   <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-6 leading-relaxed">
                     Everything you need for unlimited usage
@@ -965,12 +962,12 @@ export default function AboutPage() {
                 <div className="flex-1 space-y-2 text-center sm:text-left">
                   <h3 className="font-medium text-base">Student Discount: $10 off Pro Plan</h3>
                   <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                    Students can get the Pro plan for just $5/month. Email zaid@scira.ai with your student ID and a
-                    brief description of how you use Scira for your studies.
+                    Students can get the Pro plan for just $5/month. Email ziqsearch@gmail.com with your student ID and a
+                    brief description of how you use Ziq for your studies.
                   </p>
                   <div className="pt-1">
                     <a
-                      href="mailto:zaid@scira.ai?subject=Student%20Discount%20Request"
+                      href="mailto:ziqsearch@gmail.com?subject=Student%20Discount%20Request"
                       className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-zinc-300 dark:border-zinc-700 bg-background hover:bg-zinc-100 dark:hover:bg-zinc-800 h-9 px-4 py-2"
                     >
                       Request Student Discount
@@ -1032,14 +1029,14 @@ export default function AboutPage() {
           >
             <div className="text-center space-y-4">
               <h2 className="text-3xl font-medium tracking-tight">Frequently Asked Questions</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">Find answers to common questions about Scira</p>
+              <p className="text-muted-foreground max-w-2xl mx-auto">Find answers to common questions about Ziq</p>
             </div>
 
             <ProAccordion type="single" collapsible className="w-full">
               <ProAccordionItem value="item-1">
-                <ProAccordionTrigger>What is Scira?</ProAccordionTrigger>
+                <ProAccordionTrigger>What is Ziq?</ProAccordionTrigger>
                 <ProAccordionContent>
-                  Scira is a minimalistic open-source AI-powered search engine that uses RAG (Retrieval-Augmented
+                  Ziq is a minimalistic open-source AI-powered search engine that uses RAG (Retrieval-Augmented
                   Generation) and search grounding to provide accurate, up-to-date answers from reliable sources.
                 </ProAccordionContent>
               </ProAccordionItem>
@@ -1056,7 +1053,7 @@ export default function AboutPage() {
                 <ProAccordionTrigger>Is there a student discount?</ProAccordionTrigger>
                 <ProAccordionContent>
                   Yes, students can get $10 off the Pro plan, bringing it down to $5/month. To apply, email
-                  zaid@scira.ai with your student verification details and a brief description of how you use Scira for
+                  ziqsearch@gmail.com with your student verification details and a brief description of how you use Ziq for
                   your academic work or studies.
                 </ProAccordionContent>
               </ProAccordionItem>
@@ -1070,17 +1067,17 @@ export default function AboutPage() {
               </ProAccordionItem>
 
               <ProAccordionItem value="item-5">
-                <ProAccordionTrigger>What AI models does Scira use?</ProAccordionTrigger>
+                <ProAccordionTrigger>What AI models does Ziq use?</ProAccordionTrigger>
                 <ProAccordionContent>
-                  Scira uses a range of advanced AI models including Grok 3.0, Claude 3.7 Sonnet, OpenAI GPT 4o, Gemini
+                  Ziq uses a range of advanced AI models including Grok 3.0, Claude 3.7 Sonnet, OpenAI GPT 4o, Gemini
                   2.5 Pro, and more to provide the best possible answers.
                 </ProAccordionContent>
               </ProAccordionItem>
 
               <ProAccordionItem value="item-6">
-                <ProAccordionTrigger>How does Scira ensure information accuracy?</ProAccordionTrigger>
+                <ProAccordionTrigger>How does Ziq ensure information accuracy?</ProAccordionTrigger>
                 <ProAccordionContent>
-                  Scira combines RAG technology with search grounding to retrieve information from reliable sources and
+                  Ziq combines RAG technology with search grounding to retrieve information from reliable sources and
                   verify it before providing answers. Each response includes source attribution.
                 </ProAccordionContent>
               </ProAccordionItem>
@@ -1088,8 +1085,8 @@ export default function AboutPage() {
               <ProAccordionItem value="item-7">
                 <ProAccordionTrigger>How do I apply for the student discount?</ProAccordionTrigger>
                 <ProAccordionContent>
-                  Email zaid@scira.ai with a copy of your student ID or enrollment proof. In your email, include a brief
-                  description of how you use or plan to use Scira for your academic work or studies. Once verified,
+                  Email ziqsearch@gmail.com with a copy of your student ID or enrollment proof. In your email, include a brief
+                  description of how you use or plan to use Ziq for your academic work or studies. Once verified,
                   you&apos;ll receive a special discount code for $10 off the Pro plan.
                 </ProAccordionContent>
               </ProAccordionItem>
@@ -1099,7 +1096,7 @@ export default function AboutPage() {
               <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
                 Have more questions?{' '}
                 <a
-                  href="mailto:zaid@scira.ai"
+                  href="mailto:ziqsearch@gmail.com"
                   className="text-black dark:text-white hover:underline underline-offset-4 decoration-zinc-400 dark:decoration-zinc-600 transition-colors duration-200"
                 >
                   Get in touch
@@ -1115,7 +1112,7 @@ export default function AboutPage() {
         <div className="container max-w-screen-xl mx-auto py-12 px-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <Image src="/scira.png" alt="Scira" width={32} height={32} className="h-8 w-8 invert dark:invert-0" />
+              <Image src="/logo.png" alt="Ziq" width={32} height={32} className="h-8 w-8 invert dark:invert-0" />
               <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} All rights reserved.</p>
             </div>
 
@@ -1139,7 +1136,7 @@ export default function AboutPage() {
                   <XLogo className="h-4 w-4" />
                 </Link>
                 <Link
-                  href="https://git.new/scira"
+                  href="https://git.new/ziq"
                   className="p-2 text-muted-foreground hover:text-foreground transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"

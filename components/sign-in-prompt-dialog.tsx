@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { signIn } from '@/lib/auth-client';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -36,17 +36,32 @@ const SignInButton = ({ provider, loading, setLoading }: SignInButtonProps) => {
       )}
       disabled={loading}
       onClick={async () => {
-        await signIn.social(
-          {
-            provider,
-            callbackURL: '/',
-          },
-          {
-            onRequest: () => {
-              setLoading(true);
+        try {
+          setLoading(true);
+          // Use a specific callback URL that matches what's registered in the OAuth provider console
+          const callbackUrl = `${window.location.origin}/api/auth/callback/${provider}`;
+          console.log(`Attempting ${provider} sign-in with callback URL:`, callbackUrl);
+          
+          await signIn.social(
+            {
+              provider,
+              callbackURL: callbackUrl,
             },
-          },
-        );
+            {
+              onError: (error) => {
+                console.error(`${provider} sign-in error:`, error);
+                // Log detailed error information for debugging
+                console.error('Error details:', JSON.stringify(error, null, 2));
+                setLoading(false);
+              },
+            },
+          );
+        } catch (error) {
+          console.error(`Error during ${provider} sign-in:`, error);
+          // Log detailed error for debugging
+          console.error('Detailed error:', error instanceof Error ? error.message : String(error));
+          setLoading(false);
+        }
       }}
     >
       <div className="flex items-center justify-center w-full gap-3">
@@ -104,9 +119,11 @@ export function SignInPromptDialog({ open, onOpenChange }: SignInPromptDialogPro
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[360px] p-6 gap-0 border border-neutral-200 dark:border-neutral-800 rounded-lg">
+        {/* Accessible Dialog Title */}
+        <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-1">Sign in to continue</DialogTitle>
+        
         {/* Compact Header */}
         <div className="mb-6">
-          <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-1">Sign in to continue</h2>
           <p className="text-sm text-neutral-500 dark:text-neutral-400">Save conversations and sync across devices</p>
         </div>
 

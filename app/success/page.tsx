@@ -59,7 +59,7 @@ export default function SuccessPage() {
         </div>
 
         {/* Content */}
-        <h1 className="text-2xl font-light text-zinc-900 mb-4 tracking-tight">Welcome to Scira Pro</h1>
+        <h1 className="text-2xl font-light text-zinc-900 mb-4 tracking-tight">Welcome to Ziq Pro</h1>
         <p className="text-zinc-600 mb-8">Your subscription is active. Start unlimited searching.</p>
 
         {/* Action */}

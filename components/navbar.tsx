@@ -1,8 +1,9 @@
 'use client';
 
-/* eslint-disable @next/next/no-img-element */
 import React, { useState, memo, useCallback, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   Plus,
   Globe,
@@ -15,11 +16,14 @@ import {
   Eye,
   DotsThree,
   Share,
+  Shield,
 } from '@phosphor-icons/react';
+import { Coins, CreditCard, HelpCircle, History, Info, Mail, Menu, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { UserProfile } from '@/components/user-profile';
 import { ChatHistoryButton } from '@/components/chat-history-dialog';
+import { AdminPanel } from '@/components/admin-panel';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   DropdownMenu,
@@ -31,18 +35,18 @@ import { cn } from '@/lib/utils';
 import { User } from '@/lib/db/schema';
 import { LinkedinLogo, RedditLogo, XLogo } from '@phosphor-icons/react';
 import { ClassicLoader } from '@/components/ui/loading';
-import { useRouter } from 'next/navigation';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 type VisibilityType = 'public' | 'private';
 
 interface NavbarProps {
-  isDialogOpen: boolean;
-  chatId: string | null;
-  selectedVisibilityType: VisibilityType;
-  onVisibilityChange: (visibility: VisibilityType) => void | Promise<void>;
-  status: string;
-  user: User | null;
-  onHistoryClick: () => void;
+  isDialogOpen?: boolean;
+  chatId?: string | null;
+  selectedVisibilityType?: VisibilityType;
+  onVisibilityChange?: (visibility: VisibilityType) => void | Promise<void>;
+  status?: string;
+  user?: User | null;
+  onHistoryClick?: () => void;
   isOwner?: boolean;
   subscriptionData?: any;
   isProUser?: boolean;
@@ -51,23 +55,92 @@ interface NavbarProps {
 
 const Navbar = memo(
   ({
-    isDialogOpen,
-    chatId,
-    selectedVisibilityType,
-    onVisibilityChange,
-    status,
-    user,
-    onHistoryClick,
+    isDialogOpen = false,
+    chatId = null,
+    selectedVisibilityType = 'private',
+    onVisibilityChange = () => {},
+    status = 'ready',
+    user = null,
+    onHistoryClick = () => {},
     isOwner = true,
     subscriptionData,
-    isProUser,
-    isProStatusLoading,
+    isProUser = false,
+    isProStatusLoading = false,
   }: NavbarProps) => {
     const [copied, setCopied] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [privateDropdownOpen, setPrivateDropdownOpen] = useState(false);
     const [isChangingVisibility, setIsChangingVisibility] = useState(false);
+    const [userCredits, setUserCredits] = useState<number | null>(null);
+    const [isLoadingCredits, setIsLoadingCredits] = useState(true);
+    const [isAdmin, setIsAdmin] = useState(false);
     const router = useRouter();
+    const pathname = usePathname();
+
+    // Function to get the user ID from localStorage or cookies
+    const getUserId = () => {
+      if (typeof window === 'undefined') return null;
+      
+      // Try to get from localStorage first
+      const storedUserId = localStorage.getItem('userId');
+      if (storedUserId) {
+        console.log('Found userId in localStorage:', storedUserId);
+        return storedUserId;
+      }
+      
+      // Try to get from cookies
+      const cookies = document.cookie.split(';');
+      for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'userId') {
+          console.log('Found userId in cookies:', value);
+          return value;
+        }
+      }
+      
+      return null;
+    };
+    
+    useEffect(() => {
+      async function fetchCredits() {
+        try {
+          setIsLoadingCredits(true);
+          console.log("Fetching credits...");
+          
+          // Get the user ID
+          const userId = getUserId();
+          
+          // Prepare headers with authentication if we have a user ID
+          const headers: HeadersInit = {};
+          if (userId) {
+            headers['Authorization'] = `Bearer ${userId}`;
+          }
+          
+          const response = await fetch('/api/debug/credits', { headers });
+          const data = await response.json();
+          console.log("Credits API response:", data);
+          
+          // Set credits directly
+          setUserCredits(data.credits);
+          console.log("Set userCredits to:", data.credits);
+          
+          // Check if user is admin
+          if (data.isAdmin) {
+            setIsAdmin(true);
+          }
+        } catch (error) {
+          console.error('Error fetching credits:', error);
+        } finally {
+          setIsLoadingCredits(false);
+        }
+      }
+
+      if (user) {
+        fetchCredits();
+        const interval = setInterval(fetchCredits, 5000);
+        return () => clearInterval(interval);
+      }
+    }, [user]);
 
     // Use passed Pro status instead of calculating it
     const hasActiveSubscription = isProUser;
@@ -78,7 +151,7 @@ const Navbar = memo(
 
       if (!chatId) return;
 
-      const url = `https://scira.ai/search/${chatId}`;
+      const url = `https://ziqsearch.com/search/${chatId}`;
       navigator.clipboard.writeText(url);
       setCopied(true);
       toast.success('Link copied to clipboard');
@@ -87,7 +160,7 @@ const Navbar = memo(
     };
 
     // Generate the share URL
-    const shareUrl = chatId ? `https://scira.ai/search/${chatId}` : '';
+    const shareUrl = chatId ? `https://ziqsearch.com/search/${chatId}` : '';
 
     // Social media share handlers
     const handleShareLinkedIn = (e: React.MouseEvent) => {
@@ -122,30 +195,126 @@ const Navbar = memo(
       }
     };
 
+    const AboutButton = () => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full w-8 h-8 bg-background dark:bg-muted border-border dark:border-muted hover:bg-muted/50 dark:hover:bg-muted/80 transition-all"
+            >
+              <Menu className="h-5 w-5 text-foreground/70 dark:text-foreground/70" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[180px] mt-1" sideOffset={8}>
+            <DropdownMenuItem asChild>
+              <Link href="/history" className="flex items-center cursor-pointer">
+                <History className="mr-2 h-4 w-4" />
+                <span>Search History</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/pricing" className="flex items-center cursor-pointer">
+                <CreditCard className="mr-2 h-4 w-4" />
+                <span>Pricing</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/faq" className="flex items-center cursor-pointer">
+                <HelpCircle className="mr-2 h-4 w-4" />
+                <span>FAQ</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/about" className="flex items-center cursor-pointer">
+                <Info className="mr-2 h-4 w-4" />
+                <span>About</span>
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    };
+
     return (
       <div
         className={cn(
-          'fixed top-0 left-0 right-0 z-30 flex justify-between items-center p-3 transition-colors duration-200',
+          'fixed top-0 left-0 right-0 z-30 flex justify-between items-center px-6 py-4 h-[72px] transition-colors duration-200',
           isDialogOpen
             ? 'bg-transparent pointer-events-none'
             : status === 'streaming' || status === 'ready'
             ? 'bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60'
             : 'bg-background',
+          'animate-gradient-background'
         )}
       >
+        {/* Left section - Ziq branding and buttons */}
         <div className={cn('flex items-center gap-3', isDialogOpen ? 'pointer-events-auto' : '')}>
-          <Link href="/new">
+          <div className="flex space-x-2 relative z-[70]">
             <Button
               type="button"
-              variant="secondary"
-              size="sm"
-              className="rounded-full bg-accent hover:bg-accent/80 group transition-all hover:scale-105 pointer-events-auto"
+              variant={"default"}
+              className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto flex items-center transition-all duration-300 shadow-sm"
+              onClick={() => {
+                // Clear any localStorage state that might be persisting search data
+                localStorage.removeItem('lastQuery');
+                localStorage.removeItem('lastMessages');
+                localStorage.removeItem('searchState');
+                
+                // Use a client-side approach to reset the application state
+                if (pathname === '/') {
+                  // Create a custom event to notify the page to reset its state
+                  const resetEvent = new CustomEvent('resetSearch', { detail: { timestamp: Date.now() } });
+                  window.dispatchEvent(resetEvent);
+                  
+                  // Use router.refresh() to update the page without a full reload
+                  router.refresh();
+                } else {
+                  // If we're on another page, navigate to home
+                  router.push('/');
+                }
+              }}
             >
-              <Plus size={16} className="group-hover:rotate-90 transition-all" />
-              <span className="text-sm ml-1.5 group-hover:block hidden animate-in fade-in duration-300">New</span>
+              <Plus size={18} className="group-hover:rotate-90 transition-all" />
+              <span className="text-sm ml-2 md:opacity-0 md:w-0 md:group-hover:opacity-100 md:group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
+                New
+              </span>
             </Button>
-          </Link>
+            
+            <Button
+              type="button"
+              variant={"outline"}
+              className="rounded-full bg-background hover:bg-muted/50 text-foreground backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto flex items-center transition-all duration-300 shadow-sm"
+              onClick={() => router.push('/faq')}
+            >
+              <HelpCircle size={18} className="transition-all" />
+              <span className="text-sm ml-2 opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
+                FAQ
+              </span>
+            </Button>
+            
+            <Button
+              type="button"
+              variant={"outline"}
+              className="rounded-full bg-background hover:bg-muted/50 text-foreground backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto flex items-center transition-all duration-300 shadow-sm"
+              onClick={() => {
+                window.location.href = 'mailto:ziqsearch@gmail.com?subject=Feedback%20for%20Ziq';
+              }}
+            >
+              <Mail size={18} className="transition-all" />
+              <span className="text-sm ml-2 opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
+                Feedback
+              </span>
+            </Button>
+          </div>
         </div>
+
+        {/* Center section - Logo */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 font-semibold text-lg items-center z-50 hidden">
+        </div>
+
+        {/* Right section - User profile, admin panel, etc. */}
         <div className={cn('flex items-center gap-2', isDialogOpen ? 'pointer-events-auto' : '')}>
           {/* Visibility indicator or toggle based on authentication and ownership */}
           {chatId && (
@@ -396,6 +565,16 @@ const Navbar = memo(
             </>
           )}
 
+          {/* Credits display */}
+          {user && (
+            <div className="px-3 py-1.5 bg-primary/10 dark:bg-primary/20 rounded-full text-sm flex items-center mr-2 border border-primary/20 dark:border-primary/30 transition-all hover:bg-primary/15 dark:hover:bg-primary/25">
+              <Coins className="h-3.5 w-3.5 mr-1.5 text-primary" />
+              <span className="font-medium text-primary">
+                {isLoadingCredits ? '...' : userCredits !== null ? userCredits : '0'}
+              </span>
+            </div>
+          )}
+
           {/* Subscription Status - show loading or actual status */}
           {user && (
             <>
@@ -447,16 +626,77 @@ const Navbar = memo(
           )}
 
           {/* Chat History Button */}
-          <ChatHistoryButton onClick={onHistoryClick} />
+          {onHistoryClick && <ChatHistoryButton onClick={onHistoryClick} />}
+          
+          {/* Admin Panel - only shown to authenticated users */}
+          {user && (isAdmin || <AdminPanel />)}
 
-          {/* Memoized UserProfile component */}
-          <UserProfile
-            user={user}
-            subscriptionData={subscriptionData}
-            isProUser={isProUser}
-            isProStatusLoading={isProStatusLoading}
-          />
+          {/* User Profile */}
+          {user ? (
+            <UserProfile
+              user={user}
+              subscriptionData={subscriptionData}
+              isProUser={isProUser}
+              isProStatusLoading={isProStatusLoading}
+            />
+          ) : (
+            <>
+              <Link href="/sign-in">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-md hover:bg-primary/10 text-primary font-medium transition-all"
+                >
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button
+                  type="button"
+                  variant="default"
+                  size="sm"
+                  className="rounded-md bg-primary hover:bg-primary/90 text-primary-foreground ml-2 font-medium transition-all"
+                >
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
+
+          <AboutButton />
+          <ThemeToggle />
         </div>
+
+        <style jsx global>{`
+          @keyframes gradient-animation {
+            0% {
+              background-position: 0% 50%;
+            }
+            50% {
+              background-position: 100% 50%;
+            }
+            100% {
+              background-position: 0% 50%;
+            }
+          }
+          
+          .animate-gradient-background {
+            /* Ziq light palette: blue -> teal gradient */
+            background: linear-gradient(-45deg, #e6f0ff, #e6fbff, #f0f9ff, #e6f7ff);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            animation-delay: 0.2s; /* slight delay to ensure initial render */
+          }
+
+          .dark .animate-gradient-background {
+            /* Ziq dark palette: deep blue -> teal accents */
+            background: linear-gradient(-45deg, #0b1220, #0a1b24, #0b1f2a, #0a1422);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            animation-delay: 0.2s;
+          }
+        `}</style>
       </div>
     );
   },

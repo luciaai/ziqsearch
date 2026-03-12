@@ -155,22 +155,31 @@ function initializeChatAndChecks({
   if (isProUser) {
     // Pro users: only validate ownership, skip usage checks
     criticalChecksPromise = Promise.all([fullUserPromise, validatedChatPromise]).then(([user]) => {
-      const hasPolarSubscription = !!user?.polarSubscription;
-      const hasDodoSubscription = !!user?.dodoSubscription?.hasSubscriptions;
+      const hasSubscription = !!user?.subscription;
 
       return {
         canProceed: true,
         isProUser: true,
         messageCount: 0,
         extremeSearchUsage: 0,
-        subscriptionData:
-          hasPolarSubscription || hasDodoSubscription
-            ? {
+        subscriptionData: hasSubscription
+          ? {
               hasSubscription: true,
-              subscription: user?.polarSubscription ? { ...user.polarSubscription, organizationId: null } : null,
-              dodoSubscription: user?.dodoSubscription || null,
+              subscription: user?.subscription ? {
+                id: user.subscription.id,
+                productId: user.subscription.stripePriceId,
+                status: user.subscription.status,
+                amount: 0,
+                currency: 'USD',
+                recurringInterval: 'month',
+                currentPeriodStart: user.subscription.currentPeriodStart,
+                currentPeriodEnd: user.subscription.currentPeriodEnd,
+                cancelAtPeriodEnd: user.subscription.cancelAtPeriodEnd,
+                canceledAt: user.subscription.canceledAt,
+                organizationId: null,
+              } : null,
             }
-            : { hasSubscription: false },
+          : { hasSubscription: false },
         shouldBypassLimits: true,
       };
     });
@@ -200,22 +209,31 @@ function initializeChatAndChecks({
           throw new ChatSDKError('rate_limit:chat', 'Daily search limit reached');
         }
 
-        const hasPolarSubscription = !!user.polarSubscription;
-        const hasDodoSubscription = !!user.dodoSubscription?.hasSubscriptions;
+        const hasSubscription = !!user.subscription;
 
         return {
           canProceed: true,
           isProUser: false,
           messageCount: messageCountResult.count,
           extremeSearchUsage: extremeSearchUsage.count,
-          subscriptionData:
-            hasPolarSubscription || hasDodoSubscription
-              ? {
+          subscriptionData: hasSubscription
+            ? {
                 hasSubscription: true,
-                subscription: user.polarSubscription ? { ...user.polarSubscription, organizationId: null } : null,
-                dodoSubscription: user.dodoSubscription || null,
+                subscription: user.subscription ? {
+                  id: user.subscription.id,
+                  productId: user.subscription.stripePriceId,
+                  status: user.subscription.status,
+                  amount: 0,
+                  currency: 'USD',
+                  recurringInterval: 'month',
+                  currentPeriodStart: user.subscription.currentPeriodStart,
+                  currentPeriodEnd: user.subscription.currentPeriodEnd,
+                  cancelAtPeriodEnd: user.subscription.cancelAtPeriodEnd,
+                  canceledAt: user.subscription.canceledAt,
+                  organizationId: null,
+                } : null,
               }
-              : { hasSubscription: false },
+            : { hasSubscription: false },
           shouldBypassLimits,
         };
       })

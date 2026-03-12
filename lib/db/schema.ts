@@ -282,6 +282,47 @@ export const dodosubscription = pgTable('dodosubscription', {
   userId: text('user_id').references(() => user.id),
 });
 
+// Stripe billing customer table
+export const billingCustomer = pgTable('billing_customer', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => generateId()),
+  userId: text('user_id')
+    .notNull()
+    .unique()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  stripeCustomerId: text('stripe_customer_id').notNull().unique(),
+  email: text('email').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// Stripe billing subscription table
+export const billingSubscription = pgTable('billing_subscription', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => generateId()),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  stripeSubscriptionId: text('stripe_subscription_id').notNull().unique(),
+  stripeCustomerId: text('stripe_customer_id').notNull(),
+  stripePriceId: text('stripe_price_id').notNull(),
+  stripeProductId: text('stripe_product_id'),
+  status: text('status').notNull(), // active, canceled, incomplete, incomplete_expired, past_due, trialing, unpaid
+  currentPeriodStart: timestamp('current_period_start').notNull(),
+  currentPeriodEnd: timestamp('current_period_end').notNull(),
+  cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull().default(false),
+  canceledAt: timestamp('canceled_at'),
+  cancelAt: timestamp('cancel_at'),
+  endedAt: timestamp('ended_at'),
+  trialStart: timestamp('trial_start'),
+  trialEnd: timestamp('trial_end'),
+  metadata: json('metadata'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
 // Lookout table for scheduled searches
 export const lookout = pgTable('lookout', {
   id: text('id')
@@ -318,7 +359,7 @@ export const lookout = pgTable('lookout', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ many, one }) => ({
   sessions: many(session),
   accounts: many(account),
   chats: many(chat),
@@ -329,6 +370,8 @@ export const userRelations = relations(user, ({ many }) => ({
   payments: many(payment),
   dodoSubscriptions: many(dodosubscription),
   lookouts: many(lookout),
+  billingCustomer: one(billingCustomer),
+  billingSubscriptions: many(billingSubscription),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -375,6 +418,20 @@ export const lookoutRelations = relations(lookout, ({ one }) => ({
   }),
 }));
 
+export const billingCustomerRelations = relations(billingCustomer, ({ one }) => ({
+  user: one(user, {
+    fields: [billingCustomer.userId],
+    references: [user.id],
+  }),
+}));
+
+export const billingSubscriptionRelations = relations(billingSubscription, ({ one }) => ({
+  user: one(user, {
+    fields: [billingSubscription.userId],
+    references: [user.id],
+  }),
+}));
+
 export type User = InferSelectModel<typeof user>;
 export type Session = InferSelectModel<typeof session>;
 export type Account = InferSelectModel<typeof account>;
@@ -390,3 +447,5 @@ export type MessageUsage = InferSelectModel<typeof messageUsage>;
 export type CustomInstructions = InferSelectModel<typeof customInstructions>;
 export type UserPreferences = InferSelectModel<typeof userPreferences>;
 export type Lookout = InferSelectModel<typeof lookout>;
+export type BillingCustomer = InferSelectModel<typeof billingCustomer>;
+export type BillingSubscription = InferSelectModel<typeof billingSubscription>;

@@ -50,10 +50,21 @@ export function Navbar({ user, isProUser, isProStatusLoading, showProBadge = fal
         <UserProfile
           user={user || null}
           subscriptionData={
-            user?.polarSubscription
+            user?.subscription
               ? {
                   hasSubscription: true,
-                  subscription: user.polarSubscription,
+                  subscription: {
+                    id: user.subscription.id,
+                    productId: user.subscription.stripePriceId,
+                    status: user.subscription.status,
+                    amount: 0,
+                    currency: 'USD',
+                    recurringInterval: 'month',
+                    currentPeriodStart: user.subscription.currentPeriodStart,
+                    currentPeriodEnd: user.subscription.currentPeriodEnd,
+                    cancelAtPeriodEnd: user.subscription.cancelAtPeriodEnd,
+                    canceledAt: user.subscription.canceledAt,
+                  },
                 }
               : { hasSubscription: false }
           }

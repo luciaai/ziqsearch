@@ -1,7 +1,8 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { authClient, betterauthClient } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth-client';
+import { redirectToCheckout, redirectToPortal } from '@/lib/billing-client';
 import { ArrowRight, ArrowLeft, GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -97,51 +98,26 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
     }
 
     try {
-      // Use DodoPayments checkout for all new subscriptions
+      // Use Stripe checkout
       toast.loading('Redirecting to checkout...');
 
-      const { data: checkout, error } = await betterauthClient.dodopayments.checkoutSession({
-        slug: process.env.NEXT_PUBLIC_PREMIUM_SLUG,
-        customer: {
-          email: user.email || '',
-          name: user.name || '',
-        },
-        billing_currency: location.isIndia ? 'INR' : 'USD',
-        allowed_payment_method_types: [
-          'credit',
-          'debit',
-          'upi_collect',
-          'upi_intent',
-          'apple_pay',
-          'google_pay',
-          'amazon_pay',
-          'sepa',
-          'ach',
-          'klarna',
-          'affirm',
-          'afterpay_clearpay',
-        ],
-        referenceId: `order_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
-        ...(hasStudentDiscount() && discountConfig.dodoDiscountId && { discount_code: 'SCIRASTUD' }),
-      });
-
-      if (error) {
+      // Get the appropriate price ID based on location
+      const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY;
+      
+      if (!priceId) {
         toast.dismiss();
-        throw new Error(error.message || 'Checkout failed');
+        toast.error('Pricing configuration error. Please contact support.');
+        return;
       }
 
-      if (checkout?.url) {
-        // Show success message for student discount
-        if (hasStudentDiscount()) {
-          toast.dismiss();
-          toast.success('🎓 Student discount applied!');
-        }
-        // Redirect to DodoPayments checkout
-        window.location.href = checkout.url;
-      } else {
+      // Show success message for student discount if applicable
+      if (hasStudentDiscount()) {
         toast.dismiss();
-        throw new Error('No checkout URL received');
+        toast.success('🎓 Student discount applied!');
       }
+
+      // Redirect to Stripe checkout
+      await redirectToCheckout(priceId);
     } catch (error) {
       console.error('Checkout failed:', error);
       toast.dismiss();
@@ -151,52 +127,17 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
 
   const handleManageSubscription = async () => {
     try {
-      const proSource = getProAccessSource();
-      if (proSource === 'dodo') {
-        await betterauthClient.dodopayments.customer.portal();
-      } else {
-        await authClient.customer.portal();
-      }
+      // Use Stripe billing portal
+      await redirectToPortal();
     } catch (error) {
       console.error('Failed to open customer portal:', error);
       toast.error('Failed to open subscription management');
     }
   };
 
-  const STARTER_TIER = process.env.NEXT_PUBLIC_STARTER_TIER;
-  const STARTER_SLUG = process.env.NEXT_PUBLIC_STARTER_SLUG;
-
-  if (!STARTER_TIER || !STARTER_SLUG) {
-    console.error('Missing required environment variables');
-    throw new Error('Missing required environment variables for Starter tier');
-  }
-
-  // Check if user has active Polar subscription
-  const hasPolarSubscription = () => {
-    return (
-      subscriptionDetails.hasSubscription &&
-      subscriptionDetails.subscription?.productId === STARTER_TIER &&
-      subscriptionDetails.subscription?.status === 'active'
-    );
-  };
-
-  // Check if user has active Dodo payments subscription
-  const hasDodoSubscription = () => {
-    return user?.isProUser === true && user?.proSource === 'dodo';
-  };
-
-  // Check if user has any Pro status (Polar or DodoPayments)
+  // Check if user has active subscription (simplified for Stripe)
   const hasProAccess = () => {
-    const polarAccess = hasPolarSubscription();
-    const dodoAccess = hasDodoSubscription();
-    return polarAccess || dodoAccess;
-  };
-
-  // Get the source of Pro access for display
-  const getProAccessSource = () => {
-    if (hasPolarSubscription()) return 'polar';
-    if (hasDodoSubscription()) return 'dodo';
-    return null;
+    return user?.isProUser === true;
   };
 
   const formatDate = (date: Date) => {
@@ -302,49 +243,10 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
 
             {/* Pricing Display */}
             <div className="mb-8">
-              {hasProAccess() ? (
-                getProAccessSource() === 'dodo' ? (
-                  <div className="flex items-baseline">
-                    <span className="text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">₹{PRICING.PRO_MONTHLY_INR}</span>
-                    <span className="text-sm text-muted-foreground ml-2">(excl. GST)/month</span>
-                  </div>
-                ) : (
-                  <div className="flex items-baseline">
-                    <span className="text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">$15</span>
-                    <span className="text-sm text-muted-foreground ml-2">/month</span>
-                  </div>
-                )
-              ) : location.isIndia || derivedIsIndianStudentEmail ? (
-                <div className="space-y-1">
-                  <div className="flex items-baseline">
-                    {getStudentPrice(true) ? (
-                      <>
-                        <span className="text-xl text-muted-foreground line-through mr-2">₹{PRICING.PRO_MONTHLY_INR}</span>
-                        <span className="text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">₹{getStudentPrice(true)}</span>
-                      </>
-                    ) : (
-                      <span className="text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">₹{PRICING.PRO_MONTHLY_INR}</span>
-                    )}
-                    <span className="text-sm text-muted-foreground ml-2">(excl. GST)/month</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Approx. $15/month</p>
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  <div className="flex items-baseline">
-                    {getStudentPrice(false) ? (
-                      <>
-                        <span className="text-xl text-muted-foreground line-through mr-2">$15</span>
-                        <span className="text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">${getStudentPrice(false)}</span>
-                      </>
-                    ) : (
-                      <span className="text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">$15</span>
-                    )}
-                    <span className="text-sm text-muted-foreground ml-2">/month</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Approx. ₹{PRICING.PRO_MONTHLY_INR}/month</p>
-                </div>
-              )}
+              <div className="flex items-baseline">
+                <span className="text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">${PRICING.PRO_MONTHLY_USD}</span>
+                <span className="text-sm text-muted-foreground ml-2">/month</span>
+              </div>
             </div>
 
             <ul className="space-y-3 mb-8 flex-1">
@@ -373,23 +275,18 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
             {hasProAccess() ? (
               <div className="space-y-3">
                 <Button className="w-full h-11 rounded-none" onClick={handleManageSubscription}>
-                  {getProAccessSource() === 'dodo' ? 'Manage payment' : 'Manage subscription'}
+                  Manage subscription
                 </Button>
-                {getProAccessSource() === 'polar' && subscriptionDetails.subscription && (
+                {user?.subscription && (
                   <p className="text-xs text-muted-foreground text-center">
-                    {subscriptionDetails.subscription.cancelAtPeriodEnd
-                      ? `Expires ${formatDate(subscriptionDetails.subscription.currentPeriodEnd)}`
-                      : `Renews ${formatDate(subscriptionDetails.subscription.currentPeriodEnd)}`}
-                  </p>
-                )}
-                {getProAccessSource() === 'dodo' && user?.dodoSubscription?.expiresAt && (
-                  <p className="text-xs text-muted-foreground text-center">
-                    Expires {formatDate(new Date(user.dodoSubscription.expiresAt))}
+                    {user.subscription.cancelAtPeriodEnd
+                      ? `Expires ${formatDate(user.subscription.currentPeriodEnd)}`
+                      : `Renews ${formatDate(user.subscription.currentPeriodEnd)}`}
                   </p>
                 )}
               </div>
             ) : !user ? (
-              <Button className="w-full h-11 rounded-none group" onClick={() => handleCheckout(STARTER_TIER, STARTER_SLUG)}>
+              <Button className="w-full h-11 rounded-none group" onClick={() => handleCheckout('', '', undefined)}>
                 Sign up for Pro
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
@@ -397,18 +294,14 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
               <div className="space-y-3">
                 <Button
                   className="w-full h-11 rounded-none group"
-                  onClick={() => handleCheckout(STARTER_TIER, STARTER_SLUG, 'dodo')}
+                  onClick={() => handleCheckout('', '', undefined)}
                   disabled={location.loading}
                 >
                   {location.loading
-                    ? 'Loading...'
-                    : location.isIndia || derivedIsIndianStudentEmail
-                      ? getStudentPrice(true)
-                        ? `Subscribe ₹${getStudentPrice(true)}/month`
-                        : `Subscribe ₹${PRICING.PRO_MONTHLY_INR}/month`
-                      : getStudentPrice(false)
-                        ? `Subscribe $${getStudentPrice(false)}/month`
-                        : 'Subscribe $15/month'}
+                    ? 'Detecting location...'
+                    : hasStudentDiscount()
+                      ? '🎓 Upgrade with student discount'
+                      : 'Upgrade to Pro'}
                   {!location.loading && (
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   )}

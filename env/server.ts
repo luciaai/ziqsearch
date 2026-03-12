@@ -42,6 +42,11 @@ export const serverEnv = createEnv({
     RESEND_API_KEY: z.string().min(1),
     SUPERMEMORY_API_KEY: z.string().min(1),
     ALLOWED_ORIGINS: z.string().optional().default('http://localhost:3000'),
+    // Stripe billing
+    STRIPE_SECRET_KEY: z.string().min(1),
+    STRIPE_WEBHOOK_SECRET: z.string().min(1),
+    STRIPE_PRICE_PRO_MONTHLY: z.string().optional(),
+    STRIPE_PRICE_PRO_YEARLY: z.string().optional(),
   },
   experimental__runtimeEnv: process.env,
 });

@@ -8,11 +8,20 @@ export default async function PricingPage() {
   const user = await getCurrentUser();
 
   // Extract subscription details from unified user data
-  const subscriptionDetails = user?.polarSubscription
+  const subscriptionDetails = user?.subscription
     ? {
         hasSubscription: true,
         subscription: {
-          ...user.polarSubscription,
+          id: user.subscription.id,
+          productId: user.subscription.stripePriceId,
+          status: user.subscription.status,
+          amount: 0,
+          currency: 'USD',
+          recurringInterval: 'month',
+          currentPeriodStart: user.subscription.currentPeriodStart,
+          currentPeriodEnd: user.subscription.currentPeriodEnd,
+          cancelAtPeriodEnd: user.subscription.cancelAtPeriodEnd,
+          canceledAt: user.subscription.canceledAt,
           organizationId: null,
         },
       }

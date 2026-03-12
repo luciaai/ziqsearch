@@ -2446,10 +2446,21 @@ export async function getSubDetails() {
 
   if (!userData) return { hasSubscription: false };
 
-  return userData.polarSubscription
+  return userData.subscription
     ? {
       hasSubscription: true,
-      subscription: userData.polarSubscription,
+      subscription: {
+        id: userData.subscription.id,
+        productId: userData.subscription.stripePriceId,
+        status: userData.subscription.status,
+        amount: 0,
+        currency: 'USD',
+        recurringInterval: 'month',
+        currentPeriodStart: userData.subscription.currentPeriodStart,
+        currentPeriodEnd: userData.subscription.currentPeriodEnd,
+        cancelAtPeriodEnd: userData.subscription.cancelAtPeriodEnd,
+        canceledAt: userData.subscription.canceledAt,
+      },
     }
     : { hasSubscription: false };
 }
@@ -2827,36 +2838,38 @@ export async function getDodoSubscriptionHistory() {
   }
 }
 
-export async function getDodoSubscriptionProStatus() {
+export async function getDodoSubscriptionStatus() {
   'use server';
 
-  // Import here to avoid issues with SSR
   const { getComprehensiveUserData } = await import('@/lib/user-data-server');
   const userData = await getComprehensiveUserData();
 
   if (!userData) return { isProUser: false, hasSubscriptions: false };
 
-  const isDodoProUser = userData.proSource === 'dodo' && userData.isProUser;
-
   return {
-    isProUser: isDodoProUser,
-    hasSubscriptions: Boolean(userData.dodoSubscription?.hasSubscriptions),
-    expiresAt: userData.dodoSubscription?.expiresAt,
-    source: userData.proSource,
-    daysUntilExpiration: userData.dodoSubscription?.daysUntilExpiration,
-    isExpired: userData.dodoSubscription?.isExpired,
-    isExpiringSoon: userData.dodoSubscription?.isExpiringSoon,
+    isProUser: userData.isProUser,
+    hasSubscriptions: Boolean(userData.subscription),
+    expiresAt: userData.subscription?.currentPeriodEnd || null,
+    source: 'stripe',
+    daysUntilExpiration: userData.subscription?.currentPeriodEnd 
+      ? Math.ceil((new Date(userData.subscription.currentPeriodEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+      : undefined,
+    isExpired: userData.subscription?.currentPeriodEnd 
+      ? new Date(userData.subscription.currentPeriodEnd) < new Date()
+      : false,
+    isExpiringSoon: userData.subscription?.currentPeriodEnd
+      ? Math.ceil((new Date(userData.subscription.currentPeriodEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) <= 7
+      : false,
   };
 }
 
-export async function getDodoSubscriptionExpirationDate() {
+export async function getDodoSubscriptionExpiration() {
   'use server';
 
-  // Import here to avoid issues with SSR
   const { getComprehensiveUserData } = await import('@/lib/user-data-server');
   const userData = await getComprehensiveUserData();
 
-  return userData?.dodoSubscription?.expiresAt || null;
+  return userData?.subscription?.currentPeriodEnd || null;
 }
 
 // Initialize QStash client

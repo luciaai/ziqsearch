@@ -268,19 +268,15 @@ class ExaSearchStrategy implements SearchProviderStrategy {
   async search(query: string, category?: SearchCategory, include_domains?: string[]): Promise<SearchResult[]> {
     console.log(`[Exa] searchWeb called with query: "${query}", category: ${category}`);
     try {
+      // Map SearchCategory to valid Exa categories
+      const validExaCategories = ['news', 'company', 'research paper', 'pdf', 'tweet', 'personal site', 'financial report', 'people'];
+      const exaCategory = category && validExaCategories.includes(category) ? category : undefined;
+      
       const { results } = await this.exa.search(query, {
         numResults: 8,
         type: 'fast',
-        ...(category
-          ? {
-              category: category as SearchCategory,
-            }
-          : {}),
-        ...(include_domains
-          ? {
-              include_domains: include_domains,
-            }
-          : {}),
+        ...(exaCategory ? { category: exaCategory as any } : {}),
+        ...(include_domains ? { include_domains } : {}),
       });
       console.log(`[Exa] searchWeb received ${results.length} results from Exa API`);
 

@@ -35,8 +35,8 @@ export function useCachedUserData() {
 
   // Recalculate derived properties based on current user data
   const isProUser = Boolean(user?.isProUser);
-  const proSource = user?.proSource || 'none';
-  const subscriptionStatus = user?.subscriptionStatus || 'none';
+  const proSource = 'stripe'; // Now using Stripe only
+  const subscriptionStatus = user?.subscription?.status || 'none';
 
   // Helper function to check if user should have unlimited access for specific models
   const shouldBypassLimitsForModel = (selectedModel: string) => {
@@ -56,53 +56,52 @@ export function useCachedUserData() {
     proSource,
     subscriptionStatus,
 
-    // Polar subscription details
-    polarSubscription: user?.polarSubscription,
-    hasPolarSubscription: Boolean(user?.polarSubscription),
+    // Stripe subscription details
+    subscription: user?.subscription,
+    hasSubscription: Boolean(user?.subscription),
 
-    // Dodo Subscription details
-    dodoSubscription: user?.dodoSubscription,
-    hasDodoSubscription: Boolean(user?.dodoSubscription?.hasSubscriptions),
-    dodoExpiresAt: user?.dodoSubscription?.expiresAt,
-    isDodoExpiring: Boolean(user?.dodoSubscription?.isExpiringSoon),
-    isDodoExpired: Boolean(user?.dodoSubscription?.isExpired),
+    // Legacy compatibility - removed Polar/Dodo
+    polarSubscription: null,
+    hasPolarSubscription: false,
+    dodoSubscription: null,
+    hasDodoSubscription: false,
+    dodoExpiresAt: null,
+    isDodoExpiring: false,
+    isDodoExpired: false,
 
-    // Subscription history
-    subscriptionHistory: user?.subscriptionHistory || [],
+    // Subscription history - now managed via Stripe portal
+    subscriptionHistory: [],
 
     // Rate limiting helpers
     shouldCheckLimits: Boolean(!isLoading && user && !user.isProUser),
     shouldBypassLimitsForModel,
 
     // Subscription status checks
-    hasActiveSubscription: user?.subscriptionStatus === 'active',
-    isSubscriptionCanceled: user?.subscriptionStatus === 'canceled',
-    isSubscriptionExpired: user?.subscriptionStatus === 'expired',
-    hasNoSubscription: user?.subscriptionStatus === 'none',
+    hasActiveSubscription: subscriptionStatus === 'active',
+    isSubscriptionCanceled: subscriptionStatus === 'canceled',
+    isSubscriptionExpired: false, // Stripe doesn't use 'expired' status
+    hasNoSubscription: subscriptionStatus === 'none',
 
     // Legacy compatibility helpers
-    subscriptionData: user?.polarSubscription
+    subscriptionData: user?.subscription
       ? {
           hasSubscription: true,
-          subscription: user.polarSubscription,
+          subscription: {
+            id: user.subscription.id,
+            productId: user.subscription.stripePriceId,
+            status: user.subscription.status,
+            currentPeriodStart: user.subscription.currentPeriodStart,
+            currentPeriodEnd: user.subscription.currentPeriodEnd,
+            cancelAtPeriodEnd: user.subscription.cancelAtPeriodEnd,
+            canceledAt: user.subscription.canceledAt,
+          },
         }
       : { hasSubscription: false },
 
-    // Map dodoSubscription to legacy dodoProStatus structure for settings dialog
-    dodoProStatus: user?.dodoSubscription
-      ? {
-          isProUser: proSource === 'dodo' && isProUser,
-          hasSubscriptions: user.dodoSubscription.hasSubscriptions,
-          expiresAt: user.dodoSubscription.expiresAt,
-          mostRecentSubscription: user.dodoSubscription.mostRecentSubscription,
-          daysUntilExpiration: user.dodoSubscription.daysUntilExpiration,
-          isExpired: user.dodoSubscription.isExpired,
-          isExpiringSoon: user.dodoSubscription.isExpiringSoon,
-          source: proSource,
-        }
-      : null,
+    // Dodo pro status removed - now using Stripe
+    dodoProStatus: null,
 
-    expiresAt: user?.dodoSubscription?.expiresAt,
+    expiresAt: user?.subscription?.currentPeriodEnd || null,
 
     // Additional utilities
     isCached: Boolean(cachedUser),

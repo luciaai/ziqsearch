@@ -31,7 +31,7 @@ import {
   getConnectorSyncStatusAction,
 } from '@/app/actions';
 import { SEARCH_LIMITS } from '@/lib/constants';
-import { authClient, betterauthClient } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth-client';
 import {
   MagnifyingGlassIcon,
   LightningIcon,
@@ -1219,91 +1219,32 @@ export function SubscriptionSection({ subscriptionData, isProUser, user }: any) 
   // Use data from user object (already cached)
   const dodoProStatus = user?.dodoProStatus || null;
 
-  // Fetch Polar orders using React Query
-  const { data: polarOrders, isLoading: polarOrdersLoading } = useQuery({
-    queryKey: ['polarOrders', user?.id],
-    queryFn: async () => {
-      try {
-        const ordersResponse = await authClient.customer.orders.list({
-          query: {
-            page: 1,
-            limit: 10,
-            productBillingType: 'recurring',
-          },
-        });
-        return ordersResponse.data;
-      } catch (error) {
-        console.log('Failed to fetch Polar orders:', error);
-        return null;
-      }
-    },
-    enabled: !!user?.id,
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-  });
+  // Polar orders removed - now using Stripe
+  const polarOrders = null;
+  const polarOrdersLoading = false;
 
-  // Fetch Dodo subscriptions using React Query
-  const { data: dodoSubscriptions, isLoading: dodoSubscriptionsLoading } = useQuery({
-    queryKey: ['dodoSubscriptions', user?.id],
-    queryFn: async () => {
-      try {
-        const { data, error } = await betterauthClient.dodopayments.customer.subscriptions.list();
-        if (error) {
-          console.log('Failed to fetch Dodo subscriptions:', error);
-          return null;
-        }
-        console.log('Dodo subscriptions response:', data);
-        return data;
-      } catch (error) {
-        console.log('Failed to fetch Dodo subscriptions:', error);
-        return null;
-      }
-    },
-    enabled: !!user?.id,
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-  });
+  // Dodo subscriptions removed - now using Stripe
+  const dodoSubscriptions = null;
+  const dodoSubscriptionsLoading = false;
 
   const handleManageSubscription = async () => {
-    // Determine the subscription source
-    const getProAccessSource = () => {
-      if (hasActiveSubscription) return 'polar';
-      if (hasDodoProStatus) return 'dodo';
-      return null;
-    };
-
-    const proSource = getProAccessSource();
-
-    console.log('proSource', proSource);
-
     try {
       setIsManagingSubscription(true);
-
-      console.log('Settings Dialog - Provider source:', proSource);
-      console.log('User dodoProStatus:', user?.dodoProStatus);
-      console.log('User full object keys:', Object.keys(user || {}));
-
-      if (proSource === 'dodo') {
-        // Use DodoPayments portal for DodoPayments users
-        console.log('Opening DodoPayments portal');
-        console.log('User object for DodoPayments:', {
-          id: user?.id,
-          email: user?.email,
-          dodoProStatus: user?.dodoProStatus,
-          isProUser: user?.isProUser,
-        });
-        await betterauthClient.dodopayments.customer.portal();
-      } else {
-        // Use Polar portal for Polar subscribers
-        console.log('Opening Polar portal');
-        await authClient.customer.portal();
+      
+      // Use Stripe billing portal
+      const response = await fetch('/api/billing/portal', {
+        method: 'POST',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create portal session');
       }
+      
+      const { url } = await response.json();
+      window.location.href = url;
     } catch (error) {
       console.error('Subscription management error:', error);
-
-      if (proSource === 'dodo') {
-        toast.error('Unable to access DodoPayments portal. Please contact support at zaid@scira.ai');
-      } else {
-        toast.error('Failed to open subscription management');
-      }
+      toast.error('Failed to open subscription management');
     } finally {
       setIsManagingSubscription(false);
     }
@@ -1496,92 +1437,19 @@ export function SubscriptionSection({ subscriptionData, isProUser, user }: any) 
           </div>
         ) : (
           <div className="space-y-2">
-            {/* Show Dodo subscriptions */}
-            {dodoSubscriptions &&
-              (Array.isArray(dodoSubscriptions) ? dodoSubscriptions : dodoSubscriptions.items || []).length > 0 && (
-                <>
-                  {(Array.isArray(dodoSubscriptions) ? dodoSubscriptions : dodoSubscriptions.items || [])
-                    .slice(0, 3)
-                    .map((subscription) => (
-                      <div key={subscription.id} className={cn('bg-muted/30 rounded-lg', isMobile ? 'p-2.5' : 'p-3')}>
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1 min-w-0">
-                            <p className={cn('font-medium truncate', isMobile ? 'text-xs' : 'text-sm')}>
-                              Scira Pro (DodoPayments)
-                            </p>
-                            <div className="flex items-center gap-2">
-                              <p className={cn('text-muted-foreground', isMobile ? 'text-[10px]' : 'text-xs')}>
-                                {new Date(subscription.created_at).toLocaleDateString()}
-                              </p>
-                              <Badge variant="secondary" className="text-[8px] px-1 py-0">
-                                🇮🇳 {subscription.currency?.toUpperCase() || 'INR'}
-                              </Badge>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <span className={cn('font-semibold block', isMobile ? 'text-xs' : 'text-sm')}>
-                              ₹{subscription.recurring_pre_tax_amount ? subscription.recurring_pre_tax_amount : '—'}
-                            </span>
-                            <span className={cn('text-muted-foreground', isMobile ? 'text-[9px]' : 'text-xs')}>
-                              {subscription.status}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                </>
-              )}
+            {/* Dodo subscriptions removed - now using Stripe */}
 
-            {/* Show Polar orders */}
-            {polarOrders?.result?.items && polarOrders.result.items.length > 0 && (
-              <>
-                {polarOrders.result.items.slice(0, 3).map((order: any) => (
-                  <div key={order.id} className={cn('bg-muted/30 rounded-lg', isMobile ? 'p-2.5' : 'p-3')}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 min-w-0">
-                        <p className={cn('font-medium truncate', isMobile ? 'text-xs' : 'text-sm')}>
-                          {order.product?.name || 'Subscription'}
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <p className={cn('text-muted-foreground', isMobile ? 'text-[10px]' : 'text-xs')}>
-                            {new Date(order.createdAt).toLocaleDateString()}
-                          </p>
-                          <Badge variant="secondary" className="text-[8px] px-1 py-0">
-                            🌍 USD
-                          </Badge>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className={cn('font-semibold block', isMobile ? 'text-xs' : 'text-sm')}>
-                          ${(order.totalAmount / 100).toFixed(2)}
-                        </span>
-                        <span className={cn('text-muted-foreground', isMobile ? 'text-[9px]' : 'text-xs')}>
-                          recurring
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </>
-            )}
-
-            {/* Show message if no billing history */}
-            {(!dodoSubscriptions ||
-              (Array.isArray(dodoSubscriptions)
-                ? dodoSubscriptions.length === 0
-                : !dodoSubscriptions.items || dodoSubscriptions.items.length === 0)) &&
-              (!polarOrders?.result?.items || polarOrders.result.items.length === 0) && (
-                <div
-                  className={cn(
-                    'border rounded-lg text-center bg-muted/20 flex items-center justify-center',
-                    isMobile ? 'p-4 h-16' : 'p-6 h-20',
-                  )}
-                >
-                  <p className={cn('text-muted-foreground', isMobile ? 'text-[11px]' : 'text-xs')}>
-                    No billing history yet
-                  </p>
-                </div>
+            {/* Show message - billing history now managed via Stripe portal */}
+            <div
+              className={cn(
+                'border rounded-lg text-center bg-muted/20 flex items-center justify-center',
+                isMobile ? 'p-4 h-16' : 'p-6 h-20',
               )}
+            >
+              <p className={cn('text-muted-foreground', isMobile ? 'text-[11px]' : 'text-xs')}>
+                View billing history in the Stripe portal
+              </p>
+            </div>
           </div>
         )}
       </div>

@@ -35,56 +35,55 @@ export function useUserData() {
 
     // Quick access to commonly used properties
     isProUser: Boolean(userData?.isProUser),
-    proSource: userData?.proSource || 'none',
-    subscriptionStatus: userData?.subscriptionStatus || 'none',
+    proSource: 'stripe', // Now using Stripe only
+    subscriptionStatus: userData?.subscription?.status || 'none',
 
-    // Polar subscription details
-    polarSubscription: userData?.polarSubscription,
-    hasPolarSubscription: Boolean(userData?.polarSubscription),
+    // Stripe subscription details
+    subscription: userData?.subscription,
+    hasSubscription: Boolean(userData?.subscription),
 
-    // Dodo Subscription details
-    dodoSubscription: userData?.dodoSubscription,
-    hasDodoSubscription: Boolean(userData?.dodoSubscription?.hasSubscriptions),
-    dodoExpiresAt: userData?.dodoSubscription?.expiresAt,
-    isDodoExpiring: Boolean(userData?.dodoSubscription?.isExpiringSoon),
-    isDodoExpired: Boolean(userData?.dodoSubscription?.isExpired),
+    // Legacy compatibility - removed Polar/Dodo
+    polarSubscription: null,
+    hasPolarSubscription: false,
+    dodoSubscription: null,
+    hasDodoSubscription: false,
+    dodoExpiresAt: null,
+    isDodoExpiring: false,
+    isDodoExpired: false,
 
-    // Subscription history
-    subscriptionHistory: userData?.subscriptionHistory || [],
+    // Subscription history - now managed via Stripe portal
+    subscriptionHistory: [],
 
     // Rate limiting helpers
     shouldCheckLimits: !isLoading && userData && !userData.isProUser,
     shouldBypassLimitsForModel,
 
     // Subscription status checks
-    hasActiveSubscription: userData?.subscriptionStatus === 'active',
-    isSubscriptionCanceled: userData?.subscriptionStatus === 'canceled',
-    isSubscriptionExpired: userData?.subscriptionStatus === 'expired',
-    hasNoSubscription: userData?.subscriptionStatus === 'none',
+    hasActiveSubscription: userData?.subscription?.status === 'active',
+    isSubscriptionCanceled: userData?.subscription?.status === 'canceled',
+    isSubscriptionExpired: false, // Stripe doesn't use 'expired' status
+    hasNoSubscription: !userData?.subscription,
 
     // Legacy compatibility helpers
-    subscriptionData: userData?.polarSubscription
+    subscriptionData: userData?.subscription
       ? {
           hasSubscription: true,
-          subscription: userData.polarSubscription,
+          subscription: {
+            id: userData.subscription.id,
+            productId: userData.subscription.stripePriceId,
+            status: userData.subscription.status,
+            currentPeriodStart: userData.subscription.currentPeriodStart,
+            currentPeriodEnd: userData.subscription.currentPeriodEnd,
+            cancelAtPeriodEnd: userData.subscription.cancelAtPeriodEnd,
+            canceledAt: userData.subscription.canceledAt,
+          },
         }
       : { hasSubscription: false },
 
-    // Map dodoSubscription to legacy dodoProStatus structure for settings dialog
-    dodoProStatus: userData?.dodoSubscription
-      ? {
-          isProUser: userData.proSource === 'dodo' && userData.isProUser,
-          hasSubscriptions: userData.dodoSubscription.hasSubscriptions,
-          expiresAt: userData.dodoSubscription.expiresAt,
-          mostRecentSubscription: userData.dodoSubscription.mostRecentSubscription,
-          daysUntilExpiration: userData.dodoSubscription.daysUntilExpiration,
-          isExpired: userData.dodoSubscription.isExpired,
-          isExpiringSoon: userData.dodoSubscription.isExpiringSoon,
-          source: userData.proSource,
-        }
-      : null,
+    // Dodo pro status removed - now using Stripe
+    dodoProStatus: null,
 
-    expiresAt: userData?.dodoSubscription?.expiresAt,
+    expiresAt: userData?.subscription?.currentPeriodEnd || null,
   };
 }
 

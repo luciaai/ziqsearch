@@ -78,7 +78,7 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
     const customer = await db.query.billingCustomer.findFirst({
       where: eq(billingCustomer.stripeCustomerId, customerId),
     });
-    finalUserId = customer?.userId;
+    finalUserId = customer?.userId || '';
   }
 
   if (!finalUserId) {
@@ -93,14 +93,14 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
     stripePriceId: subscription.items.data[0]?.price.id || '',
     stripeProductId: subscription.items.data[0]?.price.product as string,
     status: subscription.status,
-    currentPeriodStart: new Date(subscription.current_period_start * 1000),
-    currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-    cancelAtPeriodEnd: subscription.cancel_at_period_end,
-    canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null,
-    cancelAt: subscription.cancel_at ? new Date(subscription.cancel_at * 1000) : null,
-    endedAt: subscription.ended_at ? new Date(subscription.ended_at * 1000) : null,
-    trialStart: subscription.trial_start ? new Date(subscription.trial_start * 1000) : null,
-    trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
+    currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+    currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+    cancelAtPeriodEnd: (subscription as any).cancel_at_period_end || false,
+    canceledAt: (subscription as any).canceled_at ? new Date((subscription as any).canceled_at * 1000) : null,
+    cancelAt: (subscription as any).cancel_at ? new Date((subscription as any).cancel_at * 1000) : null,
+    endedAt: (subscription as any).ended_at ? new Date((subscription as any).ended_at * 1000) : null,
+    trialStart: (subscription as any).trial_start ? new Date((subscription as any).trial_start * 1000) : null,
+    trialEnd: (subscription as any).trial_end ? new Date((subscription as any).trial_end * 1000) : null,
     metadata: subscription.metadata,
   };
 

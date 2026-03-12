@@ -4,7 +4,7 @@ import { Geist_Mono } from 'next/font/google';
 import { highlight } from 'sugar-high';
 import Image from 'next/image';
 import Link from 'next/link';
-import Latex from 'react-latex-next';
+import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import Marked, { ReactRenderer } from 'marked-react';
 import { Lexer } from 'marked';
 import React, { useCallback, useMemo, useState, Fragment, useRef, lazy, Suspense, useEffect, use } from 'react';
@@ -1026,9 +1026,9 @@ const SafeLatex: React.FC<{
 
   try {
     return (
-      <Latex delimiters={delimiters} strict={false}>
+      <MathJax inline={!isBlock} hideUntilTypeset="first">
         {children}
-      </Latex>
+      </MathJax>
     );
   } catch (error) {
     console.warn('LaTeX rendering error:', error, 'Content:', children);
@@ -1987,9 +1987,11 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = React.memo(
     }
 
     return (
-      <div className="markdown-body prose prose-neutral dark:prose-invert max-w-none text-foreground font-sans">
-        <Marked renderer={renderer}>{processedContent}</Marked>
-      </div>
+      <MathJaxContext>
+        <div className="markdown-body prose prose-neutral dark:prose-invert max-w-none text-foreground font-sans">
+          <Marked renderer={renderer}>{processedContent}</Marked>
+        </div>
+      </MathJaxContext>
     );
   },
   (prevProps, nextProps) => {

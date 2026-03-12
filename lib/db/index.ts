@@ -6,43 +6,52 @@ import Redis from 'ioredis';
 import * as schema from './schema';
 import { Pool } from 'pg';
 
-// Create Redis client
-const redis = new Redis(serverEnv.REDIS_URL);
+const poolConfig = {
+  ssl: { rejectUnauthorized: false },
+  max: 10,
+  idleTimeoutMillis: 30_000,
+  connectionTimeoutMillis: 10_000,
+} as const;
 
-// Create shared cache instance
-const cache = new RedisDrizzleCache({
-  redis,
-  defaultTtl: 20,
-  strategy: 'explicit',
-  namespace: 'scira:drizzle',
-});
+let cache: RedisDrizzleCache | undefined;
 
-export const maindb = drizzle({
-  client: new Pool({
-    connectionString: serverEnv.DATABASE_URL,
-    ssl: true,
-  }),
-  schema,
-  cache,
-});
+try {
+  const redis = new Redis(serverEnv.REDIS_URL, {
+    lazyConnect: true,
+    maxRetriesPerRequest: 1,
+    enableOfflineQueue: false,
+  });
 
-const dbread1 = drizzle({
-  client: new Pool({
-    connectionString: process.env.READ_DB_1,
-    ssl: true,
-  }),
-  schema,
-  cache,
-});
+  redis.on('error', (error) => {
+    console.error('Drizzle cache Redis unavailable:', error);
+  });
 
-const dbread2 = drizzle({
-  client: new Pool({
-    connectionString: process.env.READ_DB_2,
-    ssl: true,
-  }),
-  schema,
-  cache,
-});
+  cache = new RedisDrizzleCache({
+    redis,
+    defaultTtl: 20,
+    strategy: 'explicit',
+    namespace: 'scira:drizzle',
+  });
+} catch (error) {
+  console.error('Failed to initialize Drizzle cache:', error);
+}
+
+function createDatabase(connectionString: string) {
+  return drizzle({
+    client: new Pool({
+      connectionString,
+      ...poolConfig,
+    }),
+    schema,
+    ...(cache ? { cache } : {}),
+  });
+}
+
+export const maindb = createDatabase(serverEnv.DATABASE_URL);
+
+const readReplicas = [process.env.READ_DB_1, process.env.READ_DB_2]
+  .filter((value): value is string => Boolean(value && value.trim()))
+  .map((connectionString) => createDatabase(connectionString));
 
 const REPLICA_WEIGHTS = [4, 6];
 let currentIndex = -1;
@@ -75,13 +84,16 @@ function selectReplica<T>(replicas: readonly T[]): T {
   }
 }
 
-export const db = withReplicas(maindb, [dbread1, dbread2], (replicas) => selectReplica(replicas));
+export const db =
+  readReplicas.length > 0
+    ? withReplicas(maindb, readReplicas as [typeof maindb, ...typeof maindb[]], (replicas) => selectReplica(replicas))
+    : maindb;
 
-type ReplicaClient = (typeof db)['$replicas'][number];
+type ReplicaClient = typeof maindb;
 
 export function getReadReplica(): ReplicaClient {
-  return selectReplica(db.$replicas);
+  return readReplicas.length > 0 ? selectReplica(readReplicas) : maindb;
 }
 
 // Export all database instances for cache invalidation
-export const allDatabases = [maindb, dbread1, dbread2] as const;
+export const allDatabases = [maindb, ...readReplicas] as const;

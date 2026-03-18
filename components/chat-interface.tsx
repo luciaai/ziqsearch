@@ -28,6 +28,7 @@ import { Button } from '@/components/ui/button';
 import FormComponent from '@/components/ui/form-component';
 import { ShareDialog } from '@/components/share/share-dialog';
 import { ExampleCategories } from '@/components/example-categories';
+import { SciraLogo } from '@/components/logos/scira-logo';
 import { Pencil, Trash2, Share as ShareIcon, ChevronDown } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
@@ -510,9 +511,9 @@ const ChatInterface = memo(
         }
 
         // Only generate suggested questions if authenticated user or private chat
-        if (message.parts && message.role === 'assistant' && (user || chatState.selectedVisibilityType === 'private')) {
+        if (message.parts && message.parts.length > 0 && message.role === 'assistant' && (user || chatState.selectedVisibilityType === 'private')) {
           const lastPart = message.parts[message.parts.length - 1];
-          const lastPartText = lastPart.type === 'text' ? lastPart.text : '';
+          const lastPartText = lastPart && lastPart.type === 'text' ? lastPart.text : '';
           const newHistory = [
             { role: 'user', content: lastSubmittedQueryRef.current },
             { role: 'assistant', content: lastPartText },
@@ -1072,9 +1073,7 @@ const ChatInterface = memo(
                       </Link>
                     </div>
                     <div className="inline-flex items-center gap-3">
-                      <h1 className="text-4xl sm:text-5xl mb-0! text-foreground dark:text-foreground font-be-vietnam-pro! font-light tracking-tighter">
-                        scira
-                      </h1>
+                      <SciraLogo className="h-12 sm:h-16 w-auto" />
                       {isUserPro && (
                         <h1 className="text-2xl font-baumans! leading-4 inline-block px-3! pt-1! pb-2.5! rounded-xl shadow-sm m-0! mt-2! bg-linear-to-br from-secondary/25 via-primary/20 to-accent/25 text-foreground ring-1 ring-ring/35 ring-offset-1 ring-offset-background dark:bg-linear-to-br dark:from-primary dark:via-secondary dark:to-primary dark:text-foreground">
                           pro

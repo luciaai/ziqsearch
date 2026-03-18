@@ -63,6 +63,7 @@ export async function POST(req: NextRequest) {
     const bodySchema = z.object({
       username: z.string().min(1),
       year: z.number().int().min(2006).max(2100).optional(),
+      quarter: z.number().int().min(1).max(4).optional(),
     });
 
     const parsedBody = bodySchema.safeParse(await req.json());
@@ -70,19 +71,40 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid request body', details: parsedBody.error.flatten() }, { status: 400 });
     }
 
-    const year = parsedBody.data.year ?? 2025;
+    const year = parsedBody.data.year ?? new Date().getFullYear();
+    const quarter = parsedBody.data.quarter;
     const cleanUsername = parsedBody.data.username.replace(/^@+/, '').trim();
     if (!cleanUsername) return NextResponse.json({ error: 'Username is required' }, { status: 400 });
 
-    // Check cache
-    const cacheKey = `x-wrapped:${cleanUsername}:${year}`;
+    // Calculate date range based on quarter
+    let startDate: string;
+    let endDate: string;
+    
+    if (quarter) {
+      // Quarter-specific date ranges
+      const quarterRanges = {
+        1: { start: `${year}-01-01`, end: `${year}-03-31` },
+        2: { start: `${year}-04-01`, end: `${year}-06-30` },
+        3: { start: `${year}-07-01`, end: `${year}-09-30` },
+        4: { start: `${year}-10-01`, end: `${year}-12-31` },
+      };
+      const range = quarterRanges[quarter as 1 | 2 | 3 | 4];
+      startDate = range.start;
+      endDate = range.end;
+    } else {
+      // Full year
+      startDate = `${year}-01-01`;
+      endDate = `${year}-12-31`;
+    }
+
+    // Check cache (include quarter in cache key)
+    const cacheKey = quarter 
+      ? `x-wrapped:${cleanUsername}:${year}:Q${quarter}`
+      : `x-wrapped:${cleanUsername}:${year}`;
     const cached = await redis.get<XWrappedData>(cacheKey);
     if (cached) {
       return NextResponse.json(cached);
     }
-
-    const startDate = `${year}-01-01`;
-    const endDate = `${year}-12-31`;
 
     // IMPORTANT: Use the same x_search tool wiring as lib/tools/x-search.ts (lines ~120-122).
     const xSearchToolConfig: Parameters<typeof xai.tools.xSearch>[0] = {

@@ -42,7 +42,7 @@ ${additionalInfo}
 
 `
     : ''
-}I am a current student at this university and would love to access the student discount for Scira Pro.
+}I am a current student at this university and would love to access the student discount for Ziq Pro.
 
 Thank you for considering my request!
 

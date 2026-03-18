@@ -210,36 +210,43 @@ export async function checkImageModeration(images: string[]) {
 export async function generateTitleFromUserMessage({ message }: { message: UIMessage }) {
   const startTime = Date.now();
   const firstTextPart = message.parts.find((part) => part.type === 'text');
-  const prompt = JSON.stringify(firstTextPart && firstTextPart.type === 'text' ? firstTextPart.text : '');
-  console.log('Prompt: ', prompt);
-  const { text: title } = await generateText({
-    model: scira.languageModel('scira-name'),
-    temperature: 1,
-    maxOutputTokens: 10,
-    system: `You are an expert title generator. You are given a message and you need to generate a short title based on it.
+  const prompt = firstTextPart && firstTextPart.type === 'text' ? firstTextPart.text : '';
+  
+  // If no text content, return default
+  if (!prompt || prompt.trim().length === 0) {
+    console.log('⚠️ No text content in message, using default title');
+    return 'New Chat';
+  }
+  
+  console.log('Generating title from prompt: ', prompt.substring(0, 100));
+  
+  try {
+    const { text: title } = await generateText({
+      model: groq('llama-3.3-70b-versatile'),
+      temperature: 0.7,
+      maxOutputTokens: 15,
+      system: `Generate a short, descriptive title (3-5 words max) for this conversation based on the user's first message. 
+Rules:
+- Be concise and specific
+- No quotes, colons, or special characters
+- Plain text only, no markdown
+- Capture the main topic or question`,
+      prompt: `User's message: ${prompt}\n\nGenerate title:`,
+    });
 
-    - you will generate a short 3-4 words title based on the first message a user begins a conversation with
-    - the title should creative and unique
-    - do not write anything other than the title
-    - do not use quotes or colons
-    - no markdown formatting allowed
-    - keep plain text only
-    - not more than 4 words in the title
-    - do not use any other text other than the title`,
-    prompt,
-    providerOptions: {
-      gateway: {
-        only: ['google'],
-      },
-    },
-  });
+    const cleanTitle = title.trim().replace(/^["']|["']$/g, '');
+    console.log('Generated title: ', cleanTitle);
 
-  console.log('Title: ', title);
+    const durationMs = Date.now() - startTime;
+    console.log(`⏱️ [USAGE] generateTitleFromUserMessage: Model took ${durationMs}ms`);
 
-  const durationMs = Date.now() - startTime;
-  console.log(`⏱️ [USAGE] generateTitleFromUserMessage: Model took ${durationMs}ms`);
-
-  return title;
+    return cleanTitle || 'New Chat';
+  } catch (error) {
+    console.error('❌ Failed to generate title:', error);
+    // Fallback: use first few words of the message
+    const fallbackTitle = prompt.split(' ').slice(0, 4).join(' ');
+    return fallbackTitle.length > 50 ? fallbackTitle.substring(0, 47) + '...' : fallbackTitle;
+  }
 }
 
 export async function enhancePrompt(raw: string) {
@@ -2873,7 +2880,11 @@ export async function getDodoSubscriptionExpiration() {
 }
 
 // Initialize QStash client
-const qstash = new Client({ token: serverEnv.QSTASH_TOKEN });
+// Use custom URL if provided, otherwise let SDK auto-detect from token
+const qstash = new Client({ 
+  token: serverEnv.QSTASH_TOKEN,
+  ...(serverEnv.QSTASH_URL && { baseUrl: serverEnv.QSTASH_URL }),
+});
 
 // Helper function to convert frequency to cron schedule with timezone
 function frequencyToCron(frequency: string, time: string, timezone: string, dayOfWeek?: string): string {
@@ -3051,12 +3062,12 @@ export async function createScheduledLookout({
           const minimumDelay = Math.max(delay, 5); // At least 5 seconds to ensure DB consistency
 
           if (delay > 0) {
+            const webhookUrl = process.env.NODE_ENV === 'development'
+              ? (process.env.NGROK_URL || 'https://scira.ai') + '/api/lookout'
+              : `https://scira.ai/api/lookout`;
+            
             await qstash.publish({
-              // if dev env use localhost:3000/api/lookout, else use scira.ai/api/lookout
-              url:
-                process.env.NODE_ENV === 'development'
-                  ? process.env.NGROK_URL + '/api/lookout'
-                  : `https://scira.ai/api/lookout`,
+              url: webhookUrl,
               body: JSON.stringify({
                 lookoutId: lookout.id,
                 prompt,
@@ -3085,12 +3096,19 @@ export async function createScheduledLookout({
           console.log('⏰ Creating QStash recurring schedule for lookout:', lookout.id);
           console.log('📅 Cron schedule with timezone:', cronSchedule);
 
+          const webhookUrl = process.env.NODE_ENV === 'development'
+            ? (process.env.NGROK_URL || 'https://scira.ai') + '/api/lookout'
+            : `https://scira.ai/api/lookout`;
+
+          console.log('🌐 Webhook URL:', webhookUrl);
+          console.log('📦 Request body:', JSON.stringify({
+            lookoutId: lookout.id,
+            prompt,
+            userId: user.id,
+          }));
+
           const scheduleResponse = await qstash.schedules.create({
-            // if dev env use localhost:3000/api/lookout, else use scira.ai/api/lookout
-            destination:
-              process.env.NODE_ENV === 'development'
-                ? process.env.NGROK_URL + '/api/lookout'
-                : `https://scira.ai/api/lookout`,
+            destination: webhookUrl,
             method: 'POST',
             cron: cronSchedule,
             body: JSON.stringify({
@@ -3115,10 +3133,14 @@ export async function createScheduledLookout({
         }
       } catch (qstashError) {
         console.error('Error creating QStash schedule:', qstashError);
+        console.error('QStash error details:', JSON.stringify(qstashError, null, 2));
         // Delete the lookout if QStash creation fails
         await deleteLookout({ id: lookout.id });
+        
+        // Provide more detailed error message
+        const errorMessage = qstashError instanceof Error ? qstashError.message : 'Unknown error';
         throw new Error(
-          `Failed to ${frequency === 'once' ? 'schedule one-time search' : 'create recurring schedule'}. Please try again.`,
+          `Failed to ${frequency === 'once' ? 'schedule one-time search' : 'create recurring schedule'}. Error: ${errorMessage}`,
         );
       }
     }
@@ -3284,13 +3306,13 @@ export async function updateLookoutAction({
         console.log('⏰ Recreating QStash schedule for lookout:', id);
         console.log('📅 Updated cron schedule with timezone:', cronSchedule);
 
+        const webhookUrl = process.env.NODE_ENV === 'development'
+          ? (process.env.NGROK_URL || 'https://scira.ai') + '/api/lookout'
+          : `https://scira.ai/api/lookout`;
+
         // Create new schedule with updated cron
         const scheduleResponse = await qstash.schedules.create({
-          // if dev env use localhost:3000/api/lookout, else use scira.ai/api/lookout
-          destination:
-            process.env.NODE_ENV === 'development'
-              ? process.env.NGROK_URL + '/api/lookout'
-              : `https://scira.ai/api/lookout`,
+          destination: webhookUrl,
           method: 'POST',
           cron: cronSchedule,
           body: JSON.stringify({
@@ -3390,9 +3412,13 @@ export async function testLookoutAction({ id }: { id: string }) {
       throw new Error(`Cannot test lookout with status: ${lookout.status}`);
     }
 
+    const webhookUrl = process.env.NODE_ENV === 'development'
+      ? (process.env.NGROK_URL || 'https://scira.ai') + '/api/lookout'
+      : `https://scira.ai/api/lookout`;
+
     // Make a POST request to the lookout API endpoint to trigger the run
     const response = await fetch(
-      process.env.NODE_ENV === 'development' ? process.env.NGROK_URL + '/api/lookout' : `https://scira.ai/api/lookout`,
+      webhookUrl,
       {
         method: 'POST',
         headers: {

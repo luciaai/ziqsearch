@@ -62,7 +62,7 @@ export default function AboutPage() {
           <div className="flex items-center justify-between h-14 px-6">
             <Link href="/" className="flex items-center gap-2.5 group">
               <SciraLogo className="size-6 transition-transform duration-300 group-hover:scale-110" />
-              <span className="text-xl font-light tracking-tighter font-be-vietnam-pro">scira</span>
+              <span className="text-xl font-light tracking-tighter font-be-vietnam-pro">Ziq</span>
             </Link>
 
             <div className="flex items-center gap-4">
@@ -87,7 +87,7 @@ export default function AboutPage() {
                 className="h-8 px-4 text-sm rounded-none"
                 onClick={() => router.push('/')}
               >
-                Try Scira
+                Try Ziq
               </Button>
             </div>
           </div>
@@ -224,7 +224,7 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="mb-12">
             <p className="text-xs text-muted-foreground tracking-wide mb-3">Capabilities</p>
-            <h2 className="text-2xl font-light tracking-tight font-be-vietnam-pro">What makes Scira different</h2>
+            <h2 className="text-2xl font-light tracking-tight font-be-vietnam-pro">What makes Ziq different</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border">
@@ -686,7 +686,7 @@ export default function AboutPage() {
                 </li>
                 <li className="flex items-start gap-3 text-sm text-muted-foreground">
                   <span className="w-1 h-1 rounded-full bg-foreground/40 mt-2 shrink-0" />
-                  Scira Lookout
+                  Ziq Lookout
                 </li>
               </ul>
 
@@ -722,9 +722,9 @@ export default function AboutPage() {
 
           <ProAccordion type="single" collapsible className="w-full">
             <ProAccordionItem value="item-1">
-              <ProAccordionTrigger>What is Scira?</ProAccordionTrigger>
+              <ProAccordionTrigger>What is Ziq?</ProAccordionTrigger>
               <ProAccordionContent>
-                Scira is an open-source agentic research platform. It combines planning + tool use with RAG
+                Ziq is an open-source agentic research platform. It combines planning + tool use with RAG
                 (Retrieval-Augmented Generation) and search grounding to produce accurate, up-to-date answers with
                 citations.
               </ProAccordionContent>
@@ -757,17 +757,17 @@ export default function AboutPage() {
             </ProAccordionItem>
 
             <ProAccordionItem value="item-5">
-              <ProAccordionTrigger>What AI models does Scira use?</ProAccordionTrigger>
+              <ProAccordionTrigger>What AI models does Ziq use?</ProAccordionTrigger>
               <ProAccordionContent>
-                Scira uses a range of advanced AI models including Grok, Claude, OpenAI GPT, Gemini, and more to
+                Ziq uses a range of advanced AI models including Grok, Claude, OpenAI GPT, Gemini, and more to
                 provide the best possible answers for different types of queries.
               </ProAccordionContent>
             </ProAccordionItem>
 
             <ProAccordionItem value="item-6">
-              <ProAccordionTrigger>How does Scira ensure information accuracy?</ProAccordionTrigger>
+              <ProAccordionTrigger>How does Ziq ensure information accuracy?</ProAccordionTrigger>
               <ProAccordionContent>
-                Scira grounds outputs in retrieved sources (RAG + search grounding) and includes citations so you
+                Ziq grounds outputs in retrieved sources (RAG + search grounding) and includes citations so you
                 can audit the evidence. Agents can cross-check multiple sources before synthesizing an answer.
               </ProAccordionContent>
             </ProAccordionItem>
@@ -803,7 +803,7 @@ export default function AboutPage() {
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-3">
               <SciraLogo className="size-4" />
-              <span className="text-xs text-muted-foreground">© {new Date().getFullYear()} Scira</span>
+              <span className="text-xs text-muted-foreground">© {new Date().getFullYear()} Ziq</span>
             </div>
             <div className="flex items-center gap-6">
               <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">

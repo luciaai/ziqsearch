@@ -2040,16 +2040,25 @@ const ExtremeSearchComponent = ({
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground">{sources.length} sources</span>
             {sources.length > 0 && (
-              <button
+              <span
                 onClick={(e) => {
                   e.stopPropagation();
                   setSourcesSheetOpen(true);
                 }}
-                className="flex items-center gap-1.5 text-xs text-foreground hover:text-foreground/80 px-2.5 py-1.5 rounded-md hover:bg-accent/50 transition-colors duration-150"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSourcesSheetOpen(true);
+                  }
+                }}
+                className="flex items-center gap-1.5 text-xs text-foreground hover:text-foreground/80 px-2.5 py-1.5 rounded-md hover:bg-accent/50 transition-colors duration-150 cursor-pointer"
               >
                 View all
                 <Icons.ArrowUpRight className="w-3 h-3" />
-              </button>
+              </span>
             )}
             <ChevronDown
               className={cn(

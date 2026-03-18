@@ -1,13 +1,21 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Play, Loader2, Copy, Check, X } from 'lucide-react';
+import { Play, Loader2, Copy, Check, X, History, ChevronDown } from 'lucide-react';
 import { CodeIcon, XLogoIcon } from '@phosphor-icons/react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { Tweet } from 'react-tweet';
 import { useRouter } from 'next/navigation';
@@ -19,17 +27,66 @@ import { cn } from '@/lib/utils';
 import { type XQLMessage } from '@/app/api/xql/route';
 import { highlight } from 'sugar-high';
 import { SciraLogo } from '@/components/logos/scira-logo';
-import { SidebarLayout } from '@/components/sidebar-layout';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { v7 as uuidv7 } from 'uuid';
+
+const MAX_HISTORY_ITEMS = 10;
+const HISTORY_STORAGE_KEY = 'xql-query-history';
 
 function XQLPageContent() {
   const [input, setInput] = useState<string>('');
   const [copiedResult, setCopiedResult] = useState(false);
+  const [queryHistory, setQueryHistory] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { user, isProUser, isLoading: isProStatusLoading } = useUser();
   const router = useRouter();
+
+  // Load query history from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(HISTORY_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setQueryHistory(parsed);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load query history:', err);
+    }
+  }, []);
+
+  // Save query to history
+  const saveToHistory = useCallback((query: string) => {
+    if (!query.trim()) return;
+    
+    setQueryHistory((prev) => {
+      // Remove duplicates and add to front
+      const filtered = prev.filter((q) => q !== query);
+      const updated = [query, ...filtered].slice(0, MAX_HISTORY_ITEMS);
+      
+      // Save to localStorage
+      try {
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(updated));
+      } catch (err) {
+        console.error('Failed to save query history:', err);
+      }
+      
+      return updated;
+    });
+  }, []);
+
+  // Clear query history
+  const clearHistory = useCallback(() => {
+    setQueryHistory([]);
+    try {
+      localStorage.removeItem(HISTORY_STORAGE_KEY);
+    } catch (err) {
+      console.error('Failed to clear query history:', err);
+    }
+    toast.success('Query history cleared');
+  }, []);
 
   const { messages, sendMessage, status } = useChat<XQLMessage>({
     transport: new DefaultChatTransport({
@@ -46,11 +103,14 @@ function XQLPageContent() {
   const handleRun = useCallback(async () => {
     if (!input.trim() || status !== 'ready') return;
 
+    // Save to history before running
+    saveToHistory(input);
+
     await sendMessage({
       role: 'user',
       parts: [{ type: 'text', text: `Convert this natural language query to SQL: ${input}` }],
     });
-  }, [input, status, sendMessage]);
+  }, [input, status, sendMessage, saveToHistory]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -103,20 +163,55 @@ function XQLPageContent() {
           <div className="md:hidden absolute left-0">
             <SidebarTrigger />
           </div>
-          <span className="text-foreground">Scira</span>
-          <div className="flex items-center relative">
-            <XLogoIcon className="size-6 sm:size-8 md:size-12 text-foreground -mr-1 sm:-mr-2 font-medium" />
-            <h1 className="text-foreground">QL</h1>
-            <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 md:-top-3 md:-right-4">
-              <div className="bg-primary text-primary-foreground px-1 sm:px-1.5 pt-0.5 pb-0.5 sm:pb-0.75 rounded-sm text-[8px] sm:text-xs font-semibold">
-                β
-              </div>
-            </div>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <h1 className="text-foreground">Search</h1>
+            <XLogoIcon className="size-6 sm:size-8 md:size-12 text-foreground font-medium" />
           </div>
         </div>
 
-        <div className="flex items-center gap-2 border border-border rounded-full px-3 sm:px-4 py-2 bg-muted/20 w-full">
-          <XLogoIcon className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground shrink-0" />
+        <div className="flex items-center gap-2 w-full">
+          {queryHistory.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-10 sm:h-11 px-3 rounded-full border-border hover:bg-muted/50 shrink-0"
+                  disabled={isProStatusLoading || status !== 'ready'}
+                >
+                  <History className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-[280px] sm:w-[320px]">
+                <DropdownMenuLabel className="flex items-center justify-between">
+                  <span>Recent Queries</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearHistory}
+                    className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    Clear
+                  </Button>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {queryHistory.map((query, index) => (
+                  <DropdownMenuItem
+                    key={index}
+                    onClick={() => setInput(query)}
+                    className="cursor-pointer text-sm"
+                  >
+                    <div className="flex items-start gap-2 w-full min-w-0">
+                      <XLogoIcon className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                      <span className="truncate flex-1">{query}</span>
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          <div className="flex items-center gap-2 border border-border rounded-full px-3 sm:px-4 py-2 bg-muted/20 flex-1">
+            <XLogoIcon className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground shrink-0" />
           <div className="relative flex-1 min-w-0 m-0! p-0!">
             <Input
               ref={inputRef}
@@ -138,9 +233,9 @@ function XQLPageContent() {
                 <X className="h-3 w-3" />
               </Button>
             )}
-          </div>
-          {input.trim() && <div className="w-px h-8 sm:h-9 bg-border shrink-0 self-center rounded" />}
-          <Button
+            </div>
+            {input.trim() && <div className="w-px h-8 sm:h-9 bg-border shrink-0 self-center rounded" />}
+            <Button
             onClick={handleRun}
             disabled={!input.trim() || status !== 'ready' || isProStatusLoading}
             size="sm"
@@ -151,7 +246,8 @@ function XQLPageContent() {
             ) : (
               <Play className="h-3 w-3 sm:h-4 sm:w-4" />
             )}
-          </Button>
+            </Button>
+          </div>
         </div>
 
         {isProStatusLoading && (
@@ -179,35 +275,35 @@ function XQLPageContent() {
 
         {messages.length === 0 && status === 'ready' && !isProStatusLoading && (
           <div className="mt-8 space-y-4">
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-2">Try these XQL queries:</p>
-              <p className="text-xs text-muted-foreground/70">Search X posts with natural language</p>
+            <div className="text-center space-y-2">
+              <p className="text-sm font-medium text-foreground">Try these search queries</p>
+              <p className="text-xs text-muted-foreground">Search X posts with natural language and advanced filters</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {[
                 {
-                  query: '@SciraAI updates from last week',
-                  description: 'Popular content with date range',
-                },
-                {
                   query: 'Posts from @elonmusk about Tesla',
-                  description: 'Specific user + topic filter',
+                  description: 'Combine user filter with topic search',
                 },
                 {
-                  query: 'Research Paper discussions with 1000+ views today',
-                  description: 'High engagement + recent',
+                  query: 'AI developments from past 3 days',
+                  description: 'Recent posts on trending topics',
                 },
                 {
-                  query: 'Hugging Face tweets about new AI models',
-                  description: 'Topic with handle exclusion',
+                  query: 'Posts from @openai @anthropicai about GPT',
+                  description: 'Multiple users discussing a topic',
                 },
                 {
-                  query: 'Posts from @openai @anthropicai with 500+ likes',
-                  description: 'Multiple handles + engagement',
+                  query: 'Machine learning research from this month',
+                  description: 'Topic search with time filter',
                 },
                 {
-                  query: 'Tech news from past 3 days with 2000+ views',
-                  description: 'Date range + view threshold',
+                  query: 'Funny cat videos from this week',
+                  description: 'Recent posts on popular topics',
+                },
+                {
+                  query: 'Tech news from @verge @techcrunch today',
+                  description: 'Multiple sources with date filter',
                 },
               ].map((example, i) => (
                 <Card
@@ -231,16 +327,30 @@ function XQLPageContent() {
               ))}
             </div>
 
-            <div className="mt-6 p-3 sm:p-4 bg-accent rounded-lg border border-muted/30">
-              <div className="flex items-start gap-2 sm:gap-3">
-                <CodeIcon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                <div className="text-xs sm:text-sm text-muted-foreground">
-                  <p className="font-medium mb-1 sm:mb-2">XQL supports advanced filtering:</p>
-                  <ul className="space-y-0.5 sm:space-y-1 text-xs sm:text-sm">
-                    <li>• Date ranges (ISO format: YYYY-MM-DD or natural language)</li>
-                    <li>• User handles (include up to 10 or exclude up to 10, not both)</li>
-                    <li>• Engagement thresholds (minimum likes/views required)</li>
-                    <li>• Topic and keyword combinations</li>
+            <div className="mt-6 p-4 sm:p-5 bg-gradient-to-br from-accent/50 to-accent/30 rounded-xl border border-border/50">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+                  <CodeIcon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                </div>
+                <div className="text-xs sm:text-sm text-foreground/90 space-y-2">
+                  <p className="font-semibold text-foreground text-sm sm:text-base">Advanced Filtering</p>
+                  <ul className="space-y-1.5 text-xs sm:text-sm leading-relaxed">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">•</span>
+                      <span><strong>Date ranges:</strong> Use natural language like "last week" or ISO format (YYYY-MM-DD)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">•</span>
+                      <span><strong>User handles:</strong> Include or exclude up to 10 users (e.g., @username)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">•</span>
+                      <span><strong>Topics:</strong> Search by keywords, hashtags, or subject matter</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">•</span>
+                      <span><strong>Combinations:</strong> Mix filters for precise results</span>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -332,7 +442,7 @@ function XQLPageContent() {
                           <div className="grow min-w-0">
                             <div className="flex items-center gap-2 sm:gap-3 mb-3">
                               <CodeIcon className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground shrink-0" />
-                              <p className="text-sm font-medium text-muted-foreground">XQL Code</p>
+                              <p className="text-sm font-medium text-muted-foreground">Search Query</p>
                             </div>
                             <div className="relative">
                               <pre className="text-xs sm:text-sm bg-muted/30 p-2 sm:p-3 rounded-lg border font-mono leading-relaxed overflow-x-auto w-full max-w-full">
@@ -382,8 +492,8 @@ function XQLPageContent() {
                             part.type === 'tool-xql' &&
                             (part.state === 'input-streaming' || part.state === 'input-available'),
                         )
-                          ? 'Executing XQL...'
-                          : 'Writing XQL code...'}
+                          ? 'Executing search...'
+                          : 'Processing query...'}
                       </TextShimmer>
                       <div className="flex gap-1 sm:gap-2">
                         {[...Array(3)].map((_, i) => (
@@ -415,7 +525,7 @@ function XQLPageContent() {
                           <div className="flex items-center gap-2 min-w-0">
                             <SciraLogo className="size-6 text-foreground shrink-0" />
                             <span className="font-semibold text-foreground text-sm sm:text-base">
-                              Scira found {citations.length} Posts
+                              Ziq found {citations.length} Posts
                             </span>
                           </div>
 
@@ -519,9 +629,5 @@ function XQLPageContent() {
 }
 
 export default function XQLPage() {
-  return (
-    <SidebarLayout>
-      <XQLPageContent />
-    </SidebarLayout>
-  );
+  return <XQLPageContent />;
 }

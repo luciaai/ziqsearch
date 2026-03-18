@@ -1,15 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { XLogoIcon } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
-import { ArrowUpRight, RotateCcw } from 'lucide-react';
+import { ArrowUpRight, RotateCcw, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { ColorPanels } from '@paper-design/shaders-react';
+import Link from 'next/link';
 import { TextShimmer } from '@/components/core/text-shimmer';
 import { TextLoop } from '@/components/core/text-loop';
 import { Badge } from '@/components/ui/badge';
@@ -90,10 +91,16 @@ function SentimentBar({ positive, neutral, negative, delay = 0 }: { positive: nu
 export default function XWrappedUsernamePage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const username = (params?.username as string) || '';
+  const year = parseInt(searchParams.get('year') || new Date().getFullYear().toString());
+  const quarter = searchParams.get('quarter') ? parseInt(searchParams.get('quarter')!) : null;
   const [loading, setLoading] = useState(true);
   const [wrappedData, setWrappedData] = useState<XWrappedData | null>(null);
   const [error, setError] = useState('');
+
+  const quarterLabel = quarter ? `Q${quarter}` : null;
+  const quarterMonths = quarter ? ['Jan-Mar', 'Apr-Jun', 'Jul-Sep', 'Oct-Dec'][quarter - 1] : null;
 
   useEffect(() => {
     if (!username) {
@@ -106,10 +113,15 @@ export default function XWrappedUsernamePage() {
       setError('');
 
       try {
+        const body: { username: string; year: number; quarter?: number } = { username, year };
+        if (quarter) {
+          body.quarter = quarter;
+        }
+        
         const response = await fetch('/api/x-wrapped', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, year: 2025 }),
+          body: JSON.stringify(body),
         });
 
         if (!response.ok) {
@@ -126,13 +138,18 @@ export default function XWrappedUsernamePage() {
     };
 
     fetchData();
-  }, [username, router]);
+  }, [username, year, quarter, router]);
 
   const handleShare = () => {
     if (!wrappedData) return;
 
-    const shareUrl = `${window.location.origin}/x-wrapped/${encodeURIComponent(wrappedData.username)}`;
-    const text = `My X Wrapped 2025 ✨\n\n@${wrappedData.username}\n${wrappedData.mostActiveMonth} was my month\n\nTop topics: ${wrappedData.topTopics.slice(0, 3).join(', ')}\n\n${shareUrl}`;
+    const params = new URLSearchParams({ year: year.toString() });
+    if (quarter) {
+      params.append('quarter', quarter.toString());
+    }
+    const shareUrl = `${window.location.origin}/x-wrapped/${encodeURIComponent(wrappedData.username)}?${params.toString()}`;
+    const periodText = quarter ? `${quarterLabel} ${year}` : `${year}`;
+    const text = `X Wrapped ${periodText} ✨\n\n@${wrappedData.username}\n${wrappedData.mostActiveMonth} was my month\n\nTop topics: ${wrappedData.topTopics.slice(0, 3).join(', ')}\n\n${shareUrl}`;
 
     // Open X (Twitter) compose with pre-filled text
     const twitterUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
@@ -150,7 +167,7 @@ export default function XWrappedUsernamePage() {
         <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
           <ColorPanels
             style={{ width: '100%', height: '100%' }}
-            colors={['#786654', '#f5e6c8', '#d95545', '#c9a87c']}
+            colors={['#6366f1', '#8b5cf6', '#3b82f6', '#06b6d4']}
             colorBack="#00000000"
             density={1.6}
             angle1={0.3}
@@ -165,6 +182,15 @@ export default function XWrappedUsernamePage() {
             rotation={112}
           />
           <div className="absolute inset-0 bg-background/20" />
+        </div>
+        {/* Back button */}
+        <div className="absolute top-6 left-6">
+          <Link href="/">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+          </Link>
         </div>
         <div className="flex flex-col items-center gap-4">
           <Badge variant="outline" className="text-sm bg-background/70 border-border/50 flex items-center gap-2">
@@ -188,7 +214,7 @@ export default function XWrappedUsernamePage() {
         <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
           <ColorPanels
             style={{ width: '100%', height: '100%' }}
-            colors={['#786654', '#f5e6c8', '#d95545', '#c9a87c']}
+            colors={['#6366f1', '#8b5cf6', '#3b82f6', '#06b6d4']}
             colorBack="#00000000"
             density={1.6}
             angle1={0.3}
@@ -203,6 +229,15 @@ export default function XWrappedUsernamePage() {
             rotation={112}
           />
           <div className="absolute inset-0 bg-background/20" />
+        </div>
+        {/* Back button */}
+        <div className="absolute top-6 left-6">
+          <Link href="/">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+          </Link>
         </div>
         <div className="text-center space-y-4">
           <p className="text-destructive">{error || 'Failed to load data'}</p>
@@ -222,7 +257,7 @@ export default function XWrappedUsernamePage() {
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <ColorPanels
           style={{ width: '100%', height: '100%' }}
-          colors={['#786654', '#f5e6c8', '#d95545', '#c9a87c']}
+          colors={['#6366f1', '#8b5cf6', '#3b82f6', '#06b6d4']}
           colorBack="#00000000"
           density={1.6}
           angle1={0.3}
@@ -237,6 +272,15 @@ export default function XWrappedUsernamePage() {
           rotation={112}
         />
         <div className="absolute inset-0 bg-background/20" />
+      </div>
+      {/* Back button */}
+      <div className="absolute top-6 left-6 z-10">
+        <Link href="/">
+          <Button variant="ghost" size="sm" className="gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+        </Link>
       </div>
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
         {/* Header */}

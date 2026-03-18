@@ -2142,7 +2142,7 @@ export function SettingsDialog({
             <DrawerHeader className="pb-2 px-4 pt-3 shrink-0">
               <DrawerTitle className="text-base font-medium flex items-center gap-2">
                 <SciraLogo className="size-6" />
-                Settings
+                Ziq Settings
               </DrawerTitle>
             </DrawerHeader>
 
@@ -2204,7 +2204,7 @@ export function SettingsDialog({
         <DialogHeader className="p-4 m-0!">
           <DialogTitle className="text-xl font-medium tracking-normal flex items-center gap-2">
             <SciraLogo className="size-6" color="currentColor" />
-            Settings
+            Ziq Settings
           </DialogTitle>
         </DialogHeader>
 

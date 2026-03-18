@@ -359,14 +359,12 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                 <div className="flex items-center justify-center size-8 transition-opacity duration-200 group-data-[collapsible=icon]:group-hover:opacity-0">
                   <SciraLogo width={26} height={26} />
                 </div>
-                <div className="flex flex-row items-center gap-2 leading-none group-data-[collapsible=icon]:hidden">
-                  <span className="font-be-vietnam-pro font-light tracking-tighter text-xl">scira</span>
+                <div className="flex flex-row items-center gap-2 leading-none group-data-[collapsible=icon]:hidden" suppressHydrationWarning>
+                  <span className="font-be-vietnam-pro font-light tracking-tighter text-xl">Ziq</span>
                   {user && isProUser && (
-                    <div className="w-fit" suppressHydrationWarning>
-                      <span className="animate-shimmer text-xs font-baumans inline-flex items-center justify-center min-w-6 h-4 px-1.5 pt-0 pb-0.5 rounded-md shadow-sm bg-linear-to-br from-secondary/30 via-primary/25 to-accent/30 text-foreground ring-1 ring-primary/25 ring-offset-1 ring-offset-background dark:bg-linear-to-br dark:from-primary dark:via-secondary dark:to-primary dark:text-foreground dark:ring-primary/40">
-                        pro
-                      </span>
-                    </div>
+                    <span className="animate-shimmer text-xs font-baumans inline-flex items-center justify-center min-w-6 h-4 px-1.5 pt-0 pb-0.5 rounded-md shadow-sm bg-linear-to-br from-secondary/30 via-primary/25 to-accent/30 text-foreground ring-1 ring-primary/25 ring-offset-1 ring-offset-background dark:bg-linear-to-br dark:from-primary dark:via-secondary dark:to-primary dark:text-foreground dark:ring-primary/40">
+                      pro
+                    </span>
                   )}
                 </div>
               </div>
@@ -482,12 +480,12 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
             </SidebarMenuItem>
           )}
 
-          {/* XQL */}
+          {/* Search X */}
           {user && (
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                tooltip="XQL (Beta) - X/Twitter Search"
+                tooltip="Search X - Search X/Twitter Posts"
                 className={cn(
                   'hover:bg-primary/10 transition-all duration-200',
                   pathname === '/xql' ? 'bg-primary/15 text-foreground font-medium' : ''
@@ -500,14 +498,15 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                   className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full"
                 >
                   <XLogoIcon size={18} weight="regular" />
-                  <span className="group-data-[collapsible=icon]:hidden">XQL (Beta)</span>
+                  <span className="group-data-[collapsible=icon]:hidden">Search X</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}
 
-          {/* Voice */}
-          {user && (
+          {/* Voice - Hidden until infrastructure is set up */}
+          {/* TODO: Re-enable when voice backend is ready */}
+          {false && user && (
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
@@ -835,7 +834,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                             {user.name || 'User'}
                           </span>
                           <span className="text-xs text-sidebar-foreground/70 truncate text-left w-full">
-                            {isProUser ? 'Scira Pro' : 'Scira Free'}
+                            {isProUser ? 'Ziq Pro' : 'Ziq Free'}
                           </span>
                         </div>
                       </div>
@@ -975,7 +974,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                     {/* User info header */}
                     <div className="px-2 py-1.5">
                       <p className="text-sm font-semibold">{user.name || 'User'}</p>
-                      <p className="text-xs text-muted-foreground">{isProUser ? 'Scira Pro' : 'Scira Free'}</p>
+                      <p className="text-xs text-muted-foreground">{isProUser ? 'Ziq Pro' : 'Ziq Free'}</p>
                     </div>
 
                     <DropdownMenuSeparator />

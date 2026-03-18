@@ -35,8 +35,8 @@ const VOICES: { value: VoiceType; label: string; description: string }[] = [
   { value: "Leo", label: "Leo", description: "Authoritative, strong" },
 ];
 
-const VOICE_STORAGE_KEY = "scira.voice.selected-voice";
-const MUTE_STORAGE_KEY = "scira.voice.mic-muted";
+const VOICE_STORAGE_KEY = "ziq.voice.selected-voice";
+const MUTE_STORAGE_KEY = "ziq.voice.mic-muted";
 
 function isVoiceType(value: string): value is VoiceType {
   return value === "Ara" || value === "Rex" || value === "Sal" || value === "Eve" || value === "Leo";
@@ -393,7 +393,7 @@ Then: Continue the conversation naturally
               ) : (
                 <>
                   <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                    {turn.role === "user" ? "You" : "Scira"}
+                    {turn.role === "user" ? "You" : "Ziq"}
                   </p>
                   <div
                     className={cn(
@@ -418,7 +418,7 @@ Then: Continue the conversation naturally
                 You
               </div>
               <div className="text-muted-foreground/80 text-[11px] font-medium uppercase tracking-[0.14em]">
-                Scira
+                Ziq
               </div>
             </div>
           </div>
@@ -472,7 +472,7 @@ Then: Continue the conversation naturally
           <div className="inline-flex items-center gap-2">
             <SciraLogo className="shrink-0 size-10" />
             <span className="lowercase tracking-tighter text-3xl font-be-vietnam-pro font-light text-foreground">
-              Scira Voice
+              Ziq Voice
             </span>
           </div>
 

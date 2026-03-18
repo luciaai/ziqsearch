@@ -121,7 +121,7 @@ export function ShareDialog({
   const handleNativeShare = async () => {
     try {
       await navigator.share({
-        title: 'Shared Scira Chat',
+        title: 'Shared Ziq Chat',
         url: shareUrl,
       });
     } catch (error) {

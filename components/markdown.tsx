@@ -1742,10 +1742,11 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = React.memo(
             components.push(<span key={key}>{textContent}</span>);
           }
 
-          return components.length === 1 ? components[0] : <Fragment>{components}</Fragment>;
+          return components.length === 1 ? components[0] : <Fragment key={getElementKey('text', 'fragment')}>{components}</Fragment>;
         },
         hr() {
-          return <></>;
+          const key = getElementKey('hr', Math.random().toString());
+          return <hr key={key} className="my-4 border-border" />;
         },
         paragraph(children) {
           const key = getElementKey('paragraph', String(children));
@@ -1861,6 +1862,16 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = React.memo(
         list(children, ordered) {
           const key = getElementKey('list');
           const ListTag = ordered ? 'ol' : 'ul';
+          
+          // Ensure children is an array and add keys if needed
+          const childrenArray = Array.isArray(children) ? children : [children];
+          const childrenWithKeys = childrenArray.map((child, index) => {
+            if (React.isValidElement(child) && !child.key) {
+              return React.cloneElement(child, { key: `list-item-${index}` });
+            }
+            return child;
+          });
+          
           return (
             <ListTag
               key={key}
@@ -1869,12 +1880,12 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = React.memo(
                 ordered ? 'pl-8' : 'pl-8 list-disc marker:text-primary/70',
               )}
             >
-              {children}
+              {childrenWithKeys}
             </ListTag>
           );
         },
         listItem(children) {
-          const key = getElementKey('listItem');
+          const key = getElementKey('listItem', String(children).substring(0, 20));
           return (
             <li key={key} className="pl-2 text-[15px] leading-relaxed text-foreground/90">
               <span className="inline">{children}</span>

@@ -1866,10 +1866,12 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = React.memo(
           // Ensure children is an array and add keys if needed
           const childrenArray = Array.isArray(children) ? children : [children];
           const childrenWithKeys = childrenArray.map((child, index) => {
-            if (React.isValidElement(child) && !child.key) {
-              return React.cloneElement(child, { key: `list-item-${index}` });
+            if (React.isValidElement(child)) {
+              // Clone element with key, even if it already has one to ensure uniqueness
+              return React.cloneElement(child, { key: `${key}-item-${index}` });
             }
-            return child;
+            // For non-element children (text, etc), wrap in Fragment with key
+            return <Fragment key={`${key}-fragment-${index}`}>{child}</Fragment>;
           });
           
           return (

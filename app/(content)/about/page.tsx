@@ -66,19 +66,6 @@ export default function AboutPage() {
             </Link>
 
             <div className="flex items-center gap-4">
-              <Link
-                href="https://git.new/scira"
-                className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                target="_blank"
-              >
-                <GithubLogoIcon className="h-4 w-4" />
-                {!isLoadingStars && githubStars && (
-                  <span className="text-xs tabular-nums">
-                    {githubStars > 1000 ? `${(githubStars / 1000).toFixed(1)}k` : githubStars}
-                  </span>
-                )}
-              </Link>
-
               <ThemeSwitcher />
 
               <Button
@@ -174,20 +161,6 @@ export default function AboutPage() {
             {/* Quick Links */}
             <div className="flex flex-wrap items-center gap-4">
               <Link
-                href="https://git.new/scira"
-                className="inline-flex items-center gap-2 text-sm text-foreground hover:text-foreground/70 transition-colors group"
-                target="_blank"
-              >
-                <GithubLogoIcon className="h-4 w-4" />
-                <span>Star on GitHub</span>
-                {!isLoadingStars && githubStars && (
-                  <span className="text-xs text-muted-foreground">
-                    {githubStars > 1000 ? `${(githubStars / 1000).toFixed(1)}k` : githubStars}
-                  </span>
-                )}
-              </Link>
-              <span className="w-px h-4 bg-border" />
-              <Link
                 href="/"
                 className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
               >
@@ -207,12 +180,6 @@ export default function AboutPage() {
               <div>
                 <div className="text-3xl lg:text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">100K+</div>
                 <div className="text-xs text-muted-foreground mt-1">Users</div>
-              </div>
-              <div>
-                <div className="text-3xl lg:text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">
-                  {isLoadingStars ? '...' : `${githubStars && githubStars > 1000 ? `${(githubStars / 1000).toFixed(1)}k` : githubStars || '11k'}+`}
-                </div>
-                <div className="text-xs text-muted-foreground mt-1">Stars</div>
               </div>
             </div>
           </div>
@@ -299,18 +266,6 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <a
-              href="https://openalternative.co/scira?utm_source=openalternative&utm_medium=badge&utm_campaign=embed&utm_content=tool-scira"
-              target="_blank"
-              className="opacity-60 hover:opacity-100 transition-opacity"
-            >
-              <Image
-                src="https://openalternative.co/scira/badge.svg?theme=dark&width=200&height=50"
-                width={150}
-                height={38}
-                alt="Scira badge"
-              />
-            </a>
           </div>
         </div>
       </section>
@@ -779,8 +734,8 @@ export default function AboutPage() {
               <p className="text-sm font-medium text-foreground">Have more questions?</p>
               <p className="text-xs text-muted-foreground">
                 Reach out at{' '}
-                <a href="mailto:zaid@scira.ai" className="text-foreground hover:underline">
-                  zaid@scira.ai
+<a href="mailto:ziqsearch@gmail.com" className="text-foreground hover:underline">
+                  ziqsearch@gmail.com
                 </a>
               </p>
             </div>
@@ -813,19 +768,12 @@ export default function AboutPage() {
                 Privacy
               </Link>
               <span className="w-px h-4 bg-border" />
-              <Link
-                href="https://x.com/sciraai"
+<Link
+                href="https://x.com/ziqsearch"
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 target="_blank"
               >
                 <XLogoIcon className="h-4 w-4" />
-              </Link>
-              <Link
-                href="https://git.new/scira"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                target="_blank"
-              >
-                <GithubLogoIcon className="h-4 w-4" />
               </Link>
             </div>
           </div>

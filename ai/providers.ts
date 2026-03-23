@@ -2022,13 +2022,24 @@ export function isModelRestrictedInRegion(modelValue: string, countryCode?: stri
   return isOpenAI || isAnthropic;
 }
 
-// Filter models based on user's region
+// Filter models based on user's region and available API keys
 export function getFilteredModels(countryCode?: string): Model[] {
-  if (!countryCode || !RESTRICTED_REGIONS.includes(countryCode.toUpperCase())) {
-    return models;
+  let filteredModels = models;
+
+  // Filter out Gemini models if API key is not available
+  const hasGeminiKey = !!process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  if (!hasGeminiKey) {
+    filteredModels = filteredModels.filter((model) => 
+      !model.value.includes('google') && !model.value.includes('gemini')
+    );
   }
 
-  return models.filter((model) => !isModelRestrictedInRegion(model.value, countryCode));
+  // Filter by region restrictions
+  if (!countryCode || !RESTRICTED_REGIONS.includes(countryCode.toUpperCase())) {
+    return filteredModels;
+  }
+
+  return filteredModels.filter((model) => !isModelRestrictedInRegion(model.value, countryCode));
 }
 
 // Legacy arrays for backward compatibility (deprecated - use helper functions instead)

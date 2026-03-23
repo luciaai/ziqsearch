@@ -61,7 +61,7 @@ Best regards`;
 
     // Ensure proper line breaks for email clients
     const formattedBody = body.replace(/\n/g, '%0D%0A');
-    const mailtoLink = `mailto:zaid@scira.ai?subject=${encodeURIComponent(subject)}&body=${formattedBody}`;
+    const mailtoLink = `mailto:ziqsearch@gmail.com?subject=${encodeURIComponent(subject)}&body=${formattedBody}`;
 
     // Open email client
     window.location.href = mailtoLink;

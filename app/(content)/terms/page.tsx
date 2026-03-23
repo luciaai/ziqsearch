@@ -206,7 +206,7 @@ export default function TermsPage() {
           <h2>14. Contact Us</h2>
           <p>If you have any questions about these Terms of Service, please contact us at:</p>
           <p>
-            <a href="mailto:zaid@scira.ai">zaid@scira.ai</a>
+            <a href="mailto:ziqsearch@gmail.com">ziqsearch@gmail.com</a>
           </p>
         </div>
 
@@ -229,7 +229,7 @@ export default function TermsPage() {
             <div className="flex items-center gap-3">
               <SciraLogo className="size-4" />
               <span className="text-xs text-muted-foreground">
-                © {new Date().getFullYear()} Scira
+                © {new Date().getFullYear()} Ziq
               </span>
             </div>
             <div className="flex items-center gap-6">

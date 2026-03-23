@@ -40,6 +40,7 @@ import { after } from 'next/server';
 import { CustomInstructions } from '@/lib/db/schema';
 import { v7 as uuidv7 } from 'uuid';
 import { geolocation } from '@vercel/functions';
+import { serverEnv } from '@/env/server';
 
 import {
   stockChartTool,
@@ -746,7 +747,7 @@ export async function POST(req: Request) {
 
             text_translate: textTranslateTool,
             ...(model !== 'scira-qwen-coder-plus' ? { code_interpreter: codeInterpreterTool } : {}),
-            track_flight: flightTrackerTool,
+            ...(serverEnv.AMADEUS_API_KEY ? { track_flight: flightTrackerTool } : {}),
             datetime: datetimeTool,
             extreme_search: extremeSearchTool(dataStream, extremeSearchProvider || 'exa'),
             greeting: greetingTool(timezone),

@@ -95,7 +95,7 @@ const ChatInterface = memo(
     const { state } = useSidebar();
     const [query] = useQueryState('query', parseAsString.withDefault(''));
     const [q] = useQueryState('q', parseAsString.withDefault(''));
-    const [groupParam] = useQueryState('group', parseAsString.withDefault(''));
+    const [groupParam, setGroupParam] = useQueryState('group', parseAsString.withDefault(''));
     const [input, setInput] = useLocalStorage<string>('scira-draft-input', '');
     const [localChatTitle, setLocalChatTitle] = useState<string>(chatTitle || (initialChatId ? 'Chat' : 'New Chat'));
     const [isEditingTitle, setIsEditingTitle] = useState(false); // legacy inline edit (to be removed)
@@ -745,6 +745,8 @@ const ChatInterface = memo(
     const handleExampleSelect = useCallback(
       (text: string, group?: string) => {
         if (group) {
+          // Clear URL parameter so effectiveSelectedGroup uses localStorage value
+          setGroupParam(null);
           setSelectedGroup(group as SearchGroupId);
         }
 
@@ -764,7 +766,7 @@ const ChatInterface = memo(
         // Also update React state
         setInput(text);
       },
-      [setInput, setSelectedGroup],
+      [setInput, setSelectedGroup, setGroupParam],
     );
 
     // Handle visibility change
@@ -1215,6 +1217,7 @@ const ChatInterface = memo(
                       lastSubmittedQueryRef={lastSubmittedQueryRef}
                       selectedGroup={effectiveSelectedGroup}
                       setSelectedGroup={setSelectedGroup}
+                      clearGroupParam={() => setGroupParam(null)}
                       showExperimentalModels={messages.length === 0}
                       status={status}
                       setHasSubmitted={(hasSubmitted) => {
@@ -1233,6 +1236,10 @@ const ChatInterface = memo(
                     {messages.length === 0 && !chatState.hasSubmitted && (
                       <ExampleCategories
                         onSelectExample={handleExampleSelect}
+                        onCategorySelect={(group) => {
+                          setGroupParam(null);
+                          setSelectedGroup(group as SearchGroupId);
+                        }}
                         className="mt-5"
                       />
                     )}

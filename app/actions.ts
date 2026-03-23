@@ -3063,8 +3063,8 @@ export async function createScheduledLookout({
 
           if (delay > 0) {
             const webhookUrl = process.env.NODE_ENV === 'development'
-              ? (process.env.NGROK_URL || 'https://scira.ai') + '/api/lookout'
-              : `https://scira.ai/api/lookout`;
+              ? (process.env.NGROK_URL || 'https://ziqsearch.com') + '/api/lookout'
+              : `https://ziqsearch.com/api/lookout`;
             
             await qstash.publish({
               url: webhookUrl,
@@ -3097,8 +3097,8 @@ export async function createScheduledLookout({
           console.log('📅 Cron schedule with timezone:', cronSchedule);
 
           const webhookUrl = process.env.NODE_ENV === 'development'
-            ? (process.env.NGROK_URL || 'https://scira.ai') + '/api/lookout'
-            : `https://scira.ai/api/lookout`;
+            ? (process.env.NGROK_URL || 'https://ziqsearch.com') + '/api/lookout'
+            : `https://ziqsearch.com/api/lookout`;
 
           console.log('🌐 Webhook URL:', webhookUrl);
           console.log('📦 Request body:', JSON.stringify({
@@ -3307,8 +3307,8 @@ export async function updateLookoutAction({
         console.log('📅 Updated cron schedule with timezone:', cronSchedule);
 
         const webhookUrl = process.env.NODE_ENV === 'development'
-          ? (process.env.NGROK_URL || 'https://scira.ai') + '/api/lookout'
-          : `https://scira.ai/api/lookout`;
+          ? (process.env.NGROK_URL || 'https://ziqsearch.com') + '/api/lookout'
+          : `https://ziqsearch.com/api/lookout`;
 
         // Create new schedule with updated cron
         const scheduleResponse = await qstash.schedules.create({
@@ -3413,8 +3413,8 @@ export async function testLookoutAction({ id }: { id: string }) {
     }
 
     const webhookUrl = process.env.NODE_ENV === 'development'
-      ? (process.env.NGROK_URL || 'https://scira.ai') + '/api/lookout'
-      : `https://scira.ai/api/lookout`;
+      ? (process.env.NGROK_URL || 'https://ziqsearch.com') + '/api/lookout'
+      : `https://ziqsearch.com/api/lookout`;
 
     // Make a POST request to the lookout API endpoint to trigger the run
     const response = await fetch(

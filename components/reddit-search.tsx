@@ -383,16 +383,16 @@ const RedditSearch: React.FC<{
           </div>
           <div className="flex items-center gap-2">
             {totalResults > 0 && (
-              <button
+              <div
                 onClick={(e) => {
                   e.stopPropagation();
                   setSourcesSheetOpen(true);
                 }}
-                className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 hover:bg-accent rounded-md flex items-center gap-1"
+                className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 hover:bg-accent rounded-md flex items-center gap-1 cursor-pointer"
               >
                 View all
                 <Icons.ArrowUpRight className="w-3 h-3" />
-              </button>
+              </div>
             )}
             <Icons.ChevronDown
               className={cn(

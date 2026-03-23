@@ -88,16 +88,23 @@ const categories: Category[] = [
 
 interface ExampleCategoriesProps {
   onSelectExample: (text: string, group?: string) => void;
+  onCategorySelect?: (group: string) => void;
   className?: string;
 }
 
-export const ExampleCategories = memo(({ onSelectExample, className }: ExampleCategoriesProps) => {
+export const ExampleCategories = memo(({ onSelectExample, onCategorySelect, className }: ExampleCategoriesProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleCategoryClick = useCallback((categoryId: string) => {
     setSelectedCategory((prev) => (prev === categoryId ? null : categoryId));
-  }, []);
+    
+    // Get the primary group for this category and update search mode
+    const category = categories.find(c => c.id === categoryId);
+    if (category && category.examples.length > 0 && category.examples[0].group) {
+      onCategorySelect?.(category.examples[0].group);
+    }
+  }, [onCategorySelect]);
 
   const handleExampleSelect = useCallback(
     (text: string, group?: string) => {

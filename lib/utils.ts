@@ -79,14 +79,14 @@ export function getSearchGroups(searchProvider: SearchProvider = 'exa') {
       name: 'Stocks',
       description: 'Stock and currency information',
       icon: AppleStocksIcon,
-      show: true,
+      show: false, // Hidden: Requires VALYU_API_KEY
     },
     {
       id: 'connectors' as const,
       name: 'Connectors',
       description: 'Search Google Drive, Notion and OneDrive documents',
       icon: ConnectIcon,
-      show: true,
+      show: false, // Hidden: Requires SUPERMEMORY_API_KEY
       requireAuth: true,
       requirePro: true,
     },
@@ -117,7 +117,7 @@ export function getSearchGroups(searchProvider: SearchProvider = 'exa') {
       name: 'Memory',
       description: 'Your personal memory companion',
       icon: Database02Icon,
-      show: true,
+      show: false, // Hidden: Requires SUPERMEMORY_API_KEY
       requireAuth: true,
     },
     {

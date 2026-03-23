@@ -359,10 +359,10 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                 <div className="flex items-center justify-center size-8 transition-opacity duration-200 group-data-[collapsible=icon]:group-hover:opacity-0">
                   <SciraLogo width={26} height={26} />
                 </div>
-                <div className="flex flex-row items-center gap-2 leading-none group-data-[collapsible=icon]:hidden" suppressHydrationWarning>
+                <div className="flex flex-row items-center gap-2 leading-none group-data-[collapsible=icon]:hidden">
                   <span className="font-be-vietnam-pro font-light tracking-tighter text-xl">Ziq</span>
                   {user && isProUser && (
-                    <span className="animate-shimmer text-xs font-baumans inline-flex items-center justify-center min-w-6 h-4 px-1.5 pt-0 pb-0.5 rounded-md shadow-sm bg-linear-to-br from-secondary/30 via-primary/25 to-accent/30 text-foreground ring-1 ring-primary/25 ring-offset-1 ring-offset-background dark:bg-linear-to-br dark:from-primary dark:via-secondary dark:to-primary dark:text-foreground dark:ring-primary/40">
+                    <span suppressHydrationWarning={true} className="animate-shimmer text-xs font-baumans inline-flex items-center justify-center min-w-6 h-4 px-1.5 pt-0 pb-0.5 rounded-md shadow-sm bg-linear-to-br from-secondary/30 via-primary/25 to-accent/30 text-foreground ring-1 ring-primary/25 ring-offset-1 ring-offset-background dark:bg-linear-to-br dark:from-primary dark:via-secondary dark:to-primary dark:text-foreground dark:ring-primary/40">
                       pro
                     </span>
                   )}
@@ -551,25 +551,6 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
             </SidebarMenuButton>
           </SidebarMenuItem>
 
-          {/* API */}
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              tooltip="API"
-              className="hover:bg-primary/10 transition-all duration-200"
-            >
-              <a
-                href="https://api.scira.ai/"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={closeMobileSidebar}
-                className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full"
-              >
-                <CodeIcon size={18} weight="regular" />
-                <span className="group-data-[collapsible=icon]:hidden">API</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
 
           {/* Guest Info Links when signed out */}
           {!user &&

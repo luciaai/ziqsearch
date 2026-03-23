@@ -1494,6 +1494,7 @@ interface FormComponentProps {
   lastSubmittedQueryRef: React.RefObject<string>;
   selectedGroup: SearchGroupId;
   setSelectedGroup: React.Dispatch<React.SetStateAction<SearchGroupId>>;
+  clearGroupParam?: () => void;
   showExperimentalModels: boolean;
   status: UseChatHelpers<ChatMessage>['status'];
   setHasSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
@@ -1747,8 +1748,9 @@ const GroupModeToggle: React.FC<GroupSelectorProps> = React.memo(
     }, [visibleGroups, mergedGroupOrder]);
 
     const selectedGroupData = useMemo(
-      () => orderedVisibleGroups.find((group) => group.id === selectedGroup),
-      [orderedVisibleGroups, selectedGroup],
+      () => orderedVisibleGroups.find((group) => group.id === selectedGroup) || 
+            dynamicSearchGroups.find((group) => group.id === selectedGroup),
+      [orderedVisibleGroups, selectedGroup, dynamicSearchGroups],
     );
 
     const groupTooltipContent = useMemo(() => {
@@ -2353,6 +2355,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
   lastSubmittedQueryRef,
   selectedGroup,
   setSelectedGroup,
+  clearGroupParam,
   messages,
   status,
   setHasSubmitted,
@@ -2777,6 +2780,8 @@ const FormComponent: React.FC<FormComponentProps> = ({
   const handleGroupSelect = useCallback(
     (group: SearchGroup) => {
       if (!isEnhancing && !isTypewriting) {
+        // Clear URL parameter so effectiveSelectedGroup uses localStorage value
+        clearGroupParam?.();
         setSelectedGroup(group.id);
 
         // Auto-switch to extreme-enabled model when extreme mode is selected
@@ -2813,7 +2818,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
         inputRef.current?.focus();
       }
     },
-    [setSelectedGroup, inputRef, isEnhancing, isTypewriting, selectedModel, setSelectedModel, user, isProUser],
+    [setSelectedGroup, clearGroupParam, inputRef, isEnhancing, isTypewriting, selectedModel, setSelectedModel, user, isProUser],
   );
 
   const handleConnectorToggle = useCallback(

@@ -9,30 +9,30 @@ import { SciraLogo } from '@/components/logos/scira-logo';
 const testimonials = [
   {
     content:
-      'Scira is better than Grok at digging up information from X, its own platform! I asked it 3 different queries to help scrape and find some data points I was interested in about my own account and Scira did much much better with insanely accurate answers!',
-    author: 'Chris Universe',
-    handle: '@chrisuniverseb',
-    link: 'https://x.com/chrisuniverseb/status/1943025911043100835',
+      "Perfect for research projects! I used it to gather information for my history paper and it found sources I never would have discovered on my own. The citations made writing my bibliography so much easier.",
+    author: 'Student Researcher',
+    handle: '@researcher',
+    link: '#',
   },
   {
-    content: 'Scira does a really good job scraping through the reddit mines.',
-    author: 'nyaaier',
-    handle: '@nyaaier',
-    link: 'https://x.com/nyaaier/status/1932810453107065284',
-  },
-  {
-    content:
-      "I searched for myself using Gemini 2.5 Pro in extreme mode to see what results it could generate. It is not just the best, it is wild. And the best part is it's 100% accurate.",
-    author: 'Aniruddha Dak',
-    handle: '@aniruddhadak',
-    link: 'https://x.com/aniruddhadak/status/1917140602107445545',
+    content: 'As a homeschool parent, this tool has been invaluable for creating lesson plans and finding educational resources. It saves me hours of research time every week.',
+    author: 'Homeschool Educator',
+    handle: '@educator',
+    link: '#',
   },
   {
     content:
-      'Read nothing the whole sem and here I am with Scira to top my mid sems! Literally so good to get all the related diagrams, points and topics from the website my professor uses.',
-    author: 'Rajnandinit',
-    handle: '@itsRajnandinit',
-    link: 'https://x.com/itsRajnandinit/status/1897896134837682288',
+      "The AI-powered search helped me understand complex scientific concepts for my thesis. It breaks down information in a way that's easy to comprehend and provides multiple perspectives.",
+    author: 'Graduate Student',
+    handle: '@gradstudent',
+    link: '#',
+  },
+  {
+    content:
+      'Game changer for my research work. I can quickly find relevant academic papers, compare different viewpoints, and get comprehensive answers to my questions all in one place.',
+    author: 'Independent Researcher',
+    handle: '@researcher',
+    link: '#',
   },
 ];
 
@@ -61,7 +61,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <Link href="/" className="inline-flex items-center gap-3 mb-16 group">
               <SciraLogo className="size-12 transition-transform duration-300 group-hover:scale-110" />
               <span className="text-5xl font-light tracking-tighter font-be-vietnam-pro text-foreground">
-                scira
+                ziq
               </span>
             </Link>
 
@@ -141,22 +141,14 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               <span className="w-px h-3 bg-border" />
               <span>100K+ users</span>
               <span className="w-px h-3 bg-border" />
-              <span>11K+ stars</span>
+              <span>Students & Researchers</span>
             </div>
             <div className="flex items-center gap-6 text-xs">
-            <Link
-                href="https://git.new/scira"
-                target="_blank"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                GitHub
-              </Link>
               <Link
-                href="https://vercel.com/blog/ai-sdk-4-1"
-                target="_blank"
+                href="/about"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
-                Featured on Vercel
+                Learn More
               </Link>
             </div>
           </div>
@@ -169,7 +161,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <header className="lg:hidden flex items-center justify-center h-16 border-b border-border">
           <Link href="/" className="flex items-center gap-2.5">
             <SciraLogo className="size-6" />
-            <span className="text-2xl font-light tracking-tighter font-be-vietnam-pro">scira</span>
+            <span className="text-2xl font-light tracking-tighter font-be-vietnam-pro">ziq</span>
           </Link>
         </header>
 

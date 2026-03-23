@@ -13,15 +13,15 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://scira.ai'),
+  metadataBase: new URL('https://ziqsearch.com'),
   title: {
     default: 'Ziq - Research in speed of thought.',
     template: '%s | Ziq',
   },
   description:
-    'Ziq is a free Agentic Research Platform that finds, analyzes, and cites information from the live web. $15/month—fast answers; 11000+ stars on GitHub.',
+    'Ziq is a free Agentic Research Platform that finds, analyzes, and cites information from the live web. Perfect for students, homeschoolers, and researchers.',
   openGraph: {
-    url: 'https://scira.ai',
+    url: 'https://ziqsearch.com',
     siteName: 'Ziq',
   },
   keywords: [
@@ -32,11 +32,12 @@ export const metadata: Metadata = {
     'agentic search platform',
     'agentic search tool',
     'agentic search tool',
-    'scira.ai',
+    'ziqsearch',
     'ziq',
     'ziq ai',
     'Ziq',
     'Ziq AI',
+    'ziqsearch.com',
     'free ai search',
     'ai search',
     'ai research tool',
@@ -56,12 +57,9 @@ export const metadata: Metadata = {
     'minimal ai search',
     'minimal ai search alternatives',
     'Ziq (Formerly MiniPerplx)',
-    'Ziq (Formerly Scira)',
     'AI Search Engine',
     'mplx.run',
     'mplx ai',
-    'zaid mukaddam',
-    'scira.how',
     'search engine',
     'AI',
     'perplexity',

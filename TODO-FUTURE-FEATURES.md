@@ -463,6 +463,53 @@ Save X Wrapped results permanently to database instead of only caching in Redis,
 
 ---
 
+---
+
+## Student Discount System
+
+### Concept
+Implement automatic student discount pricing ($5/month instead of $10/month) for users with verified university email addresses.
+
+### Current State
+- ❌ Student discount UI removed from pricing page
+- ✅ Backend logic exists in `lib/discount.ts`
+- ✅ Email domain verification system built
+- ❌ Not currently active
+
+### How It Would Work
+1. **Automatic Email Verification:**
+   - System checks user's email domain against approved list
+   - Approved domains stored in Vercel Edge Config (e.g., `.edu`, `.ac.uk`)
+   - No manual approval needed - fully automatic
+
+2. **Pricing:**
+   - Regular Pro: $10/month
+   - Student Pro: $5/month (50% discount)
+   - Applied automatically at checkout
+
+3. **Domain Management:**
+   - Domains managed via Vercel Edge Config
+   - Can add new university domains without code deployment
+   - Fallback hardcoded domains: `.edu`, `.ac.in`, `.edu.in`
+
+### Implementation Requirements
+1. Set up Vercel Edge Config with `student_domains` key
+2. Add `DODO_STUD_DISC_ID` environment variable (payment provider discount ID)
+3. Re-enable student discount UI in pricing page
+4. Test checkout flow with student email
+
+### Files Involved
+- `lib/discount.ts` - Email verification logic
+- `app/pricing/_component/pricing-table.tsx` - Pricing UI
+- `app/actions.ts` - Server action for discount config
+- `components/student-domain-request-button.tsx` - Domain request UI
+- `components/supported-domains-list.tsx` - Shows approved domains
+
+### Priority
+🟡 **MEDIUM** - Nice to have for student market, but requires payment provider setup and testing
+
+---
+
 ## Status
 💡 **IDEA** - Future consideration, not currently planned for development
 

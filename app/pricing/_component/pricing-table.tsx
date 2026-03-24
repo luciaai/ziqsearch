@@ -11,10 +11,7 @@ import Link from 'next/link';
 import { PRICING, SEARCH_LIMITS } from '@/lib/constants';
 import { getDiscountConfigAction } from '@/app/actions';
 import { DiscountConfig } from '@/lib/discount';
-import { useLocation } from '@/hooks/use-location';
 import { ComprehensiveUserData } from '@/lib/user-data-server';
-import { StudentDomainRequestButton } from '@/components/student-domain-request-button';
-import { SupportedDomainsList } from '@/components/supported-domains-list';
 import { SciraLogo } from '@/components/logos/scira-logo';
 
 type SubscriptionDetails = {
@@ -45,11 +42,7 @@ interface PricingTableProps {
 
 export default function PricingTable({ subscriptionDetails, user }: PricingTableProps) {
   const router = useRouter();
-  const location = useLocation();
   const userEmail = user?.email?.toLowerCase() ?? '';
-  const derivedIsIndianStudentEmail = Boolean(
-    userEmail && (userEmail.endsWith('.ac.in') || userEmail.endsWith('.edu.in')),
-  );
 
   const [discountConfig, setDiscountConfig] = useState<DiscountConfig>({
     enabled: false,
@@ -61,7 +54,7 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
       try {
         const config = await getDiscountConfigAction({
           email: user?.email,
-          isIndianUser: location.isIndia || derivedIsIndianStudentEmail,
+          isIndianUser: false,
         });
 
         setDiscountConfig(config as DiscountConfig);
@@ -71,24 +64,17 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
     };
 
     fetchDiscountConfig();
-  }, [location.isIndia, user?.email, derivedIsIndianStudentEmail]);
+  }, [user?.email]);
 
-  // Helper function to get student discount price
-  const getStudentPrice = (isINR: boolean = false) => {
+  const hasStudentDiscount = () => {
+    return discountConfig.enabled && discountConfig.isStudentDiscount;
+  };
+
+  const getStudentPrice = () => {
     if (!discountConfig.enabled || !discountConfig.isStudentDiscount) {
       return null;
     }
-
-    if (isINR) {
-      return discountConfig.inrPrice || null;
-    } else {
-      return discountConfig.finalPrice || null;
-    }
-  };
-
-  // Check if student discount is active
-  const hasStudentDiscount = () => {
-    return discountConfig.enabled && discountConfig.isStudentDiscount;
+    return discountConfig.finalPrice || 5;
   };
 
   const handleCheckout = async (_productId: string, _slug: string, _paymentMethod?: 'dodo' | 'polar') => {
@@ -156,7 +142,7 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
           <div className="flex items-center justify-between h-14 px-6">
             <Link href="/" className="flex items-center gap-2.5 group">
               <SciraLogo className="size-5 transition-transform duration-300 group-hover:scale-110" />
-              <span className="text-lg font-light tracking-tighter font-be-vietnam-pro">scira</span>
+              <span className="text-lg font-light tracking-tighter font-be-vietnam-pro">ziq</span>
             </Link>
             <Link
               href="/"
@@ -226,7 +212,7 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
             {!hasProAccess() && hasStudentDiscount() && (
               <div className="absolute top-4 right-4">
                 <span className="text-[10px] uppercase tracking-wider text-green-600 dark:text-green-400 border border-green-600 dark:border-green-400 px-2 py-1">
-                  Student
+                  Academic
                 </span>
               </div>
             )}
@@ -268,7 +254,7 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
               </li>
               <li className="flex items-start gap-3 text-sm text-foreground/80">
                 <span className="w-1 h-1 rounded-full bg-foreground mt-2 shrink-0" />
-                Scira Lookout
+                Ziq Lookout
               </li>
             </ul>
 
@@ -295,28 +281,13 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
                 <Button
                   className="w-full h-11 rounded-none group"
                   onClick={() => handleCheckout('', '', undefined)}
-                  disabled={location.loading}
                 >
-                  {location.loading
-                    ? 'Detecting location...'
-                    : hasStudentDiscount()
-                      ? '🎓 Upgrade with student discount'
-                      : 'Upgrade to Pro'}
-                  {!location.loading && (
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  )}
+                  {hasStudentDiscount() ? '🎓 Upgrade with academic discount' : 'Upgrade to Pro'}
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <p className="text-xs text-center text-muted-foreground">
-                  {location.isIndia || derivedIsIndianStudentEmail
-                    ? 'UPI, Cards, Net Banking & more'
-                    : 'Credit/Debit Cards, UPI & more'}{' '}
-                  (auto-renews monthly)
+                  Credit/Debit Cards (auto-renews monthly)
                 </p>
-                {(location.isIndia || derivedIsIndianStudentEmail) && (
-                  <p className="text-xs text-center text-amber-600 dark:text-amber-400">
-                    Tip: UPI payments have a higher success rate on PC/Desktop
-                  </p>
-                )}
                 {hasStudentDiscount() && discountConfig.message && (
                   <p className="text-xs text-green-600 dark:text-green-400 text-center font-medium">
                     {discountConfig.message}
@@ -327,43 +298,39 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
           </div>
         </div>
 
-        {/* Student Discount Section */}
+        {/* Academic Discount Section */}
         {!hasStudentDiscount() && (
           <div className="max-w-3xl mx-auto mt-8 p-6 border border-border">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-start gap-4">
                 <GraduationCap className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-sm font-medium mb-1">Student discount available</h3>
+                  <h3 className="text-sm font-medium mb-1">Academic discount available</h3>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    Get Pro for just $5/month! Sign up with your university or academic institution email (.edu)
+                  </p>
                   <p className="text-xs text-muted-foreground">
-                    {location.isIndia || derivedIsIndianStudentEmail
-                      ? 'Get Pro for just ₹450/month (approx. $5)!'
-                      : 'Get Pro for just $5/month (approx. ₹450)!'}{' '}
-                    Sign up with your university email.
+                    Don't have a .edu email?{' '}
+                    <Link href="/request-education-discount" className="text-foreground hover:underline font-medium">
+                      Request education discount
+                    </Link>
+                    {' '}(homeschoolers, international students, etc.)
                   </p>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <SupportedDomainsList />
-                <StudentDomainRequestButton />
               </div>
             </div>
           </div>
         )}
 
-        {/* Student Discount Active */}
+        {/* Academic Discount Active */}
         {hasStudentDiscount() && !hasProAccess() && (
           <div className="max-w-3xl mx-auto mt-8 p-6 border border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10">
             <div className="flex items-start gap-4">
               <GraduationCap className="h-5 w-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
               <div>
-                <h3 className="text-sm font-medium mb-1 text-green-700 dark:text-green-300">Student discount active</h3>
+                <h3 className="text-sm font-medium mb-1 text-green-700 dark:text-green-300">Academic discount active</h3>
                 <p className="text-xs text-muted-foreground">
-                  Your university email has been recognized. Get Pro for{' '}
-                  {location.isIndia || derivedIsIndianStudentEmail
-                    ? `₹${getStudentPrice(true) || 450}/month`
-                    : `$${getStudentPrice(false) || 5}/month`}
-                  . Discount applied automatically at checkout.
+                  Your academic email has been recognized. Get Pro for ${getStudentPrice()}/month. Discount applied automatically at checkout.
                 </p>
               </div>
             </div>
@@ -384,8 +351,8 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
           </p>
           <p className="text-xs text-muted-foreground">
             Questions?{' '}
-            <a href="mailto:zaid@scira.ai" className="text-foreground hover:underline">
-              zaid@scira.ai
+            <a href="mailto:ziqsearch@gmail.com" className="text-foreground hover:underline">
+              ziqsearch@gmail.com
             </a>
           </p>
         </div>
@@ -397,7 +364,7 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-3">
               <SciraLogo className="size-4" />
-              <span className="text-xs text-muted-foreground">© {new Date().getFullYear()} Scira</span>
+              <span className="text-xs text-muted-foreground">© {new Date().getFullYear()} Ziq</span>
             </div>
             <div className="flex items-center gap-6">
               <Link href="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors">

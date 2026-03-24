@@ -72,6 +72,6 @@ export const auth = betterAuth({
     lastLoginMethod(),
     nextCookies(),
   ],
-  trustedOrigins: ['http://localhost:3000', 'https://scira.ai', 'https://www.scira.ai'],
-  allowedOrigins: ['http://localhost:3000', 'https://scira.ai', 'https://www.scira.ai'],
+  trustedOrigins: ['http://localhost:3000', 'https://ziqsearch.com', 'https://www.ziqsearch.com'],
+  allowedOrigins: ['http://localhost:3000', 'https://ziqsearch.com', 'https://www.ziqsearch.com'],
 });

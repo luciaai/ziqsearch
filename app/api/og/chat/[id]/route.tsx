@@ -77,7 +77,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
                   textShadow: '0 3px 10px rgba(0,0,0,0.45)',
                 }}
               >
-                Scira AI
+                Ziq
               </div>
               <div
                 style={{
@@ -198,7 +198,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
                 <SciraLogo width={28} height={28} color="#ffffff" />
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ fontSize: 18, color: '#ffffff', fontFamily: 'BeVietnamPro', fontWeight: 800 }}>
-                    Scira AI
+                    Ziq
                   </div>
                   <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.5)' }} />
                   <div style={{ fontSize: 16, color: '#e5e7eb', fontFamily: 'Inter', fontWeight: 600 }}>

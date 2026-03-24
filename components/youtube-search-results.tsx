@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { SearchLoadingState } from './tool-invocation-list-view';
+import { ScrollArrows } from '@/components/ui/scroll-arrows';
 
 // Helper function to parse captions that might be JSON-encoded
 const parseCaptions = (captions: string | undefined): string | undefined => {
@@ -548,6 +549,8 @@ const YouTubeEmptyState: React.FC = () => (
 
 // Main YouTube Search Results Component
 export const YouTubeSearchResults: React.FC<YouTubeSearchResultsProps> = ({ results, isLoading = false }) => {
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null!);
+
   if (isLoading) {
     return <SearchLoadingState icon={YoutubeIcon} text="Searching YouTube" color="red" />;
   }
@@ -646,7 +649,8 @@ export const YouTubeSearchResults: React.FC<YouTubeSearchResultsProps> = ({ resu
           </AccordionTrigger>
           <AccordionContent className='border-b rounded-2xl'>
             <div className="relative">
-              <div className="w-full overflow-x-scroll">
+              <ScrollArrows containerRef={scrollContainerRef} />
+              <div ref={scrollContainerRef} className="w-full overflow-x-scroll">
                 <div className="flex pl-4">
                   {filteredVideos.map((video, index) => (
                     <div key={video.videoId} className="last:mr-12">

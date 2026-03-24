@@ -65,7 +65,9 @@ export async function getDiscountConfig(userEmail?: string, isIndianUser?: boole
   } catch (error) {
     console.warn('Failed to fetch student domains from Edge Config:', error);
     // Fallback to hardcoded domains
-    studentDomains = ['.edu', '.ac.in', '.edu.in'];
+    // TO MANAGE STUDENT DISCOUNTS: Edit this list to add/remove university email domains
+    // Examples: '.edu' (US universities), '.ac.uk' (UK universities), '.edu.au' (Australia)
+    studentDomains = ['.edu'];
   }
 
   // Check if user is a student
@@ -85,11 +87,10 @@ export async function getDiscountConfig(userEmail?: string, isIndianUser?: boole
 
   return {
     enabled: true,
-    message: '🎓 Student discount applied',
-    finalPrice: 5, // $5/month for students (USD)
-    inrPrice: 450, // ₹450/month for students (INR)
+    message: '🎓 Academic discount applied',
+    finalPrice: 5, // $5/month for academic users (USD)
     isStudentDiscount: true,
     dodoDiscountId: dodoStudentDiscountId,
-    discountId: dodoStudentDiscountId, // Use same ID for all
+    discountId: dodoStudentDiscountId,
   };
 }

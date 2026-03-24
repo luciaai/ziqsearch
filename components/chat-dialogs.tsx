@@ -47,12 +47,10 @@ export const PostMessageUpgradeDialog = React.memo(({ open, onOpenChange }: Post
 
   const pricing = useMemo(() => {
     const defaultUSDPrice = PRICING.PRO_MONTHLY;
-    const defaultINRPrice = PRICING.PRO_MONTHLY_INR;
 
     if (!discountConfig || !discountConfig.enabled || !discountConfig.isStudentDiscount) {
       return {
         usd: { finalPrice: defaultUSDPrice, hasDiscount: false, originalPrice: defaultUSDPrice },
-        inr: { finalPrice: defaultINRPrice, hasDiscount: false, originalPrice: defaultINRPrice },
       };
     }
 
@@ -61,24 +59,12 @@ export const PostMessageUpgradeDialog = React.memo(({ open, onOpenChange }: Post
     const usdFinalPrice: number = discountConfig.finalPrice || defaultUSDPrice;
     const hasUSDDiscount = !!discountConfig.finalPrice && discountConfig.finalPrice < defaultUSDPrice;
 
-    // Calculate INR pricing with student discount
-    const inrOriginalPrice: number = defaultINRPrice;
-    const inrFinalPrice: number = discountConfig.inrPrice || defaultINRPrice;
-    const hasINRDiscount = !!discountConfig.inrPrice && discountConfig.inrPrice < defaultINRPrice;
-
     return {
       usd: {
         finalPrice: usdFinalPrice,
         originalPrice: usdOriginalPrice,
         hasDiscount: hasUSDDiscount,
       },
-      inr: discountConfig.inrPrice
-        ? {
-            finalPrice: inrFinalPrice,
-            originalPrice: inrOriginalPrice,
-            hasDiscount: hasINRDiscount,
-          }
-        : null,
     };
   }, [discountConfig]);
 
@@ -121,19 +107,6 @@ export const PostMessageUpgradeDialog = React.memo(({ open, onOpenChange }: Post
                   )}
                   <span className="text-sm text-white/80">/month</span>
                 </div>
-                {pricing.inr && (
-                  <div className="flex items-center gap-2 mb-2">
-                    {pricing.inr.hasDiscount ? (
-                      <>
-                        <span className="text-sm text-white/60 line-through">₹{pricing.inr.originalPrice}</span>
-                        <span className="text-lg font-semibold">₹{pricing.inr.finalPrice}</span>
-                      </>
-                    ) : (
-                      <span className="text-lg font-semibold">₹{pricing.inr.finalPrice}</span>
-                    )}
-                    <span className="text-sm text-white/80">for a month</span>
-                  </div>
-                )}
                 <p className="text-sm text-white/80 text-left">
                   Unlock unlimited searches, advanced AI models, and premium features to supercharge your research.
                 </p>

@@ -256,15 +256,11 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = React.memo(
     // Calculate pricing with student discounts
     const calculatePricing = useCallback(() => {
       const defaultUSDPrice = PRICING.PRO_MONTHLY;
-      const defaultINRPrice = PRICING.PRO_MONTHLY_INR;
 
       // Check if student discount is active
       if (!discountConfig || !discountConfig.enabled || !discountConfig.isStudentDiscount) {
         return {
           usd: { originalPrice: defaultUSDPrice, finalPrice: defaultUSDPrice, hasDiscount: false },
-          inr: location.isIndia
-            ? { originalPrice: defaultINRPrice, finalPrice: defaultINRPrice, hasDiscount: false }
-            : null,
         };
       }
 
@@ -281,27 +277,10 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = React.memo(
           hasDiscount: false,
         };
 
-      // INR pricing with student discount - show if available in discount config
-      let inrPricing: { originalPrice: number; finalPrice: number; hasDiscount: boolean } | null = null;
-      if (discountConfig.inrPrice || location.isIndia) {
-        inrPricing = discountConfig.inrPrice
-          ? {
-            originalPrice: defaultINRPrice,
-            finalPrice: discountConfig.inrPrice,
-            hasDiscount: true,
-          }
-          : {
-            originalPrice: defaultINRPrice,
-            finalPrice: defaultINRPrice,
-            hasDiscount: false,
-          };
-      }
-
       return {
         usd: usdPricing,
-        inr: inrPricing,
       };
-    }, [discountConfig, location.isIndia]);
+    }, [discountConfig]);
 
     const pricing = calculatePricing();
 
@@ -1073,21 +1052,14 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = React.memo(
                       </div>
                     )}
                     <div className="flex items-center gap-2">
-                      {pricing.inr ? (
-                        // Show INR pricing when available
-                        (pricing.inr.hasDiscount ? (<>
-                          <span className="text-lg text-white/60 line-through">₹{pricing.inr.originalPrice}</span>
-                          <span className="text-2xl font-bold">₹{pricing.inr.finalPrice}</span>
-                        </>) : (<span className="text-2xl font-bold">₹{pricing.inr.finalPrice}</span>))
-                      ) : // Show USD pricing for non-Indian users
-                        pricing.usd.hasDiscount ? (
-                          <>
-                            <span className="text-lg text-white/60 line-through">${pricing.usd.originalPrice}</span>
-                            <span className="text-2xl font-bold">${pricing.usd.finalPrice.toFixed(2)}</span>
-                          </>
-                        ) : (
-                          <span className="text-2xl font-bold">${pricing.usd.finalPrice}</span>
-                        )}
+                      {pricing.usd.hasDiscount ? (
+                        <>
+                          <span className="text-lg text-white/60 line-through">${pricing.usd.originalPrice}</span>
+                          <span className="text-2xl font-bold">${pricing.usd.finalPrice.toFixed(2)}</span>
+                        </>
+                      ) : (
+                        <span className="text-2xl font-bold">${pricing.usd.finalPrice}</span>
+                      )}
                       <span className="text-sm text-white/80">/month</span>
                     </div>
                     <p className="text-sm text-white/80 text-left mt-2">
@@ -2429,15 +2401,11 @@ const FormComponent: React.FC<FormComponentProps> = ({
   // Calculate pricing with student discounts
   const calculatePricing = useCallback(() => {
     const defaultUSDPrice = PRICING.PRO_MONTHLY;
-    const defaultINRPrice = PRICING.PRO_MONTHLY_INR;
 
     // Check if student discount is active
     if (!discountConfig || !discountConfig.enabled || !discountConfig.isStudentDiscount) {
       return {
         usd: { originalPrice: defaultUSDPrice, finalPrice: defaultUSDPrice, hasDiscount: false },
-        inr: location.isIndia
-          ? { originalPrice: defaultINRPrice, finalPrice: defaultINRPrice, hasDiscount: false }
-          : null,
       };
     }
 
@@ -2454,27 +2422,10 @@ const FormComponent: React.FC<FormComponentProps> = ({
         hasDiscount: false,
       };
 
-    // INR pricing with student discount - show if available in discount config
-    let inrPricing: { originalPrice: number; finalPrice: number; hasDiscount: boolean } | null = null;
-    if (discountConfig.inrPrice || location.isIndia) {
-      inrPricing = discountConfig.inrPrice
-        ? {
-          originalPrice: defaultINRPrice,
-          finalPrice: discountConfig.inrPrice,
-          hasDiscount: true,
-        }
-        : {
-          originalPrice: defaultINRPrice,
-          finalPrice: defaultINRPrice,
-          hasDiscount: false,
-        };
-    }
-
     return {
       usd: usdPricing,
-      inr: inrPricing,
     };
-  }, [discountConfig, location.isIndia]);
+  }, [discountConfig]);
 
   const pricing = calculatePricing();
 
@@ -4102,21 +4053,14 @@ const FormComponent: React.FC<FormComponentProps> = ({
                       </div>
                     )}
                     <div className="flex items-center gap-2 mb-2">
-                      {pricing.inr ? (
-                        // Show INR pricing when available
-                        (pricing.inr.hasDiscount ? (<>
-                          <span className="text-lg text-white/60 line-through">₹{pricing.inr.originalPrice}</span>
-                          <span className="text-2xl font-bold">₹{pricing.inr.finalPrice}</span>
-                        </>) : (<span className="text-2xl font-bold">₹{pricing.inr.finalPrice}</span>))
-                      ) : // Show USD pricing for non-Indian users
-                        pricing.usd.hasDiscount ? (
-                          <>
-                            <span className="text-lg text-white/60 line-through">${pricing.usd.originalPrice}</span>
-                            <span className="text-2xl font-bold">${pricing.usd.finalPrice.toFixed(2)}</span>
-                          </>
-                        ) : (
-                          <span className="text-2xl font-bold">${pricing.usd.finalPrice}</span>
-                        )}
+                      {pricing.usd.hasDiscount ? (
+                        <>
+                          <span className="text-lg text-white/60 line-through">${pricing.usd.originalPrice}</span>
+                          <span className="text-2xl font-bold">${pricing.usd.finalPrice.toFixed(2)}</span>
+                        </>
+                      ) : (
+                        <span className="text-2xl font-bold">${pricing.usd.finalPrice}</span>
+                      )}
                       <span className="text-sm text-white/80">/month</span>
                     </div>
                     <p className="text-sm text-white/80 text-left">

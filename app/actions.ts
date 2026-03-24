@@ -3682,3 +3682,57 @@ export async function searchChatsByTitle(query: string, limit: number = 25, offs
     return { error: 'Failed to search chats', status: 500 };
   }
 }
+
+export async function submitEducationDiscountRequest(data: {
+  name: string;
+  email: string;
+  role: string;
+  organization: string;
+  details: string;
+  proofUrl: string;
+}) {
+  try {
+    const { Resend } = await import('resend');
+    const resend = new Resend(serverEnv.RESEND_API_KEY);
+
+    // Send notification email to admin
+    await resend.emails.send({
+      from: 'Ziq <noreply@ziqsearch.com>',
+      to: ['ziqsearch@gmail.com'],
+      subject: '🎓 New Education Discount Request',
+      html: `
+        <h2>New Education Discount Request</h2>
+        <p><strong>Name:</strong> ${data.name}</p>
+        <p><strong>Email:</strong> ${data.email}</p>
+        <p><strong>Role:</strong> ${data.role}</p>
+        <p><strong>Organization:</strong> ${data.organization || 'Not provided'}</p>
+        <p><strong>Details:</strong></p>
+        <p>${data.details}</p>
+        ${data.proofUrl ? `<p><strong>Proof Document:</strong> <a href="${data.proofUrl}">View Document</a></p>` : '<p><strong>Proof Document:</strong> Not provided</p>'}
+        <hr>
+        <p><em>Review this request and send a discount code to ${data.email} if approved.</em></p>
+      `,
+    });
+
+    // Send confirmation email to requester
+    await resend.emails.send({
+      from: 'Ziq <noreply@ziqsearch.com>',
+      to: [data.email],
+      subject: 'Education Discount Request Received - Ziq',
+      html: `
+        <h2>Thank you for your education discount request!</h2>
+        <p>Hi ${data.name},</p>
+        <p>We've received your request for an education discount on Ziq Pro. We'll review your application and get back to you within 2-3 business days.</p>
+        <p>If approved, you'll receive a discount code that gives you 50% off ($5/month instead of $10/month).</p>
+        <p>If you have any questions, feel free to reply to this email.</p>
+        <br>
+        <p>Best regards,<br>The Ziq Team</p>
+      `,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error submitting education discount request:', error);
+    return { success: false, error: 'Failed to submit request. Please try again.' };
+  }
+}

@@ -5,9 +5,8 @@ export const SEARCH_LIMITS = {
 } as const;
 
 export const PRICING = {
-  PRO_MONTHLY: 15, // USD
+  PRO_MONTHLY: 10, // USD
   PRO_MONTHLY_USD: 10, // USD pricing for Stripe
-  PRO_MONTHLY_INR: 1330, // INR for Indian users
 } as const;
 
 export const CURRENCIES = {

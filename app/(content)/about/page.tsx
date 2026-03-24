@@ -614,13 +614,10 @@ export default function AboutPage() {
                 </span>
               </div>
               <p className="text-sm text-muted-foreground mb-6">Everything for serious research</p>
-              <div className="mb-1">
+              <div className="mb-8">
                 <span className="text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">${PRICING.PRO_MONTHLY}</span>
                 <span className="text-sm text-muted-foreground ml-2">/month</span>
               </div>
-              <p className="text-sm text-muted-foreground mb-8">
-                ₹{PRICING.PRO_MONTHLY_INR} <span className="text-xs">(excl. GST)</span>
-              </p>
 
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-3 text-sm text-muted-foreground">
@@ -688,22 +685,42 @@ export default function AboutPage() {
             <ProAccordionItem value="item-2">
               <ProAccordionTrigger>What&apos;s the difference between Free and Pro plans?</ProAccordionTrigger>
               <ProAccordionContent>
-                The Free plan includes limited daily research runs with essential models, while the Pro plan
-                ($15/month) unlocks unlimited research, access to all AI models, PDF document analysis, Lookout
+                The Free plan includes 10 searches per day with basic AI models, while the Pro plan
+                ($10/month) unlocks unlimited searches, access to all AI models, PDF document analysis, Lookout
                 automations, and priority support.
               </ProAccordionContent>
             </ProAccordionItem>
 
             <ProAccordionItem value="item-3">
-              <ProAccordionTrigger>Is there a student discount?</ProAccordionTrigger>
+              <ProAccordionTrigger>What file types can I upload and analyze?</ProAccordionTrigger>
               <ProAccordionContent>
-                Yes! Students with university email addresses (.edu, .ac.in, .ac.uk, etc.) automatically get Pro for
-                just $5/month - that&apos;s $120 in annual savings. No verification required, the discount is
-                applied automatically at checkout.
+                Free users can upload images (JPEG, PNG, GIF, WebP) for visual analysis and OCR. Pro users can also
+                upload PDF documents for analysis and summarization. You can attach up to 4 files per message, with a
+                maximum size of 5MB per file. Other file types like Word documents, Excel, or code files are not
+                currently supported.
               </ProAccordionContent>
             </ProAccordionItem>
 
             <ProAccordionItem value="item-4">
+              <ProAccordionTrigger>Is there an academic discount?</ProAccordionTrigger>
+              <ProAccordionContent>
+                Yes! Anyone with a university or academic institution email address (.edu) automatically gets Pro for just $5/month - that&apos;s 50% off.
+                This includes students, professors, researchers, and staff. No verification required, the discount is applied automatically at checkout.
+                <br /><br />
+                Don&apos;t have a .edu email? Homeschoolers, international students, and others can request the education discount on the pricing page.
+                We typically review requests within 2-3 business days.
+              </ProAccordionContent>
+            </ProAccordionItem>
+
+            <ProAccordionItem value="item-5">
+              <ProAccordionTrigger>Which AI models support PDF analysis?</ProAccordionTrigger>
+              <ProAccordionContent>
+                PDF analysis is supported by Gemini and Claude models. When you upload a PDF, Ziq will automatically
+                switch to a compatible model if needed. All Pro users have access to these PDF-capable models.
+              </ProAccordionContent>
+            </ProAccordionItem>
+
+            <ProAccordionItem value="item-6">
               <ProAccordionTrigger>Can I cancel my subscription anytime?</ProAccordionTrigger>
               <ProAccordionContent>
                 Yes, you can cancel your Pro subscription at any time. Your benefits will continue until the end of
@@ -711,7 +728,7 @@ export default function AboutPage() {
               </ProAccordionContent>
             </ProAccordionItem>
 
-            <ProAccordionItem value="item-5">
+            <ProAccordionItem value="item-7">
               <ProAccordionTrigger>What AI models does Ziq use?</ProAccordionTrigger>
               <ProAccordionContent>
                 Ziq uses a range of advanced AI models including Grok, Claude, OpenAI GPT, Gemini, and more to
@@ -719,7 +736,7 @@ export default function AboutPage() {
               </ProAccordionContent>
             </ProAccordionItem>
 
-            <ProAccordionItem value="item-6">
+            <ProAccordionItem value="item-8">
               <ProAccordionTrigger>How does Ziq ensure information accuracy?</ProAccordionTrigger>
               <ProAccordionContent>
                 Ziq grounds outputs in retrieved sources (RAG + search grounding) and includes citations so you

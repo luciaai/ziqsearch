@@ -893,13 +893,13 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                           </a>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <a href="https://x.com/sciraai" target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar}>
+                          <a href="https://x.com/ziqsearch" target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar}>
                             <XLogoIcon size={16} weight="regular" className="mr-2" />
                             <span>X.com</span>
                           </a>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <a href="https://www.instagram.com/scira.ai" target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar}>
+                          <a href="https://www.instagram.com/ziqsearch" target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar}>
                             <InstagramLogoIcon size={16} weight="regular" className="mr-2" />
                             <span>Instagram</span>
                           </a>

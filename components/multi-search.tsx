@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { CustomUIDataTypes, DataQueryCompletionPart } from '@/lib/types';
 import type { DataUIPart } from 'ai';
 import { Sparkles as SparklesIcon } from 'lucide-react';
+import { ScrollArrows } from '@/components/ui/scroll-arrows';
 
 // Custom Premium Icons
 const Icons = {
@@ -352,33 +353,39 @@ const ImageGallery = React.memo(({ images }: { images: SearchImage[] }) => {
     [isMobile],
   );
 
+  // Scroll container ref for arrows
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null!);
+
   if (!isClient) {
     return <div className="space-y-4" />;
   }
 
   return (
     <div className="space-y-4">
-      {/* Image Gallery - Horizontal Scroll */}
-      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-        {displayImages.map((image, index) => (
-          <button key={`${image.url}-${index}`} onClick={() => handleImageClick(index)} className={gridItemClassName()}>
-            <img
-              src={image.url}
-              alt={image.description || ''}
-              className="absolute inset-0 w-full h-full object-cover"
-              onError={() => handleImageError(image.url)}
-            />
+      {/* Image Gallery - Horizontal Scroll with Navigation Arrows */}
+      <div className="relative group">
+        <ScrollArrows containerRef={scrollContainerRef} />
+        <div ref={scrollContainerRef} className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+          {displayImages.map((image, index) => (
+            <button key={`${image.url}-${index}`} onClick={() => handleImageClick(index)} className={gridItemClassName()}>
+              <img
+                src={image.url}
+                alt={image.description || ''}
+                className="absolute inset-0 w-full h-full object-cover"
+                onError={() => handleImageError(image.url)}
+              />
 
-            {/* Overlay for last image if there are more */}
-            {shouldShowOverlay(index) && (
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <span className="text-white text-sm font-medium">
-                  +{validImages.length - displayImages.length} more
-                </span>
-              </div>
-            )}
-          </button>
-        ))}
+              {/* Overlay for last image if there are more */}
+              {shouldShowOverlay(index) && (
+                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">
+                    +{validImages.length - displayImages.length} more
+                  </span>
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Image Viewer */}

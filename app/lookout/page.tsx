@@ -302,13 +302,18 @@ export default function LookoutPage() {
             {/* Header with Title, Tabs and Actions */}
             <div className="mb-6 space-y-4">
               {/* Title - Always at top */}
-              <div className="flex items-center justify-center gap-2 relative">
-                {/* Mobile sidebar trigger */}
-                <div className="md:hidden absolute left-0">
-                  <SidebarTrigger />
+              <div className="space-y-2">
+                <div className="flex items-center justify-center gap-2 relative">
+                  {/* Mobile sidebar trigger */}
+                  <div className="md:hidden absolute left-0">
+                    <SidebarTrigger />
+                  </div>
+                  <HugeiconsIcon icon={BinocularsIcon} size={32} color="currentColor" strokeWidth={1.5} />
+                  <h1 className="text-2xl font-semibold font-be-vietnam-pro">Ziq Lookout</h1>
                 </div>
-                <HugeiconsIcon icon={BinocularsIcon} size={32} color="currentColor" strokeWidth={1.5} />
-                <h1 className="text-2xl font-semibold font-be-vietnam-pro">Ziq Lookout</h1>
+                <p className="text-sm text-muted-foreground text-center">
+                  Automated searches that run on your schedule and notify you of new results
+                </p>
               </div>
 
               {isMobile ? (

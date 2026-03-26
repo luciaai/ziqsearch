@@ -158,15 +158,20 @@ function XQLPageContent() {
           messages.length === 0 ? 'py-12 sm:py-14' : 'pt-12 sm:pt-14 pb-12 sm:pb-10',
         )}
       >
-        <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 text-2xl sm:text-3xl md:text-5xl font-be-vietnam-pro -tracking-normal font-medium relative">
-          {/* Mobile sidebar trigger */}
-          <div className="md:hidden absolute left-0">
-            <SidebarTrigger />
+        <div className="space-y-3 mb-6 sm:mb-8">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 text-2xl sm:text-3xl md:text-5xl font-be-vietnam-pro -tracking-normal font-medium relative">
+            {/* Mobile sidebar trigger */}
+            <div className="md:hidden absolute left-0">
+              <SidebarTrigger />
+            </div>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <XLogoIcon className="size-6 sm:size-8 md:size-12 text-foreground font-medium" />
+              <h1 className="text-foreground">Explorer</h1>
+            </div>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <h1 className="text-foreground">Search</h1>
-            <XLogoIcon className="size-6 sm:size-8 md:size-12 text-foreground font-medium" />
-          </div>
+          <p className="text-sm sm:text-base text-muted-foreground text-center max-w-2xl mx-auto">
+            Search X/Twitter posts using natural language queries with advanced filters
+          </p>
         </div>
 
         <div className="flex items-center gap-2 w-full">

@@ -480,28 +480,67 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
             </SidebarMenuItem>
           )}
 
-          {/* Search X */}
+          {/* More Section - Collapsible */}
           {user && (
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Search X - Search X/Twitter Posts"
-                className={cn(
-                  'hover:bg-primary/10 transition-all duration-200',
-                  pathname === '/xql' ? 'bg-primary/15 text-foreground font-medium' : ''
-                )}
-              >
-                <Link
-                  prefetch={true}
-                  href="/xql"
-                  onClick={closeMobileSidebar}
-                  className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full"
-                >
-                  <XLogoIcon size={18} weight="regular" />
-                  <span className="group-data-[collapsible=icon]:hidden">Search X</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            <div className="group-data-[collapsible=icon]:hidden">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="more" className="border-none">
+                  <SidebarMenuItem>
+                    <AccordionTrigger className="px-2 py-2 hover:no-underline [&>svg]:size-3 [&>svg]:text-sidebar-foreground/50">
+                      <div className="flex items-center gap-2">
+                        <MoreHorizontal size={18} className="text-muted-foreground" />
+                        <span className="text-sm font-medium text-foreground">More</span>
+                      </div>
+                    </AccordionTrigger>
+                  </SidebarMenuItem>
+                  <AccordionContent className="pb-0">
+                    {/* X Explorer */}
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        tooltip="X Explorer - Advanced X/Twitter search with natural language queries"
+                        className={cn(
+                          'hover:bg-primary/10 transition-all duration-200',
+                          pathname === '/xql' ? 'bg-primary/15 text-foreground font-medium' : ''
+                        )}
+                      >
+                        <Link
+                          prefetch={true}
+                          href="/xql"
+                          onClick={closeMobileSidebar}
+                          className="flex items-center gap-2 pl-8"
+                        >
+                          <XLogoIcon size={18} weight="regular" />
+                          <span>X Explorer</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    {/* X Wrapped */}
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        tooltip="X Wrapped - Your X/Twitter year in review"
+                        className={cn(
+                          'hover:bg-primary/10 transition-all duration-200',
+                          pathname === '/x-wrapped' ? 'bg-primary/15 text-foreground font-medium' : ''
+                        )}
+                      >
+                        <Link
+                          prefetch={true}
+                          href="/x-wrapped"
+                          onClick={closeMobileSidebar}
+                          className="flex items-center gap-2 pl-8"
+                        >
+                          <XLogoIcon size={18} weight="regular" />
+                          <span>X Wrapped</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
           )}
 
           {/* Voice - Hidden until infrastructure is set up */}
@@ -528,28 +567,6 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}
-
-          {/* X Wrapped */}
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              tooltip="X Wrapped 2025"
-              className={cn(
-                'hover:bg-primary/10 transition-all duration-200',
-                pathname === '/x-wrapped' ? 'bg-primary/15 text-foreground font-medium' : ''
-              )}
-            >
-              <Link
-                prefetch={true}
-                href="/x-wrapped"
-                onClick={closeMobileSidebar}
-                className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full"
-              >
-                <XLogoIcon size={18} weight="regular" />
-                <span className="group-data-[collapsible=icon]:hidden">X Wrapped</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
 
 
           {/* Guest Info Links when signed out */}

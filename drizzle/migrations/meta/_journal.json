@@ -78,6 +78,20 @@
       "when": 1773354833738,
       "tag": "0010_jittery_tarot",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1774491651278,
+      "tag": "0011_fat_pretty_boy",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1774492706160,
+      "tag": "0012_normal_magneto",
+      "breakpoints": true
     }
   ]
 }

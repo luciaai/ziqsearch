@@ -46,8 +46,7 @@ export type SearchProvider = keyof typeof searchProviderInfo;
 
 // Function to get dynamic web search description based on selected provider
 export function getWebSearchDescription(provider: SearchProvider = 'exa'): string {
-  const providerName = searchProviderInfo[provider];
-  return `Search across the entire internet powered by ${providerName}`;
+  return 'Search the entire internet';
 }
 
 // Function to get search groups with dynamic descriptions
@@ -63,14 +62,14 @@ export function getSearchGroups(searchProvider: SearchProvider = 'exa') {
     {
       id: 'chat' as const,
       name: 'Chat',
-      description: 'Talk to the model directly.',
+      description: 'Chat directly without searching',
       icon: ChattingIcon,
       show: true,
     },
     {
       id: 'x' as const,
       name: 'X',
-      description: 'Search X posts',
+      description: 'Search X/Twitter posts',
       icon: NewTwitterIcon,
       show: true,
     },
@@ -93,21 +92,21 @@ export function getSearchGroups(searchProvider: SearchProvider = 'exa') {
     {
       id: 'code' as const,
       name: 'Code',
-      description: 'Get context about languages and frameworks',
+      description: 'Programming help and documentation',
       icon: CodeCircleIcon,
       show: true,
     },
     {
       id: 'academic' as const,
       name: 'Academic',
-      description: 'Search academic papers and pdfs powered by Firecrawl',
+      description: 'Search research papers and PDFs',
       icon: MicroscopeIcon,
       show: true,
     },
     {
       id: 'extreme' as const,
       name: 'Extreme',
-      description: 'Deep research with multiple sources and analysis',
+      description: 'Advanced multi-source research (Pro)',
       icon: AtomicPowerIcon,
       show: true,
       requireAuth: true,
@@ -123,21 +122,21 @@ export function getSearchGroups(searchProvider: SearchProvider = 'exa') {
     {
       id: 'reddit' as const,
       name: 'Reddit',
-      description: 'Search Reddit posts powered by Parallel',
+      description: 'Search Reddit discussions',
       icon: RedditIcon,
       show: true,
     },
     {
       id: 'crypto' as const,
       name: 'Crypto',
-      description: 'Cryptocurrency research powered by CoinGecko',
+      description: 'Cryptocurrency prices and research',
       icon: Bitcoin02Icon,
       show: true,
     },
     {
       id: 'youtube' as const,
       name: 'YouTube',
-      description: 'Search content inside YouTube videos, channels and playlists',
+      description: 'Search YouTube videos and transcripts',
       icon: YoutubeIcon,
       show: true,
     },

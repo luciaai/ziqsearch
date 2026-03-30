@@ -778,6 +778,9 @@ export default function AboutPage() {
               <span className="text-xs text-muted-foreground">© {new Date().getFullYear()} Ziq</span>
             </div>
             <div className="flex items-center gap-6">
+              <Link href="/faq" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                FAQ
+              </Link>
               <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                 Terms
               </Link>

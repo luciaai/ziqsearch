@@ -88,7 +88,7 @@ export async function getDiscountConfig(userEmail?: string, isIndianUser?: boole
   return {
     enabled: true,
     message: '🎓 Academic discount applied',
-    finalPrice: 6.99, // $6.99/month for academic users (USD)
+    finalPrice: 7, // $7/month for academic users (USD)
     isStudentDiscount: true,
     dodoDiscountId: dodoStudentDiscountId,
     discountId: dodoStudentDiscountId,

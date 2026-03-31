@@ -123,7 +123,7 @@ export default function RequestEducationDiscountPage() {
                 Request Education Discount
               </h1>
               <p className="text-sm text-muted-foreground">
-                Get 50% off Pro ($5/month instead of $10/month)
+                Get 46% off Pro ($6.99/month instead of $12.99/month)
               </p>
             </div>
           </div>

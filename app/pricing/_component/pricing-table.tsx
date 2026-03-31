@@ -74,7 +74,7 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
     if (!discountConfig.enabled || !discountConfig.isStudentDiscount) {
       return null;
     }
-    return discountConfig.finalPrice || 5;
+    return discountConfig.finalPrice || 6.99;
   };
 
   const handleCheckout = async (_productId: string, _slug: string, _paymentMethod?: 'dodo' | 'polar') => {
@@ -307,7 +307,7 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
                 <div>
                   <h3 className="text-sm font-medium mb-1">Academic discount available</h3>
                   <p className="text-xs text-muted-foreground mb-2">
-                    Get Pro for just $5/month! Sign up with your university or academic institution email (.edu)
+                    Get Pro for just $6.99/month! Sign up with your university or academic institution email (.edu)
                   </p>
                   <p className="text-xs text-muted-foreground">
                     Don't have a .edu email?{' '}

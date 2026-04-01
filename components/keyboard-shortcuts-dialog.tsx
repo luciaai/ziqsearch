@@ -109,11 +109,6 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
           description: 'Go to Lookout',
           context: 'Promo Dialog (when open)',
         },
-        {
-          keys: ['⌘', 'B'],
-          description: 'Go to Blog',
-          context: 'Promo Dialog (when open)',
-        },
       ],
     },
     {

@@ -201,10 +201,6 @@ export const LookoutAnnouncementDialog = React.memo(({ open, onOpenChange }: Loo
         e.preventDefault();
         router.push('/lookout');
         onOpenChange(false);
-      } else if ((e.metaKey || e.ctrlKey) && (e.key === 'b' || e.key === 'B')) {
-        e.preventDefault();
-        router.push('/blog');
-        onOpenChange(false);
       }
     };
 
@@ -276,20 +272,6 @@ export const LookoutAnnouncementDialog = React.memo(({ open, onOpenChange }: Loo
                 <HugeiconsIcon icon={BinocularsIcon} size={16} color="currentColor" className="mr-2" />
                 Explore Lookout
                 <span className="sm:ml-auto text-xs font-mono hidden sm:inline opacity-60">⌘ ⏎</span>
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  router.push('/blog');
-                  onOpenChange(false);
-                }}
-                className="w-full sm:flex-1 group shadow-none"
-              >
-                <HugeiconsIcon icon={BookOpen01Icon} size={16} color="currentColor" className="mr-2" />
-                Read Blog
-                <span className="sm:ml-auto font-mono text-xs hidden sm:inline opacity-60">
-                  {isMac ? '⌘' : 'Ctrl'} B
-                </span>
               </Button>
             </div>
 

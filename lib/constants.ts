@@ -7,10 +7,10 @@ export const SEARCH_LIMITS = {
 } as const;
 
 export const PRICING = {
-  PRO_MONTHLY: 13, // USD
-  PRO_MONTHLY_USD: 13, // USD pricing for Stripe
-  PRO_YEARLY: 99, // USD - save $57/year
-  STUDENT_MONTHLY: 7, // USD - Education discount
+  PRO_MONTHLY: 14, // USD
+  PRO_MONTHLY_USD: 14, // USD pricing for Stripe
+  PRO_YEARLY: 99, // USD - save $69/year
+  STUDENT_MONTHLY: 7, // USD - Education discount (50% off)
   STUDENT_YEARLY: 59, // USD - save $25/year
 } as const;
 

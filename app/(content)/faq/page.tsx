@@ -57,10 +57,10 @@ export default function FAQPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="border-b border-border">
+      <section className="border-b border-border bg-gradient-to-b from-blue-50/30 to-background dark:from-blue-950/10 dark:to-background">
         <div className="max-w-4xl mx-auto px-6 pt-16 pb-12">
           <div className="inline-flex items-center gap-2 mb-6">
-            <HelpCircle className="h-4 w-4 text-muted-foreground" />
+            <HelpCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             <span className="text-xs text-muted-foreground tracking-wide">Help Center</span>
           </div>
           <h1 className="text-4xl sm:text-5xl font-light tracking-tight leading-tight text-foreground font-be-vietnam-pro mb-4">
@@ -79,7 +79,7 @@ export default function FAQPage() {
           {/* Getting Started */}
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-6">
-              <Sparkles className="h-5 w-5 text-primary" />
+              <Sparkles className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <h2 className="text-2xl font-light tracking-tight font-be-vietnam-pro">Getting Started</h2>
             </div>
             
@@ -122,20 +122,29 @@ export default function FAQPage() {
                     <div>
                       <p className="font-medium text-foreground mb-2">Free Plan:</p>
                       <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                        <li>Limited searches per day</li>
+                        <li>7 searches per day (210/month)</li>
                         <li>Access to basic search modes</li>
                         <li>Search history</li>
                         <li>Citation generator</li>
                       </ul>
                     </div>
                     <div>
-                      <p className="font-medium text-foreground mb-2">Pro Plan:</p>
+                      <p className="font-medium text-foreground mb-2">Pro Plan ($14/month or $99/year):</p>
                       <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                        <li>Unlimited searches</li>
+                        <li>500 searches per month</li>
                         <li>Advanced multi-source research (Extreme mode)</li>
                         <li>Lookout - automated recurring searches</li>
                         <li>Priority support</li>
                         <li>Access to premium AI models</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground mb-2">Student Plan ($7/month or $59/year):</p>
+                      <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                        <li>500 searches per month (same as Pro)</li>
+                        <li>All Pro features</li>
+                        <li>Requires .edu email or manual verification</li>
+                        <li>Available for homeschool students too</li>
                       </ul>
                     </div>
                   </div>
@@ -147,7 +156,7 @@ export default function FAQPage() {
           {/* Search Modes */}
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-6">
-              <Search className="h-5 w-5 text-primary" />
+              <Search className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <h2 className="text-2xl font-light tracking-tight font-be-vietnam-pro">Search Modes</h2>
             </div>
             
@@ -261,7 +270,7 @@ export default function FAQPage() {
           {/* Features */}
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-6">
-              <Settings className="h-5 w-5 text-primary" />
+              <Settings className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <h2 className="text-2xl font-light tracking-tight font-be-vietnam-pro">Features</h2>
             </div>
             
@@ -333,7 +342,7 @@ export default function FAQPage() {
           {/* Tips for Students */}
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-6">
-              <GraduationCap className="h-5 w-5 text-primary" />
+              <GraduationCap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <h2 className="text-2xl font-light tracking-tight font-be-vietnam-pro">Tips for Students & Researchers</h2>
             </div>
             
@@ -400,33 +409,33 @@ export default function FAQPage() {
           {/* Coming Soon */}
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-6">
-              <Sparkles className="h-5 w-5 text-primary" />
+              <Sparkles className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <h2 className="text-2xl font-light tracking-tight font-be-vietnam-pro">Coming Soon</h2>
             </div>
             
-            <div className="bg-muted/30 border border-border p-6 rounded-lg">
+            <div className="bg-blue-50/30 dark:bg-blue-950/10 border border-blue-200 dark:border-blue-900 p-6 rounded-lg">
               <p className="text-sm text-muted-foreground mb-4">
                 We're constantly improving Ziq. Here's what's coming next:
               </p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                  <span className="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
                   <span><strong className="text-foreground">Tags & Organization:</strong> Tag and organize your searches by project or class</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                  <span className="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
                   <span><strong className="text-foreground">Bookmarks:</strong> Save important search results and sources for later</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                  <span className="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
                   <span><strong className="text-foreground">Notes:</strong> Add personal notes to your searches and sources</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                  <span className="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
                   <span><strong className="text-foreground">Export:</strong> Export your research and citations to PDF</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">•</span>
+                  <span className="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
                   <span><strong className="text-foreground">Collaboration:</strong> Share searches and research with classmates</span>
                 </li>
               </ul>
@@ -436,11 +445,11 @@ export default function FAQPage() {
           {/* Powered By */}
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-6">
-              <Code className="h-5 w-5 text-primary" />
+              <Code className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               <h2 className="text-2xl font-light tracking-tight font-be-vietnam-pro">Technology & Attribution</h2>
             </div>
             
-            <div className="bg-muted/30 border border-border p-6 rounded-lg space-y-4">
+            <div className="bg-blue-50/30 dark:bg-blue-950/10 border border-blue-200 dark:border-blue-900 p-6 rounded-lg space-y-4">
               <p className="text-sm text-muted-foreground">
                 Ziq is built with cutting-edge technology and powered by industry-leading services:
               </p>

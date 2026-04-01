@@ -117,13 +117,6 @@ const NavigationMenu = memo(() => {
             <span>About</span>
           </Link>
         </DropdownMenuItem>
-        {/* Blog */}
-        <DropdownMenuItem className="cursor-pointer" asChild>
-          <Link href="/blog" className="w-full flex items-center gap-2">
-            <BookIcon size={16} />
-            <span>Blog</span>
-          </Link>
-        </DropdownMenuItem>
 
         <DropdownMenuItem className="cursor-pointer" asChild>
           <Link href="/terms" className="w-full flex items-center gap-2">

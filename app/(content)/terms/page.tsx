@@ -33,7 +33,7 @@ export default function TermsPage() {
             Terms of Service
           </h1>
           <p className="text-sm text-muted-foreground">
-            Last updated: July 24, 2025
+            Last updated: March 31, 2026
           </p>
         </div>
 
@@ -55,13 +55,15 @@ export default function TermsPage() {
 
           <h2>2. Description of Service</h2>
           <p>
-            Ziq is a minimalistic AI-powered search engine that helps users find information on the internet. Our
-            service utilizes artificial intelligence to process search queries and provide relevant results and
-            information.
+            Ziq is an AI-powered research platform designed for students, researchers, and curious minds. Our
+            service combines advanced search capabilities with conversational AI to help users find information,
+            understand complex topics, and organize research efficiently.
           </p>
           <p>
-            Our service is hosted on Vercel and integrates with various AI technology providers, including OpenAI,
-            Anthropic, xAI, and others, to deliver search results and content generation capabilities.
+            Our service is hosted on Vercel and integrates with various AI technology providers (OpenAI, Anthropic,
+            Google, xAI, DeepSeek, and others), search services (Exa, Firecrawl, Tavily, Parallel AI), and data
+            APIs (YouTube, CoinGecko) to deliver comprehensive research results, citations, and content generation
+            capabilities.
           </p>
 
           <h2>3. User Conduct</h2>
@@ -104,15 +106,17 @@ export default function TermsPage() {
           <p>Ziq relies on third-party services to provide its functionality:</p>
           <ul>
             <li>Our service is hosted on Vercel&apos;s infrastructure</li>
-            <li>We integrate with AI technology providers including OpenAI, Anthropic, xAI, and others</li>
-            <li>We use payment processors including Polar and DodoPayments for billing and subscription management</li>
+            <li>We integrate with AI providers: OpenAI, Anthropic, Google, xAI, DeepSeek, and others</li>
+            <li>We use search services: Exa (web search), Firecrawl (academic papers & PDFs), Tavily (alternative web search), Parallel AI (Reddit search)</li>
+            <li>We use data APIs: YouTube API (video transcripts), CoinGecko (cryptocurrency data)</li>
+            <li>We use Stripe for payment processing and subscription management</li>
             <li>These third-party services have their own terms of service and privacy policies</li>
             <li>We are not responsible for the practices or policies of these third-party services</li>
           </ul>
           <p>
             By using Ziq, you acknowledge and agree that your data may be processed by these third-party services
-            as described in our Privacy Policy. This includes payment data being processed by our payment providers
-            according to their respective privacy policies and security standards.
+            as described in our Privacy Policy. This includes payment data being processed by Stripe according to
+            their privacy policies and PCI-DSS security standards.
           </p>
 
           <h2>7. Pricing and Billing</h2>
@@ -122,31 +126,27 @@ export default function TermsPage() {
           </p>
           <ul>
             <li>
-              <strong>Free Plan:</strong> Includes limited daily searches with access to basic AI models
+              <strong>Free Plan:</strong> 7 searches per day (210/month) with access to basic AI models
             </li>
             <li>
-              <strong>Ziq Pro:</strong> $15/month subscription with unlimited searches and access to all AI models
+              <strong>Pro Plan:</strong> $14/month or $99/year with 500 searches per month and access to all AI models, Extreme mode, and Lookout
+            </li>
+            <li>
+              <strong>Student Plan:</strong> $7/month or $59/year (50% off Pro) with 500 searches per month and all Pro features (requires .edu email or manual verification)
             </li>
           </ul>
           <p>
-            <strong>Payment Processing:</strong> We use third-party payment processors to handle billing and payments:
+            <strong>Payment Processing:</strong> We use Stripe to handle all billing and payment processing. Stripe is a
+            PCI-DSS compliant payment processor trusted by millions of businesses worldwide.
           </p>
-          <ul>
-            <li>
-              <strong>Polar:</strong> For recurring monthly subscriptions (international users)
-            </li>
-            <li>
-              <strong>DodoPayments:</strong> For one-time payments (primarily for Indian users)
-            </li>
-          </ul>
           <p>
             <strong>Important:</strong> Ziq does not store any payment card details, bank information, or other
-            sensitive payment data. All payment information is processed directly by our payment providers according to
-            their respective privacy policies and security standards.
+            sensitive payment data. All payment information is processed directly by Stripe according to their
+            privacy policies and security standards.
           </p>
           <p>For paid subscriptions:</p>
           <ul>
-            <li>Billing is processed monthly and charged automatically to your payment method</li>
+            <li>Billing is processed monthly or yearly and charged automatically to your payment method</li>
             <li>All fees are non-refundable except as expressly stated in our refund policy</li>
             <li>We reserve the right to change subscription prices with 30 days advance notice</li>
             <li>You are responsible for all applicable taxes</li>

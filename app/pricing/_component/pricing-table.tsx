@@ -48,6 +48,7 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
     enabled: false,
     isStudentDiscount: false,
   });
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly');
 
   useEffect(() => {
     const fetchDiscountConfig = async () => {
@@ -162,9 +163,34 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
           <h1 className="text-3xl sm:text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro mb-4">
             Pricing
           </h1>
-          <p className="text-base text-muted-foreground">
+          <p className="text-base text-muted-foreground mb-6">
             Choose the plan that works for you
           </p>
+          
+          {/* Billing Interval Toggle */}
+          <div className="inline-flex items-center gap-1 p-1 bg-muted/50 border border-border rounded-md">
+            <button
+              onClick={() => setBillingInterval('monthly')}
+              className={`px-4 py-2 text-sm font-medium transition-colors rounded ${
+                billingInterval === 'monthly'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingInterval('yearly')}
+              className={`px-4 py-2 text-sm font-medium transition-colors rounded ${
+                billingInterval === 'yearly'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Yearly
+              <span className="ml-1.5 text-xs text-green-600 dark:text-green-400">Save up to $69</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -229,16 +255,28 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
 
             {/* Pricing Display */}
             <div className="mb-8">
-              <div className="flex items-baseline">
-                <span className="text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">${PRICING.PRO_MONTHLY_USD}</span>
-                <span className="text-sm text-muted-foreground ml-2">/month</span>
-              </div>
+              {billingInterval === 'monthly' ? (
+                <div className="flex items-baseline">
+                  <span className="text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">${hasStudentDiscount() ? PRICING.STUDENT_MONTHLY : PRICING.PRO_MONTHLY_USD}</span>
+                  <span className="text-sm text-muted-foreground ml-2">/month</span>
+                </div>
+              ) : (
+                <div>
+                  <div className="flex items-baseline">
+                    <span className="text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">${hasStudentDiscount() ? PRICING.STUDENT_YEARLY : PRICING.PRO_YEARLY}</span>
+                    <span className="text-sm text-muted-foreground ml-2">/year</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Save ${hasStudentDiscount() ? (PRICING.STUDENT_MONTHLY * 12 - PRICING.STUDENT_YEARLY) : (PRICING.PRO_MONTHLY_USD * 12 - PRICING.PRO_YEARLY)}/year
+                  </p>
+                </div>
+              )}
             </div>
 
             <ul className="space-y-3 mb-8 flex-1">
               <li className="flex items-start gap-3 text-sm text-foreground/80">
                 <span className="w-1 h-1 rounded-full bg-foreground mt-2 shrink-0" />
-                Unlimited searches
+                500 searches per month
               </li>
               <li className="flex items-start gap-3 text-sm text-foreground/80">
                 <span className="w-1 h-1 rounded-full bg-foreground mt-2 shrink-0" />
@@ -286,7 +324,7 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <p className="text-xs text-center text-muted-foreground">
-                  Credit/Debit Cards (auto-renews monthly)
+                  Credit/Debit Cards (auto-renews {billingInterval})
                 </p>
                 {hasStudentDiscount() && discountConfig.message && (
                   <p className="text-xs text-green-600 dark:text-green-400 text-center font-medium">
@@ -307,7 +345,7 @@ export default function PricingTable({ subscriptionDetails, user }: PricingTable
                 <div>
                   <h3 className="text-sm font-medium mb-1">Academic discount available</h3>
                   <p className="text-xs text-muted-foreground mb-2">
-                    Get Pro for just $7/month! Sign up with your university or academic institution email (.edu)
+                    Get 50% off Pro - just $7/month! Sign up with your university or academic institution email (.edu)
                   </p>
                   <p className="text-xs text-muted-foreground">
                     Don't have a .edu email?{' '}

@@ -530,7 +530,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
           )}
 
           {/* X / Twitter - Collapsible when expanded, individual icons when collapsed */}
-          {user && (
+          {mounted && user && (
             <>
               {/* Expanded state - Accordion */}
               <div className="group-data-[collapsible=icon]:hidden">

@@ -41,7 +41,7 @@ export const serverEnv = createEnv({
     QSTASH_TOKEN: z.string().min(1),
     QSTASH_URL: z.string().optional(),
     RESEND_API_KEY: z.string().min(1),
-    SUPERMEMORY_API_KEY: z.string().min(1),
+    SUPERMEMORY_API_KEY: z.string().optional(),
     ALLOWED_ORIGINS: z.string().optional().default('http://localhost:3000'),
     // Stripe billing
     STRIPE_SECRET_KEY: z.string().min(1),

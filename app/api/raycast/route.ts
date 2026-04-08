@@ -10,7 +10,7 @@ const scira = customProvider({
   },
 });
 
-export const maxDuration = 800;
+export const maxDuration = 300;
 
 // Define separate system prompts for each group
 const groupSystemPrompts = {

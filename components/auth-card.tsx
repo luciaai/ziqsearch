@@ -95,8 +95,38 @@ const SignInButton = ({ title, provider, loading, setLoading, callbackURL, icon,
 
 export default function AuthCard({ title, description, mode = 'sign-in' }: AuthCardProps) {
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
 
   const lastMethod = authClient.getLastUsedLoginMethod();
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailLoading(true);
+
+    try {
+      if (mode === 'sign-up') {
+        await authClient.signUp.email({
+          email,
+          password,
+          name,
+          callbackURL: '/',
+        });
+      } else {
+        await authClient.signIn.email({
+          email,
+          password,
+          callbackURL: '/',
+        });
+      }
+    } catch (error) {
+      console.error('Auth error:', error);
+    } finally {
+      setEmailLoading(false);
+    }
+  };
 
   return (
     <div className="w-full max-w-sm mx-auto">
@@ -110,10 +140,65 @@ export default function AuthCard({ title, description, mode = 'sign-in' }: AuthC
         </p>
       </div>
 
-      {/* Auth Buttons */}
+      {/* Email/Password Form */}
+      <form onSubmit={handleEmailAuth} className="space-y-3 mb-4">
+        {mode === 'sign-up' && (
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="w-full h-12 px-4 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-foreground/20"
+          />
+        )}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="w-full h-12 px-4 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-foreground/20"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          minLength={8}
+          className="w-full h-12 px-4 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-foreground/20"
+        />
+        <button
+          type="submit"
+          disabled={emailLoading}
+          className="w-full h-12 text-sm bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
+        >
+          {emailLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>{mode === 'sign-in' ? 'Signing in...' : 'Creating account...'}</span>
+            </>
+          ) : (
+            <span>{mode === 'sign-in' ? 'Sign in' : 'Create account'}</span>
+          )}
+        </button>
+      </form>
+
+      {/* Divider */}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border"></div>
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+        </div>
+      </div>
+
+      {/* OAuth Buttons */}
       <div className="space-y-3">
         <SignInButton
-          title="Continue with Google"
+          title="Google"
           provider="google"
           loading={googleLoading}
           setLoading={setGoogleLoading}

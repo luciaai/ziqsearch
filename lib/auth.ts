@@ -63,11 +63,11 @@ export const auth = betterAuth({
     //   clientId: serverEnv.TWITTER_CLIENT_ID,
     //   clientSecret: serverEnv.TWITTER_CLIENT_SECRET,
     // },
-    microsoft: {
-      clientId: process.env.MICROSOFT_CLIENT_ID as string,
-      clientSecret: process.env.MICROSOFT_CLIENT_SECRET as string,
-      prompt: 'select_account', // Forces account selection
-    },
+    // microsoft: {
+    //   clientId: process.env.MICROSOFT_CLIENT_ID as string,
+    //   clientSecret: process.env.MICROSOFT_CLIENT_SECRET as string,
+    //   prompt: 'select_account', // Forces account selection
+    // },
   },
   plugins: [
     lastLoginMethod(),

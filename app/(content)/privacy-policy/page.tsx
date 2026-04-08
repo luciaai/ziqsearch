@@ -73,8 +73,7 @@ export default function PrivacyPage() {
           <p>
             <strong>Important Note on Payment Data:</strong> Ziq does not collect, store, or process any payment
             card details, bank information, UPI details, or other sensitive payment data. All payment information is
-            handled directly by our payment processors (Polar and DodoPayments) and is subject to their respective
-            privacy policies and security standards.
+            handled directly by our payment processor (Stripe) and is subject to their privacy policy and security standards.
           </p>
 
           <h2>How We Use Your Information</h2>
@@ -103,8 +102,8 @@ export default function PrivacyPage() {
                 xAI, and others to process search queries and provide results
               </li>
               <li>
-                <strong>Payment Processors:</strong> We use Polar and DodoPayments to process payments and manage
-                subscriptions. These providers handle all payment data directly and have their own privacy policies
+                <strong>Payment Processor:</strong> We use Stripe to process payments and manage
+                subscriptions. Stripe handles all payment data directly and has its own privacy policy
                 governing payment information.
               </li>
             </ul>
@@ -118,8 +117,7 @@ export default function PrivacyPage() {
           </ul>
           <p>
             <strong>Payment Data:</strong> When you make a payment, your payment information is transmitted directly to
-            our payment processors (Polar for subscriptions, DodoPayments for one-time payments) and is not stored on
-            our servers. We only receive confirmation of successful payments and subscription status updates.
+            our payment processor (Stripe) and is not stored on our servers. We only receive confirmation of successful payments and subscription status updates.
           </p>
 
           <h2>Data Security</h2>

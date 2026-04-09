@@ -179,7 +179,10 @@ export async function getLightweightUserAuth(): Promise<LightweightUserAuth | nu
       headers: await headers(),
     });
 
+    console.log('🔐 getLightweightUserAuth - session:', session?.user?.email || 'NO SESSION');
+
     if (!session?.user?.id) {
+      console.log('❌ getLightweightUserAuth - No session or user ID');
       return null;
     }
 
@@ -217,7 +220,10 @@ export async function getLightweightUserAuth(): Promise<LightweightUserAuth | nu
       .leftJoin(billingSubscription, eq(billingSubscription.userId, user.id))
       .where(eq(user.id, userId));
 
+    console.log('📊 getLightweightUserAuth - DB query result:', result?.length || 0, 'rows');
+
     if (!result || result.length === 0) {
+      console.log('❌ getLightweightUserAuth - User not found in DB for userId:', userId);
       return null;
     }
 
@@ -230,6 +236,8 @@ export async function getLightweightUserAuth(): Promise<LightweightUserAuth | nu
       userData.subscriptionStatus === 'trialing' ||
       (userData.subscriptionStatus === 'past_due' && userData.subscriptionEnd && new Date(userData.subscriptionEnd) > now)
     );
+
+    console.log('✅ getLightweightUserAuth - User found:', userData.email, 'isProUser:', isProUser, 'subStatus:', userData.subscriptionStatus);
 
     const lightweightData: LightweightUserAuth = {
       userId: userData.userId,

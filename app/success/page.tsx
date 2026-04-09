@@ -13,7 +13,7 @@ const PRO_FEATURES = [
   { icon: Infinity, label: 'Unlimited searches', description: 'No daily limits' },
   { icon: Cpu, label: 'All AI models', description: 'Access every model' },
   { icon: FileText, label: 'PDF analysis', description: 'Upload & analyze documents' },
-  { icon: Eye, label: 'Scira Lookout', description: 'Real-time monitoring' },
+  { icon: Eye, label: 'Ziq Lookout', description: 'Real-time monitoring' },
 ];
 
 export default function SuccessPage() {

@@ -227,14 +227,14 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
       id: 'github',
       label: 'GitHub',
       icon: GithubLogoIcon,
-      href: 'https://git.new/scira',
+      href: 'https://git.new/ziq',
       external: true,
     },
     {
       id: 'feedback',
       label: 'Feedback',
       icon: BugIcon,
-      href: 'https://scira.userjot.com',
+      href: 'https://ziq.userjot.com',
       external: true,
     },
   ];
@@ -974,7 +974,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                         </DropdownMenuSubTrigger>
                         <DropdownMenuSubContent sideOffset={8} alignOffset={-20} collisionPadding={{ bottom: 20 }} className="bg-background border shadow-lg">
                           <DropdownMenuItem asChild>
-                            <a href="https://git.new/scira" target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar}>
+                            <a href="https://git.new/ziq" target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar}>
                               <GithubLogoIcon size={16} weight="regular" className="mr-2" />
                               <span>GitHub</span>
                             </a>
@@ -992,7 +992,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                             </a>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
-                            <a href="https://scira.userjot.com" target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar}>
+                            <a href="https://ziq.userjot.com" target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar}>
                               <BugIcon size={16} weight="regular" className="mr-2" />
                               <span>Feedback</span>
                             </a>
@@ -1076,7 +1076,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <a href="https://git.new/scira" target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar}>
+                      <a href="https://git.new/ziq" target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar}>
                         <GithubLogoIcon size={16} weight="regular" className="mr-2" />
                         <span>GitHub</span>
                       </a>

@@ -75,7 +75,7 @@ export const PostMessageUpgradeDialog = React.memo(({ open, onOpenChange }: Post
           <div className="relative h-80 overflow-hidden rounded-t-lg">
             <Image
               src="/placeholder.png"
-              alt="Scira Pro"
+              alt="Ziq Pro"
               width={1200}
               height={630}
               className="w-full h-full object-cover"
@@ -218,7 +218,7 @@ export const LookoutAnnouncementDialog = React.memo(({ open, onOpenChange }: Loo
           <div className="relative h-40 sm:h-48 overflow-hidden rounded-t-lg">
             <Image
               src="/lookout-promo.png"
-              alt="Scira Lookout"
+              alt="Ziq Lookout"
               width={1200}
               height={630}
               className="w-full h-full object-cover"
@@ -229,7 +229,7 @@ export const LookoutAnnouncementDialog = React.memo(({ open, onOpenChange }: Loo
                 New Feature
               </div>
               <DialogTitle className="text-white text-xl sm:text-2xl font-bold tracking-tight">
-                Introducing Scira Lookout
+                Introducing Ziq Lookout
               </DialogTitle>
               <DialogDescription className="text-white/80 text-sm mt-1">
                 Automated search monitoring on your schedule

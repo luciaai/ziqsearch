@@ -407,18 +407,18 @@ const ChatInterface = memo(
       };
     }, [user, chatState.hasShownSignInPrompt, setPersitedHasShownSignInPrompt]);
 
-    // Timer for lookout announcement - show after 30 seconds for authenticated users
-    useEffect(() => {
-      if (user && !chatState.hasShownAnnouncementDialog) {
-        const timer = setTimeout(() => {
-          dispatch({ type: 'SET_SHOW_ANNOUNCEMENT_DIALOG', payload: true });
-          dispatch({ type: 'SET_HAS_SHOWN_ANNOUNCEMENT_DIALOG', payload: true });
-          setPersitedHasShownLookoutAnnouncement(true);
-        }, 3000);
+    // Timer for lookout announcement - DISABLED until Lookout is fixed
+    // useEffect(() => {
+    //   if (user && !chatState.hasShownAnnouncementDialog) {
+    //     const timer = setTimeout(() => {
+    //       dispatch({ type: 'SET_SHOW_ANNOUNCEMENT_DIALOG', payload: true });
+    //       dispatch({ type: 'SET_HAS_SHOWN_ANNOUNCEMENT_DIALOG', payload: true });
+    //       setPersitedHasShownLookoutAnnouncement(true);
+    //     }, 3000);
 
-        return () => clearTimeout(timer);
-      }
-    }, [user, chatState.hasShownAnnouncementDialog, setPersitedHasShownLookoutAnnouncement]);
+    //     return () => clearTimeout(timer);
+    //   }
+    // }, [user, chatState.hasShownAnnouncementDialog, setPersitedHasShownLookoutAnnouncement]);
 
     type VisibilityType = 'public' | 'private';
 

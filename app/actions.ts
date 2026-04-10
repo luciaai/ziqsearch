@@ -2880,10 +2880,8 @@ export async function getDodoSubscriptionExpiration() {
 }
 
 // Initialize QStash client
-// Use us-east-1 regional endpoint
 const qstash = new Client({ 
   token: serverEnv.QSTASH_TOKEN,
-  baseUrl: 'https://qstash.us-east-1.upstash.io',
 });
 
 // Helper function to convert frequency to cron schedule with timezone

@@ -3,6 +3,7 @@
 import React, { memo, useMemo, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { FeedbackDialog } from '@/components/feedback-dialog';
 import {
   PlusIcon,
   GearIcon,
@@ -93,8 +94,9 @@ type SignedOutLink = {
   id: string;
   label: string;
   icon: React.ComponentType<any>;
-  href: string;
+  href?: string;
   external?: boolean;
+  onClick?: () => void;
 };
 
 interface AppSidebarProps {
@@ -182,6 +184,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
   const [deleteTarget, setDeleteTarget] = React.useState<{ id: string; title?: string | null } | null>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [openMenuChatId, setOpenMenuChatId] = React.useState<string | null>(null);
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = React.useState(false);
 
   // Fetch recent chats - optimized with smart caching
   const { data: chatsData, isLoading: isChatsLoading } = useQuery({
@@ -230,7 +233,6 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
       href: 'https://git.new/ziq',
       external: true,
     },
-    // Feedback is now handled via dialog in UserProfile component
   ];
 
   const invalidateRecentChats = () => {
@@ -643,12 +645,21 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
 
               return (
                 <SidebarMenuItem key={link.id}>
-                  <SidebarMenuButton asChild tooltip={link.label} className="hover:bg-primary/10">
-                    {link.external ? (
+                  <SidebarMenuButton 
+                    asChild={!link.onClick} 
+                    tooltip={link.label} 
+                    className="hover:bg-primary/10"
+                    onClick={link.onClick ? () => { closeMobileSidebar(); link.onClick?.(); } : undefined}
+                  >
+                    {link.onClick ? (
+                      <div className="flex items-center gap-2 w-full cursor-pointer">
+                        {content}
+                      </div>
+                    ) : link.external && link.href ? (
                       <a href={link.href} target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar} className="flex items-center gap-2 w-full">
                         {content}
                       </a>
-                    ) : (
+                    ) : link.href ? (
                       <Link
                         prefetch
                         href={link.href}
@@ -657,11 +668,26 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                       >
                         {content}
                       </Link>
-                    )}
+                    ) : null}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               );
             })}
+
+          {/* Feedback button - always visible */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip="Send Feedback"
+              className="hover:bg-primary/10"
+              onClick={() => {
+                closeMobileSidebar();
+                setFeedbackDialogOpen(true);
+              }}
+            >
+              <BugIcon size={18} weight="regular" />
+              <span className="group-data-[collapsible=icon]:hidden">Feedback</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
 
           {/* Recent Chats - With Date Grouping */}
           {user && (
@@ -1179,6 +1205,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
       )}
 
       <KeyboardShortcutsDialog open={keyboardShortcutsOpen} onOpenChange={setKeyboardShortcutsOpen} />
+      <FeedbackDialog open={feedbackDialogOpen} onOpenChange={setFeedbackDialogOpen} />
     </Sidebar>
   );
 });

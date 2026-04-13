@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from 'sonner';
 
 interface FeedbackDialogProps {
@@ -77,18 +77,34 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="type">Type</Label>
-            <Select value={type} onValueChange={setType}>
-              <SelectTrigger id="type">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="bug">🐛 Bug Report</SelectItem>
-                <SelectItem value="feature">✨ Feature Request</SelectItem>
-                <SelectItem value="general">💬 General Feedback</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="space-y-3">
+            <Label>Type</Label>
+            <RadioGroup value={type} onValueChange={setType} className="grid grid-cols-2 gap-3">
+              <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-muted/50 cursor-pointer has-[:checked]:bg-primary/10 has-[:checked]:border-primary">
+                <RadioGroupItem value="compliment" id="compliment" />
+                <Label htmlFor="compliment" className="cursor-pointer flex-1">
+                  💚 Compliment
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-muted/50 cursor-pointer has-[:checked]:bg-primary/10 has-[:checked]:border-primary">
+                <RadioGroupItem value="bug" id="bug" />
+                <Label htmlFor="bug" className="cursor-pointer flex-1">
+                  🐛 Bug Report
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-muted/50 cursor-pointer has-[:checked]:bg-primary/10 has-[:checked]:border-primary">
+                <RadioGroupItem value="feature" id="feature" />
+                <Label htmlFor="feature" className="cursor-pointer flex-1">
+                  ✨ Feature Request
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-muted/50 cursor-pointer has-[:checked]:bg-primary/10 has-[:checked]:border-primary">
+                <RadioGroupItem value="general" id="general" />
+                <Label htmlFor="general" className="cursor-pointer flex-1">
+                  💬 General
+                </Label>
+              </div>
+            </RadioGroup>
           </div>
 
           <div className="space-y-2">

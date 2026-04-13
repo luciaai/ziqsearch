@@ -2,6 +2,7 @@
 
 import { useState, memo, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { FeedbackDialog } from '@/components/feedback-dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -150,10 +151,17 @@ const NavigationMenu = memo(() => {
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer" asChild>
-          <a href={'https://ziq.userjot.com'} target="_blank" className="w-full flex items-center gap-2">
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              // Trigger feedback dialog from parent
+              window.dispatchEvent(new CustomEvent('open-feedback-dialog'));
+            }}
+            className="w-full flex items-center gap-2"
+          >
             <BugIcon className="size-4" />
-            <span>Feature/Bug Request</span>
-          </a>
+            <span>Send Feedback</span>
+          </button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -190,9 +198,10 @@ const UserProfile = memo(
     const [signingOut, setSigningOut] = useState(false);
     const [signingIn, setSigningIn] = useState(false);
     const [signInDialogOpen, setSignInDialogOpen] = useState(false);
+    const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
     const [showEmail, setShowEmail] = useState(false);
     const [blurPersonalInfo] = useSyncedPreferences<boolean>('scira-blur-personal-info', false);
-    const { data: session, isPending } = useSession();
+    const { data: session, isPending} = useSession();
     const router = useRouter();
 
     // Use passed user prop if available, otherwise fall back to session
@@ -205,6 +214,13 @@ const UserProfile = memo(
 
     // Use passed Pro status instead of calculating it
     const hasActiveSubscription = isProUser;
+
+    // Listen for feedback dialog open event from NavigationMenu
+    useEffect(() => {
+      const handleOpenFeedback = () => setFeedbackDialogOpen(true);
+      window.addEventListener('open-feedback-dialog', handleOpenFeedback);
+      return () => window.removeEventListener('open-feedback-dialog', handleOpenFeedback);
+    }, []);
 
     if (isPending && !user) {
       return (
@@ -409,6 +425,8 @@ const UserProfile = memo(
             if (!open) setSigningIn(false);
           }}
         />
+
+        <FeedbackDialog open={feedbackDialogOpen} onOpenChange={setFeedbackDialogOpen} />
       </>
     );
   },

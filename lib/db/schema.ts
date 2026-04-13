@@ -178,6 +178,24 @@ export const messageUsage = pgTable('message_usage', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
+// API cost tracking table
+export const apiCostTracking = pgTable('api_cost_tracking', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => generateId()),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  model: text('model').notNull(), // e.g., 'gpt-4', 'claude-3-opus'
+  provider: text('provider').notNull(), // e.g., 'openai', 'anthropic'
+  inputTokens: integer('input_tokens').notNull().default(0),
+  outputTokens: integer('output_tokens').notNull().default(0),
+  estimatedCost: real('estimated_cost').notNull().default(0), // in USD
+  searchType: text('search_type'), // 'normal', 'extreme', null
+  messageId: text('message_id').references(() => message.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
 // Custom instructions table
 export const customInstructions = pgTable('custom_instructions', {
   id: text('id')
@@ -365,6 +383,7 @@ export const userRelations = relations(user, ({ many, one }) => ({
   chats: many(chat),
   extremeSearchUsages: many(extremeSearchUsage),
   messageUsages: many(messageUsage),
+  apiCostTracking: many(apiCostTracking),
   customInstructions: many(customInstructions),
   userPreferences: many(userPreferences),
   payments: many(payment),
@@ -432,6 +451,17 @@ export const billingSubscriptionRelations = relations(billingSubscription, ({ on
   }),
 }));
 
+export const apiCostTrackingRelations = relations(apiCostTracking, ({ one }) => ({
+  user: one(user, {
+    fields: [apiCostTracking.userId],
+    references: [user.id],
+  }),
+  message: one(message, {
+    fields: [apiCostTracking.messageId],
+    references: [message.id],
+  }),
+}));
+
 export type User = InferSelectModel<typeof user>;
 export type Session = InferSelectModel<typeof session>;
 export type Account = InferSelectModel<typeof account>;
@@ -444,8 +474,26 @@ export type Payment = InferSelectModel<typeof payment>;
 export type DodoSubscription = InferSelectModel<typeof dodosubscription>;
 export type ExtremeSearchUsage = InferSelectModel<typeof extremeSearchUsage>;
 export type MessageUsage = InferSelectModel<typeof messageUsage>;
+export type ApiCostTracking = InferSelectModel<typeof apiCostTracking>;
 export type CustomInstructions = InferSelectModel<typeof customInstructions>;
 export type UserPreferences = InferSelectModel<typeof userPreferences>;
 export type Lookout = InferSelectModel<typeof lookout>;
 export type BillingCustomer = InferSelectModel<typeof billingCustomer>;
 export type BillingSubscription = InferSelectModel<typeof billingSubscription>;
+
+// Feedback table
+export const feedback = pgTable('feedback', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => generateId()),
+  userId: text('user_id').references(() => user.id, { onDelete: 'set null' }),
+  email: text('email'),
+  name: text('name'),
+  type: text('type').notNull(), // 'bug', 'feature', 'general'
+  subject: text('subject').notNull(),
+  message: text('message').notNull(),
+  status: text('status').notNull().default('new'), // 'new', 'read', 'resolved'
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export type Feedback = InferSelectModel<typeof feedback>;

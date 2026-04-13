@@ -230,13 +230,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
       href: 'https://git.new/ziq',
       external: true,
     },
-    {
-      id: 'feedback',
-      label: 'Feedback',
-      icon: BugIcon,
-      href: 'https://ziq.userjot.com',
-      external: true,
-    },
+    // Feedback is now handled via dialog in UserProfile component
   ];
 
   const invalidateRecentChats = () => {
@@ -992,10 +986,16 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                             </a>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
-                            <a href="https://ziq.userjot.com" target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar}>
+                            <button
+                              onClick={() => {
+                                closeMobileSidebar();
+                                window.dispatchEvent(new CustomEvent('open-feedback-dialog'));
+                              }}
+                              className="w-full flex items-center"
+                            >
                               <BugIcon size={16} weight="regular" className="mr-2" />
-                              <span>Feedback</span>
-                            </a>
+                              <span>Send Feedback</span>
+                            </button>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
                             <a

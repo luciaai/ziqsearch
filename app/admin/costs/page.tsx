@@ -92,7 +92,10 @@ async function getUserCosts(): Promise<UserCostData[]> {
   const costMap = new Map(costs.map((c) => [c.userId, c]));
 
   const userData: UserCostData[] = users.map((u) => {
-    const isPro = u.subscriptionStatus === 'active';
+    // Match the same Pro logic as getLightweightUserAuth
+    const isPro = u.subscriptionStatus === 'active' || 
+                  u.subscriptionStatus === 'trialing' || 
+                  u.subscriptionStatus === 'past_due';
     const monthlyRevenue = isPro ? 14 : 0; // $14 for pro, $0 for free
     const costData = costMap.get(u.userId);
     const monthlyCost = costData?.totalCost || 0;

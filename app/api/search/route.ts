@@ -7,6 +7,7 @@ import {
   getCurrentUser,
   getLightweightUser,
 } from '@/app/actions';
+import { trackApiCost } from '@/lib/api-cost-tracker';
 import {
   convertToModelMessages,
   streamText,
@@ -911,6 +912,28 @@ export async function POST(req: Request) {
           };
         }),
       });
+
+      // Track API costs for assistant messages
+      for (const message of newMessages) {
+        if (message.role === 'assistant' && message.metadata) {
+          const inputTokens = message.metadata.inputTokens ?? 0;
+          const outputTokens = message.metadata.outputTokens ?? 0;
+          
+          if (inputTokens > 0 || outputTokens > 0) {
+            try {
+              await trackApiCost({
+                userId: lightweightUser.id,
+                model: model as string,
+                inputTokens,
+                outputTokens,
+              });
+            } catch (error) {
+              console.error('Failed to track API cost:', error);
+              // Don't fail the request if cost tracking fails
+            }
+          }
+        }
+      }
     },
   });
   const streamContext = getStreamContext();

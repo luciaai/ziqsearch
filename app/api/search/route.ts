@@ -921,11 +921,22 @@ export async function POST(req: Request) {
           
           if (inputTokens > 0 || outputTokens > 0) {
             try {
+              // Extract provider from model name
+              const modelStr = model as string;
+              let provider = 'unknown';
+              if (modelStr.startsWith('gpt-')) provider = 'openai';
+              else if (modelStr.startsWith('claude-')) provider = 'anthropic';
+              else if (modelStr.startsWith('gemini-')) provider = 'google';
+              else if (modelStr.startsWith('grok-')) provider = 'xai';
+              else if (modelStr.startsWith('deepseek-')) provider = 'deepseek';
+              
               await trackApiCost({
                 userId: lightweightUser.id,
-                model: model as string,
+                model: modelStr,
+                provider,
                 inputTokens,
                 outputTokens,
+                messageId: message.id,
               });
             } catch (error) {
               console.error('Failed to track API cost:', error);

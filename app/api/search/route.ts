@@ -931,7 +931,7 @@ export async function POST(req: Request) {
               else if (modelStr.startsWith('deepseek-')) provider = 'deepseek';
               
               await trackApiCost({
-                userId: lightweightUser.id,
+                userId: lightweightUser.userId,
                 model: modelStr,
                 provider,
                 inputTokens,

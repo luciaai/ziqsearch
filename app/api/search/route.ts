@@ -8,6 +8,21 @@ import {
   getLightweightUser,
 } from '@/app/actions';
 import { trackApiCost } from '@/lib/api-cost-tracker';
+
+// Map scira selector to actual model and provider
+function getActualModelInfo(sciraSelector: string): { model: string; provider: string } {
+  const modelMap: Record<string, { model: string; provider: string }> = {
+    'scira-default': { model: 'grok-4-1-fast-non-reasoning', provider: 'xai' },
+    'scira-grok4.1-fast-thinking': { model: 'grok-4-1-fast', provider: 'xai' },
+    'scira-nano': { model: 'llama-3.3-70b-versatile', provider: 'meta' },
+    'scira-qwen-coder': { model: 'Qwen3-Coder-480B', provider: 'alibaba' },
+    'scira-deepseek-chat': { model: 'deepseek-v3.2', provider: 'deepseek' },
+    'scira-anthropic': { model: 'claude-sonnet-4-5', provider: 'anthropic' },
+    'scira-google': { model: 'gemini-2.0-flash-exp', provider: 'google' },
+  };
+  
+  return modelMap[sciraSelector] || { model: sciraSelector, provider: 'unknown' };
+}
 import {
   convertToModelMessages,
   streamText,
@@ -857,7 +872,6 @@ export async function POST(req: Request) {
           sendReasoning: true,
           messageMetadata: ({ part }) => {
             if (part.type === 'finish') {
-              console.log('Finish part: ', part);
               const processingTime = (Date.now() - streamStartTime) / 1000;
               return {
                 model: model as string,
@@ -921,18 +935,13 @@ export async function POST(req: Request) {
           
           if (inputTokens > 0 || outputTokens > 0) {
             try {
-              // Extract provider from model name
-              const modelStr = model as string;
-              let provider = 'unknown';
-              if (modelStr.startsWith('gpt-')) provider = 'openai';
-              else if (modelStr.startsWith('claude-')) provider = 'anthropic';
-              else if (modelStr.startsWith('gemini-')) provider = 'google';
-              else if (modelStr.startsWith('grok-')) provider = 'xai';
-              else if (modelStr.startsWith('deepseek-')) provider = 'deepseek';
+              // Get the actual model and provider from the scira selector
+              const sciraSelector = (message.metadata?.model as string) || (model as string);
+              const { model: actualModel, provider } = getActualModelInfo(sciraSelector);
               
               await trackApiCost({
                 userId: lightweightUser.userId,
-                model: modelStr,
+                model: actualModel,
                 provider,
                 inputTokens,
                 outputTokens,

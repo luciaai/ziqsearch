@@ -12,15 +12,20 @@ const resend = new Resend(serverEnv.RESEND_API_KEY);
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { type, subject, message, email, name } = body;
+    const { type, message, email, name } = body;
 
     // Validate required fields
-    if (!type || !subject || !message) {
+    if (!type || !message) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
+
+    // Auto-generate subject from first 60 chars of message
+    const subject = message.length > 60 
+      ? message.substring(0, 60).trim() + '...' 
+      : message.trim();
 
     // Get current user if authenticated
     const session = await auth.api.getSession({

@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { feedback } from '@/lib/db/schema';
@@ -35,7 +36,29 @@ export default async function AdminFeedbackPage() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">📬 User Feedback</h1>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">� Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage costs and user feedback</p>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="flex gap-2 mb-8 border-b">
+          <Link 
+            href="/admin/costs"
+            className="px-4 py-2 font-medium text-muted-foreground hover:text-foreground border-b-2 border-transparent hover:border-muted"
+          >
+            💰 Costs
+          </Link>
+          <Link 
+            href="/admin/feedback"
+            className="px-4 py-2 font-medium border-b-2 border-primary text-primary"
+          >
+            📬 Feedback
+          </Link>
+        </div>
+
         <p className="text-muted-foreground mb-8">View and manage user feedback submissions</p>
 
         {/* Summary Cards */}

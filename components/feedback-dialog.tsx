@@ -16,7 +16,6 @@ interface FeedbackDialogProps {
 
 export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   const [type, setType] = useState<string>('general');
-  const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -25,8 +24,8 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!subject || !message) {
-      toast.error('Please fill in all required fields');
+    if (!message) {
+      toast.error('Please enter a message');
       return;
     }
 
@@ -38,7 +37,6 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type,
-          subject,
           message,
           email: email || undefined,
           name: name || undefined,
@@ -53,7 +51,6 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
       
       // Reset form
       setType('general');
-      setSubject('');
       setMessage('');
       setEmail('');
       setName('');
@@ -108,24 +105,13 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="subject">Subject *</Label>
-            <Input
-              id="subject"
-              placeholder="Brief description"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
             <Label htmlFor="message">Message *</Label>
             <Textarea
               id="message"
-              placeholder="Tell us more..."
+              placeholder="Tell us what you think..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              rows={5}
+              rows={6}
               required
             />
           </div>

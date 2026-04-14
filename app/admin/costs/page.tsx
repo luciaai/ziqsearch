@@ -42,6 +42,7 @@ async function getUserCosts(): Promise<UserCostData[]> {
       email: user.email,
       name: user.name,
       subscriptionStatus: billingSubscription.status,
+      stripePriceId: billingSubscription.stripePriceId,
     })
     .from(user)
     .leftJoin(billingSubscription, eq(user.id, billingSubscription.userId));
@@ -91,35 +92,46 @@ async function getUserCosts(): Promise<UserCostData[]> {
   // Combine data
   const costMap = new Map(costs.map((c) => [c.userId, c]));
 
-  const userData: UserCostData[] = users.map((u) => {
-    // Match the same Pro logic as getLightweightUserAuth
-    const isPro = u.subscriptionStatus === 'active' || 
-                  u.subscriptionStatus === 'trialing' || 
-                  u.subscriptionStatus === 'past_due';
-    const monthlyRevenue = isPro ? 14 : 0; // $14 for pro, $0 for free
-    const costData = costMap.get(u.userId);
-    const monthlyCost = costData?.totalCost || 0;
-    const searchCount = costData?.searchCount || 0;
-    const profit = monthlyRevenue - monthlyCost;
+  const userData: UserCostData[] = users
+    .filter((u) => {
+      // Only show users who have cost data (have actually used the app this month)
+      return costMap.has(u.userId);
+    })
+    .map((u) => {
+      // Match the same Pro logic as getLightweightUserAuth
+      const isPro = u.subscriptionStatus === 'active' || 
+                    u.subscriptionStatus === 'trialing' || 
+                    u.subscriptionStatus === 'past_due';
+      
+      // Check if this is a coupon/manual Pro user (free Pro)
+      const isCouponUser = u.stripePriceId === 'price_manual_pro';
+      
+      // Coupon users generate $0 revenue, paying users generate $14
+      const monthlyRevenue = isPro && !isCouponUser ? 14 : 0;
+      
+      const costData = costMap.get(u.userId);
+      const monthlyCost = costData?.totalCost || 0;
+      const searchCount = costData?.searchCount || 0;
+      const profit = monthlyRevenue - monthlyCost;
 
-    let status: 'profit' | 'break-even' | 'loss';
-    if (profit > 2) status = 'profit';
-    else if (profit >= -2) status = 'break-even';
-    else status = 'loss';
+      let status: 'profit' | 'break-even' | 'loss';
+      if (profit > 2) status = 'profit';
+      else if (profit >= -2) status = 'break-even';
+      else status = 'loss';
 
-    return {
-      userId: u.userId,
-      email: u.email,
-      name: u.name,
-      isPro,
-      monthlyRevenue,
-      monthlyCost,
-      profit,
-      searchCount,
-      status,
-      apiCalls: apiCallsByUser.get(u.userId) || [],
-    };
-  });
+      return {
+        userId: u.userId,
+        email: u.email,
+        name: u.name,
+        isPro,
+        monthlyRevenue,
+        monthlyCost,
+        profit,
+        searchCount,
+        status,
+        apiCalls: apiCallsByUser.get(u.userId) || [],
+      };
+    });
 
   // Sort by profit (lowest first - biggest losers at top)
   return userData.sort((a, b) => a.profit - b.profit);

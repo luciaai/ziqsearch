@@ -55,9 +55,16 @@ export function UserCostRow({
         </td>
         <td className="p-4">
           {isPro ? (
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-              Pro
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                Pro
+              </span>
+              {monthlyRevenue === 0 && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                  Coupon
+                </span>
+              )}
+            </div>
           ) : (
             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground">
               Free

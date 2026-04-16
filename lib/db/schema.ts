@@ -337,6 +337,7 @@ export const billingSubscription = pgTable('billing_subscription', {
   trialStart: timestamp('trial_start'),
   trialEnd: timestamp('trial_end'),
   metadata: json('metadata'),
+  discount: json('discount'), // Stores Stripe discount/coupon info
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });

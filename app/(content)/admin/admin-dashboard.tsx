@@ -8,6 +8,8 @@ import { formatCost } from '@/lib/cost-calculator';
 import {
   getCurrentMonthCosts,
   getAllUserCosts,
+  getProUserCount,
+  getModelUsageBreakdown,
   type UserCostSummary,
 } from '@/app/actions/cost-analysis';
 
@@ -22,6 +24,8 @@ export function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [monthData, setMonthData] = useState<MonthCostData | null>(null);
   const [allUsers, setAllUsers] = useState<UserCostSummary[]>([]);
+  const [proUserCounts, setProUserCounts] = useState<{ paying: number; coupon: number; free: number }>({ paying: 0, coupon: 0, free: 0 });
+  const [modelBreakdown, setModelBreakdown] = useState<Array<{ model: string; provider: string; cost: number; count: number; totalTokens: number }>>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,13 +37,17 @@ export function AdminDashboard() {
       setLoading(true);
       setError(null);
 
-      const [monthCosts, userCosts] = await Promise.all([
+      const [monthCosts, userCosts, proCounts, models] = await Promise.all([
         getCurrentMonthCosts(),
         getAllUserCosts(),
+        getProUserCount(),
+        getModelUsageBreakdown(),
       ]);
 
       setMonthData(monthCosts);
       setAllUsers(userCosts.sort((a, b) => b.totalCost - a.totalCost));
+      setProUserCounts(proCounts);
+      setModelBreakdown(models);
     } catch (err) {
       console.error('Error loading admin data:', err);
       setError('Failed to load admin data');
@@ -78,11 +86,10 @@ export function AdminDashboard() {
 
   // Calculate user statistics
   const totalUsers = allUsers.length;
-  const proUsers = allUsers.filter(u => u.totalCost > 0).length;
-  const freeUsers = totalUsers - proUsers;
+  const { paying: payingProUsers, coupon: couponProUsers, free: freeUsers } = proUserCounts;
 
-  // Calculate total revenue (assuming $10/month per pro user)
-  const totalRevenue = proUsers * 10;
+  // Calculate total revenue ($14/month per PAYING pro user, $0 for coupon users)
+  const totalRevenue = payingProUsers * 14;
   const totalCosts = allUsers.reduce((sum, u) => sum + u.totalCost, 0);
   const thisMonthCost = monthData?.totalCost || 0;
   const profitMargin = totalRevenue > 0 ? ((totalRevenue - totalCosts) / totalRevenue) * 100 : 0;
@@ -105,7 +112,7 @@ export function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              {proUsers} Pro • {freeUsers} Free
+              {payingProUsers + couponProUsers} Pro • {freeUsers} Free
             </p>
           </CardContent>
         </Card>
@@ -141,7 +148,7 @@ export function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              {proUsers} Pro users × $10
+              {payingProUsers} paying Pro × $14
             </p>
           </CardContent>
         </Card>
@@ -219,35 +226,27 @@ export function AdminDashboard() {
             </CardHeader>
             <CardContent>
               {(() => {
-                const modelTotals: Record<string, { cost: number; count: number }> = {};
-                
-                allUsers.forEach(user => {
-                  user.modelBreakdown.forEach(model => {
-                    if (!modelTotals[model.model]) {
-                      modelTotals[model.model] = { cost: 0, count: 0 };
-                    }
-                    modelTotals[model.model].cost += model.cost;
-                    modelTotals[model.model].count += model.messageCount;
-                  });
-                });
+                if (modelBreakdown.length === 0) {
+                  return <p className="text-sm text-muted-foreground">No model usage data available</p>;
+                }
 
-                const sortedModels = Object.entries(modelTotals)
-                  .sort(([, a], [, b]) => b.cost - a.cost);
+                const sortedModels = modelBreakdown;
 
                 return (
                   <div className="space-y-2">
-                    {sortedModels.map(([model, data]) => (
+                    {sortedModels.map((modelData) => (
                       <div
-                        key={model}
+                        key={modelData.model}
                         className="flex items-center justify-between p-3 rounded-lg border"
                       >
                         <div>
-                          <p className="font-medium">{model}</p>
+                          <p className="font-medium">{modelData.model}</p>
+                          <p className="text-xs text-muted-foreground capitalize">{modelData.provider}</p>
                           <p className="text-xs text-muted-foreground">
-                            {data.count} messages
+                            {modelData.count} API calls • {modelData.totalTokens.toLocaleString()} tokens
                           </p>
                         </div>
-                        <p className="font-bold">{formatCost(data.cost)}</p>
+                        <p className="font-bold">{formatCost(modelData.cost)}</p>
                       </div>
                     ))}
                   </div>

@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/lib/db';
-import { message, chat, user } from '@/lib/db/schema';
+import { message, chat, user, apiCostTracking, billingSubscription } from '@/lib/db/schema';
 import { eq, and, gte, sql } from 'drizzle-orm';
 import { calculateCost } from '@/lib/cost-calculator';
 
@@ -111,56 +111,136 @@ export async function calculateUserCosts(userId: string, startDate?: Date): Prom
 }
 
 /**
- * Get current month costs
+ * Get current month costs from api_cost_tracking table
  */
 export async function getCurrentMonthCosts() {
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  // Get all users
-  const allUsers = await db.select({ id: user.id }).from(user);
+  // Get aggregated costs per user from api_cost_tracking
+  const userCosts = await db
+    .select({
+      userId: apiCostTracking.userId,
+      totalCost: sql<number>`SUM(${apiCostTracking.estimatedCost})`,
+    })
+    .from(apiCostTracking)
+    .where(gte(apiCostTracking.createdAt, startOfMonth))
+    .groupBy(apiCostTracking.userId);
 
-  let totalCost = 0;
-  let userCount = 0;
-  const topUsers: Array<{ userId: string; cost: number }> = [];
-
-  for (const u of allUsers) {
-    const userCosts = await calculateUserCosts(u.id, startOfMonth);
-    if (userCosts.totalCost > 0) {
-      totalCost += userCosts.totalCost;
-      userCount += 1;
-      topUsers.push({ userId: u.id, cost: userCosts.totalCost });
-    }
-  }
-
-  topUsers.sort((a, b) => b.cost - a.cost);
+  const totalCost = userCosts.reduce((sum, u) => sum + (u.totalCost || 0), 0);
+  const userCount = userCosts.length;
+  const topUsers = userCosts
+    .map(u => ({ userId: u.userId, cost: u.totalCost || 0 }))
+    .sort((a, b) => b.cost - a.cost)
+    .slice(0, 10);
 
   return {
     totalCost,
     userCount,
     averageCostPerUser: userCount > 0 ? totalCost / userCount : 0,
-    topUsers: topUsers.slice(0, 10),
+    topUsers,
   };
 }
 
 /**
- * Get all user costs (including free users with $0 usage)
+ * Get all user costs from api_cost_tracking table
  */
 export async function getAllUserCosts(): Promise<UserCostSummary[]> {
   try {
-    // Get ALL users from the user table
-    const allUsers = await db.select({ id: user.id }).from(user);
+    // Get all users with their cost data from api_cost_tracking
+    const costs = await db
+      .select({
+        userId: user.id,
+        userName: user.name,
+        userEmail: user.email,
+        totalCost: sql<number>`COALESCE(SUM(${apiCostTracking.estimatedCost}), 0)`,
+        messageCount: sql<number>`COALESCE(COUNT(${apiCostTracking.id}), 0)`,
+        totalTokens: sql<number>`COALESCE(SUM(${apiCostTracking.inputTokens} + ${apiCostTracking.outputTokens}), 0)`,
+      })
+      .from(user)
+      .leftJoin(apiCostTracking, eq(user.id, apiCostTracking.userId))
+      .groupBy(user.id, user.name, user.email);
 
-    const userCosts: UserCostSummary[] = [];
-
-    for (const u of allUsers) {
-      const costs = await calculateUserCosts(u.id);
-      userCosts.push(costs);
-    }
-
-    return userCosts;
+    return costs.map(c => ({
+      userId: c.userId,
+      userName: c.userName,
+      userEmail: c.userEmail,
+      totalCost: c.totalCost || 0,
+      messageCount: c.messageCount || 0,
+      totalTokens: c.totalTokens || 0,
+      averageCostPerMessage: c.messageCount > 0 ? (c.totalCost || 0) / c.messageCount : 0,
+      modelBreakdown: [], // Can add this later if needed
+    }));
   } catch (error) {
     console.error('Error getting all user costs:', error);
     throw error;
+  }
+}
+
+/**
+ * Get count of paying Pro users (excluding coupon/manual grants)
+ */
+export async function getProUserCount(): Promise<{ paying: number; coupon: number; free: number }> {
+  try {
+    const allUsers = await db.select({ id: user.id }).from(user);
+    
+    const subscriptions = await db
+      .select({
+        userId: billingSubscription.userId,
+        status: billingSubscription.status,
+        metadata: billingSubscription.metadata,
+      })
+      .from(billingSubscription)
+      .where(
+        sql`${billingSubscription.status} IN ('active', 'trialing', 'past_due')`
+      );
+
+    let payingPro = 0;
+    let couponPro = 0;
+
+    for (const sub of subscriptions) {
+      const metadata = sub.metadata as { manual_grant?: boolean } | null;
+      if (metadata?.manual_grant === true) {
+        couponPro++;
+      } else {
+        payingPro++;
+      }
+    }
+
+    const freeUsers = allUsers.length - payingPro - couponPro;
+
+    return { paying: payingPro, coupon: couponPro, free: freeUsers };
+  } catch (error) {
+    console.error('Error getting pro user count:', error);
+    return { paying: 0, coupon: 0, free: 0 };
+  }
+}
+
+/**
+ * Get model usage breakdown from api_cost_tracking
+ */
+export async function getModelUsageBreakdown(): Promise<Array<{ model: string; provider: string; cost: number; count: number; totalTokens: number }>> {
+  try {
+    const modelStats = await db
+      .select({
+        model: apiCostTracking.model,
+        provider: apiCostTracking.provider,
+        totalCost: sql<number>`SUM(${apiCostTracking.estimatedCost})`,
+        count: sql<number>`COUNT(*)`,
+        totalTokens: sql<number>`SUM(${apiCostTracking.inputTokens} + ${apiCostTracking.outputTokens})`,
+      })
+      .from(apiCostTracking)
+      .groupBy(apiCostTracking.model, apiCostTracking.provider);
+
+    return modelStats.map(m => ({
+      model: m.model,
+      provider: m.provider,
+      cost: m.totalCost || 0,
+      count: m.count || 0,
+      totalTokens: m.totalTokens || 0,
+    })).sort((a, b) => b.cost - a.cost);
+  } catch (error) {
+    console.error('Error getting model usage breakdown:', error);
+    return [];
   }
 }

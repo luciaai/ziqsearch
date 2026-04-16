@@ -49,6 +49,12 @@ interface AuthCardProps {
 }
 
 const SignInButton = ({ title, provider, loading, setLoading, callbackURL, icon, isLastUsed }: SignInButtonProps) => {
+  // Detect if user is on mobile device
+  const isMobile = () => {
+    if (typeof window === 'undefined') return false;
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  };
+
   return (
     <button
       className={`
@@ -65,6 +71,7 @@ const SignInButton = ({ title, provider, loading, setLoading, callbackURL, icon,
       `}
       disabled={loading}
       onClick={async () => {
+        setLoading(true);
         await signIn.social(
           {
             provider,
@@ -74,6 +81,8 @@ const SignInButton = ({ title, provider, loading, setLoading, callbackURL, icon,
             onRequest: () => {
               setLoading(true);
             },
+            // Use redirect mode on mobile, popup on desktop
+            newTab: !isMobile(),
           },
         );
       }}

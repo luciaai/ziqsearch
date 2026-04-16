@@ -44,6 +44,7 @@ async function getUserCosts(): Promise<UserCostData[]> {
       subscriptionStatus: billingSubscription.status,
       stripePriceId: billingSubscription.stripePriceId,
       metadata: billingSubscription.metadata,
+      discount: billingSubscription.discount,
     })
     .from(user)
     .leftJoin(billingSubscription, eq(user.id, billingSubscription.userId));
@@ -105,9 +106,16 @@ async function getUserCosts(): Promise<UserCostData[]> {
                     u.subscriptionStatus === 'past_due';
       
       // Check if this is a coupon/manual Pro user (free Pro)
-      // Check metadata for manual_grant flag (works for all coupons/manual grants)
+      // Detect coupon users by:
+      // 1. Has a Stripe discount/coupon applied
+      // 2. manual_grant metadata flag  
+      // 3. price_manual_pro price ID
       const metadata = u.metadata as { manual_grant?: boolean } | null;
-      const isCouponUser = metadata?.manual_grant === true;
+      const hasDiscount = u.discount !== null;
+      const isCouponUser = 
+        hasDiscount ||
+        metadata?.manual_grant === true || 
+        u.stripePriceId === 'price_manual_pro';
       
       // Coupon users generate $0 revenue, paying users generate $14
       const monthlyRevenue = isPro && !isCouponUser ? 14 : 0;

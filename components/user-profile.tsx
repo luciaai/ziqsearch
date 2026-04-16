@@ -344,28 +344,35 @@ const UserProfile = memo(
 
               <DropdownMenuItem
                 className="cursor-pointer w-full flex items-center justify-between gap-2"
-                onClick={() =>
-                  signOut({
-                    fetchOptions: {
-                      onRequest: () => {
-                        setSigningOut(true);
-                        toast.loading('Signing out...');
+                onSelect={async (e) => {
+                  e.preventDefault();
+                  try {
+                    await signOut({
+                      fetchOptions: {
+                        onRequest: () => {
+                          setSigningOut(true);
+                          toast.loading('Signing out...');
+                        },
+                        onSuccess: () => {
+                          setSigningOut(false);
+                          localStorage.clear();
+                          toast.success('Signed out successfully');
+                          toast.dismiss();
+                          window.location.href = '/new';
+                        },
+                        onError: () => {
+                          setSigningOut(false);
+                          toast.error('Failed to sign out');
+                          window.location.reload();
+                        },
                       },
-                      onSuccess: () => {
-                        setSigningOut(false);
-                        localStorage.clear();
-                        toast.success('Signed out successfully');
-                        toast.dismiss();
-                        window.location.href = '/new';
-                      },
-                      onError: () => {
-                        setSigningOut(false);
-                        toast.error('Failed to sign out');
-                        window.location.reload();
-                      },
-                    },
-                  })
-                }
+                    });
+                  } catch (error) {
+                    console.error('Sign out error:', error);
+                    setSigningOut(false);
+                    toast.error('Failed to sign out');
+                  }
+                }}
               >
                 <span>Sign Out</span>
                 <SignOutIcon className="size-4" />

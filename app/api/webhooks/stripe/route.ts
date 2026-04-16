@@ -102,6 +102,7 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
     trialStart: (subscription as any).trial_start ? new Date((subscription as any).trial_start * 1000) : null,
     trialEnd: (subscription as any).trial_end ? new Date((subscription as any).trial_end * 1000) : null,
     metadata: subscription.metadata,
+    discount: subscription.discounts && subscription.discounts.length > 0 ? subscription.discounts[0] : null, // Store first discount/coupon info
   };
 
   // Upsert subscription

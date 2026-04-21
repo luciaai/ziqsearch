@@ -13,6 +13,8 @@ export interface UserCostSummary {
   messageCount: number;
   totalTokens: number;
   averageCostPerMessage: number;
+  isPro: boolean;
+  isCoupon: boolean;
   modelBreakdown: Array<{
     model: string;
     cost: number;
@@ -49,6 +51,8 @@ export async function calculateUserCosts(userId: string, startDate?: Date): Prom
         messageCount: 0,
         totalTokens: 0,
         averageCostPerMessage: 0,
+        isPro: false,
+        isCoupon: false,
         modelBreakdown: [],
       };
     }
@@ -102,6 +106,8 @@ export async function calculateUserCosts(userId: string, startDate?: Date): Prom
       messageCount: messages.length,
       totalTokens,
       averageCostPerMessage: messages.length > 0 ? totalCost / messages.length : 0,
+      isPro: false,
+      isCoupon: false,
       modelBreakdown,
     };
   } catch (error) {
@@ -147,7 +153,7 @@ export async function getCurrentMonthCosts() {
  */
 export async function getAllUserCosts(): Promise<UserCostSummary[]> {
   try {
-    // Get all users with their cost data from api_cost_tracking
+    // Get all users with their cost data
     const costs = await db
       .select({
         userId: user.id,
@@ -161,16 +167,42 @@ export async function getAllUserCosts(): Promise<UserCostSummary[]> {
       .leftJoin(apiCostTracking, eq(user.id, apiCostTracking.userId))
       .groupBy(user.id, user.name, user.email);
 
-    return costs.map(c => ({
-      userId: c.userId,
-      userName: c.userName,
-      userEmail: c.userEmail,
-      totalCost: c.totalCost || 0,
-      messageCount: c.messageCount || 0,
-      totalTokens: c.totalTokens || 0,
-      averageCostPerMessage: c.messageCount > 0 ? (c.totalCost || 0) / c.messageCount : 0,
-      modelBreakdown: [], // Can add this later if needed
-    }));
+    // Get all subscriptions separately
+    const subscriptions = await db
+      .select({
+        userId: billingSubscription.userId,
+        status: billingSubscription.status,
+        discount: billingSubscription.discount,
+        metadata: billingSubscription.metadata,
+      })
+      .from(billingSubscription);
+
+    // Create a map of subscriptions by userId
+    const subMap = new Map(subscriptions.map(s => [s.userId, s]));
+
+    return costs.map(c => {
+      const sub = subMap.get(c.userId);
+      const isPro = sub?.status === 'active' || 
+                    sub?.status === 'trialing' || 
+                    sub?.status === 'past_due';
+      
+      const metadata = sub?.metadata as { manual_grant?: boolean } | null;
+      const hasDiscount = sub?.discount !== null;
+      const isCoupon = hasDiscount || metadata?.manual_grant === true;
+
+      return {
+        userId: c.userId,
+        userName: c.userName,
+        userEmail: c.userEmail,
+        totalCost: c.totalCost || 0,
+        messageCount: c.messageCount || 0,
+        totalTokens: c.totalTokens || 0,
+        averageCostPerMessage: c.messageCount > 0 ? (c.totalCost || 0) / c.messageCount : 0,
+        isPro,
+        isCoupon,
+        modelBreakdown: [], // Can add this later if needed
+      };
+    });
   } catch (error) {
     console.error('Error getting all user costs:', error);
     throw error;
@@ -189,6 +221,7 @@ export async function getProUserCount(): Promise<{ paying: number; coupon: numbe
         userId: billingSubscription.userId,
         status: billingSubscription.status,
         metadata: billingSubscription.metadata,
+        discount: billingSubscription.discount,
       })
       .from(billingSubscription)
       .where(
@@ -200,7 +233,18 @@ export async function getProUserCount(): Promise<{ paying: number; coupon: numbe
 
     for (const sub of subscriptions) {
       const metadata = sub.metadata as { manual_grant?: boolean } | null;
-      if (metadata?.manual_grant === true) {
+      const hasDiscount = sub.discount !== null;
+      
+      console.log('Subscription check:', {
+        userId: sub.userId,
+        status: sub.status,
+        hasDiscount,
+        hasManualGrant: metadata?.manual_grant === true,
+        discount: sub.discount
+      });
+      
+      // Check if user has a coupon via discount field or manual_grant metadata
+      if (hasDiscount || metadata?.manual_grant === true) {
         couponPro++;
       } else {
         payingPro++;

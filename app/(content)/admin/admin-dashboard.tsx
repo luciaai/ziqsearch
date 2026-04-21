@@ -193,9 +193,22 @@ export function AdminDashboard() {
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="font-medium">{user.userName || 'Unknown User'}</p>
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${user.totalCost > 0 ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                            {user.totalCost > 0 ? 'Pro' : 'Free'}
-                          </span>
+                          {user.isPro ? (
+                            <>
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                                Pro
+                              </span>
+                              {user.isCoupon && (
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
+                                  Coupon
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                              Free
+                            </span>
+                          )}
                         </div>
                         <p className="text-xs text-muted-foreground">{user.userEmail}</p>
                         <p className="text-xs text-muted-foreground">

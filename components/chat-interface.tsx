@@ -407,7 +407,7 @@ const ChatInterface = memo(
       };
     }, [user, chatState.hasShownSignInPrompt, setPersitedHasShownSignInPrompt]);
 
-    // Timer for lookout announcement - DISABLED until Lookout is fixed
+    // Timer for lookout announcement - DISABLED per user request
     // useEffect(() => {
     //   if (user && !chatState.hasShownAnnouncementDialog) {
     //     const timer = setTimeout(() => {

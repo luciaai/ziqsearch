@@ -30,6 +30,7 @@ interface LookoutCardProps {
   onStatusChange: (id: string, status: 'active' | 'paused' | 'archived' | 'running') => void;
   onDelete: (id: string) => void;
   onTest: (id: string) => void;
+  onEdit: (id: string) => void;
   onOpenDetails: (lookout: Lookout) => void;
   showActions?: boolean;
 }
@@ -40,6 +41,7 @@ export function LookoutCard({
   onStatusChange,
   onDelete,
   onTest,
+  onEdit,
   onOpenDetails,
   showActions = true,
 }: LookoutCardProps) {
@@ -91,6 +93,7 @@ export function LookoutCard({
                 onStatusChange={onStatusChange}
                 onDelete={onDelete}
                 onTest={onTest}
+                onEdit={onEdit}
               />
             </div>
           )}

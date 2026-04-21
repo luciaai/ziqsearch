@@ -223,6 +223,13 @@ export default function LookoutPage() {
     setIsSidebarOpen(false);
   };
 
+  const handleEdit = (id: string) => {
+    const lookout = allLookouts.find((l) => l.id === id);
+    if (lookout) {
+      handleEditLookout(lookout);
+    }
+  };
+
   const handleLookoutChange = (newLookout: Lookout) => {
     setSelectedLookout(newLookout);
   };
@@ -470,6 +477,7 @@ export default function LookoutPage() {
                         onStatusChange={handleStatusChange}
                         onDelete={handleDelete}
                         onTest={handleTest}
+                        onEdit={handleEdit}
                         onOpenDetails={handleOpenLookoutDetails}
                       />
                     ))}
@@ -492,6 +500,7 @@ export default function LookoutPage() {
                         onStatusChange={handleStatusChange}
                         onDelete={handleDelete}
                         onTest={handleTest}
+                        onEdit={handleEdit}
                         onOpenDetails={handleOpenLookoutDetails}
                         showActions={false}
                       />

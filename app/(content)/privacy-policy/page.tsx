@@ -33,7 +33,7 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p className="text-sm text-muted-foreground">
-            Last updated: April 7, 2026
+            Last updated: April 20, 2026
           </p>
         </div>
 
@@ -51,8 +51,9 @@ export default function PrivacyPage() {
               <strong>Search Queries:</strong> The questions and searches you submit to our search engine.
             </li>
             <li>
-              <strong>Usage Data:</strong> Information about how you interact with our service, including features used
-              and time spent on the platform.
+              <strong>Usage Data:</strong> Information about how you interact with our service, including features used,
+              time spent on the platform, and search activity. For Pro subscribers, we track API usage to ensure accurate
+              billing and service optimization. This helps us maintain fair pricing and improve performance.
             </li>
             <li>
               <strong>Device Information:</strong> Information about your device, browser type, IP address, and
@@ -83,6 +84,8 @@ export default function PrivacyPage() {
             <li>To understand how users interact with our platform</li>
             <li>To personalize and enhance your experience</li>
             <li>To monitor and analyze usage patterns and trends</li>
+            <li>To ensure accurate billing for Pro subscriptions based on actual usage</li>
+            <li>To optimize service performance and manage costs</li>
             <li>To detect, prevent, and address technical issues</li>
           </ul>
 

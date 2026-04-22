@@ -633,6 +633,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
 
 
           {/* Guest Info Links when signed out */}
+          <div suppressHydrationWarning>
           {!user &&
             signedOutLinks.map((link) => {
               const Icon = link.icon;
@@ -682,6 +683,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                 </SidebarMenuItem>
               );
             })}
+          </div>
 
           {/* Feedback button - always visible */}
           <SidebarMenuItem>

@@ -153,19 +153,32 @@ export async function getCurrentMonthCosts() {
  */
 export async function getAllUserCosts(): Promise<UserCostSummary[]> {
   try {
-    // Get all users with their cost data
+    // Get all API usage grouped by userId (includes anonymous users)
     const costs = await db
       .select({
-        userId: user.id,
-        userName: user.name,
-        userEmail: user.email,
+        userId: apiCostTracking.userId,
         totalCost: sql<number>`COALESCE(SUM(${apiCostTracking.estimatedCost}), 0)`,
         messageCount: sql<number>`COALESCE(COUNT(${apiCostTracking.id}), 0)`,
         totalTokens: sql<number>`COALESCE(SUM(${apiCostTracking.inputTokens} + ${apiCostTracking.outputTokens}), 0)`,
       })
-      .from(user)
-      .leftJoin(apiCostTracking, eq(user.id, apiCostTracking.userId))
-      .groupBy(user.id, user.name, user.email);
+      .from(apiCostTracking)
+      .groupBy(apiCostTracking.userId);
+
+    // Get user details for all userIds
+    const userIds = costs.map(c => c.userId);
+    const users = userIds.length > 0 
+      ? await db
+          .select({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          })
+          .from(user)
+          .where(sql`${user.id} = ANY(${userIds})`)
+      : [];
+
+    // Create a map of users by id
+    const userMap = new Map(users.map(u => [u.id, u]));
 
     // Get all subscriptions separately
     const subscriptions = await db
@@ -181,6 +194,7 @@ export async function getAllUserCosts(): Promise<UserCostSummary[]> {
     const subMap = new Map(subscriptions.map(s => [s.userId, s]));
 
     return costs.map(c => {
+      const userInfo = userMap.get(c.userId);
       const sub = subMap.get(c.userId);
       const isPro = sub?.status === 'active' || 
                     sub?.status === 'trialing' || 
@@ -192,8 +206,8 @@ export async function getAllUserCosts(): Promise<UserCostSummary[]> {
 
       return {
         userId: c.userId,
-        userName: c.userName,
-        userEmail: c.userEmail,
+        userName: userInfo?.name || 'Anonymous User',
+        userEmail: userInfo?.email || null,
         totalCost: c.totalCost || 0,
         messageCount: c.messageCount || 0,
         totalTokens: c.totalTokens || 0,

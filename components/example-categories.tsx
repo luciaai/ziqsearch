@@ -146,6 +146,32 @@ export const ExampleCategories = memo(({ onSelectExample, onCategorySelect, clas
 
   return (
     <div className={cn('w-full relative', className)}>
+      {/* Hero Section */}
+      <div className="text-center mb-8 space-y-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="space-y-3"
+        >
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
+            <span className="bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
+              Search Smarter
+            </span>
+          </h1>
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+            AI-powered search across X, Reddit, YouTube, research papers, and the web.
+            <br className="hidden sm:block" />
+            Get answers with sources you can trust.
+          </p>
+        </motion.div>
+
+        {/* Subtle gradient background effect */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 -z-10 opacity-30 blur-3xl">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 rounded-full" />
+        </div>
+      </div>
+
       {/* Category Buttons - always visible and in flow */}
       <div
         className={cn(
@@ -153,22 +179,26 @@ export const ExampleCategories = memo(({ onSelectExample, onCategorySelect, clas
           selectedCategory ? 'opacity-0 pointer-events-none' : 'opacity-100',
         )}
       >
-        {categories.map((category) => (
+        {categories.map((category, index) => (
           <motion.button
             key={category.id}
             onClick={() => handleCategoryClick(category.id)}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.05 }}
             className={cn(
-              'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium',
-              'border border-border bg-background text-muted-foreground',
-              'hover:bg-secondary hover:text-secondary-foreground hover:border-secondary',
-              'transition-colors duration-150',
+              'inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium',
+              'border border-border/50 bg-background/50 backdrop-blur-sm text-foreground',
+              'hover:bg-primary/5 hover:border-primary/30 hover:shadow-sm',
+              'transition-all duration-200',
             )}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <HugeiconsIcon icon={category.icon} size={14} strokeWidth={1.5} />
+            <HugeiconsIcon icon={category.icon} size={16} strokeWidth={1.5} />
             <span>{category.name}</span>
             {category.badge && (
-              <span className="px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide rounded bg-secondary text-secondary-foreground">
+              <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide rounded-md bg-primary/10 text-primary">
                 {category.badge}
               </span>
             )}
@@ -182,57 +212,64 @@ export const ExampleCategories = memo(({ onSelectExample, onCategorySelect, clas
           <motion.div
             ref={cardRef}
             key={activeCategory.id}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="absolute inset-x-0 top-0 z-10 border rounded-md bg-card"
+            initial={{ opacity: 0, scale: 0.96, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: -10 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="absolute inset-x-0 top-0 z-10 border border-border/50 rounded-xl bg-card/95 backdrop-blur-md shadow-xl"
           >
             {/* Header - clickable to dismiss */}
             <button
               onClick={handleDismiss}
-              className="flex items-center justify-between w-full px-3 sm:px-4 py-2.5 sm:py-3"
+              className="flex items-center justify-between w-full px-4 sm:px-5 py-3 sm:py-4 hover:bg-accent/50 transition-colors rounded-t-xl"
             >
-              <div className="flex items-center gap-2">
-                <HugeiconsIcon icon={activeCategory.icon} size={16} className="sm:size-[18px]" strokeWidth={1.5} />
-                <span className="text-sm sm:text-base font-medium">{activeCategory.name}</span>
+              <div className="flex items-center gap-2.5">
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                  <HugeiconsIcon icon={activeCategory.icon} size={18} strokeWidth={1.5} className="text-primary" />
+                </div>
+                <span className="text-base sm:text-lg font-semibold">{activeCategory.name}</span>
                 {activeCategory.badge && (
-                  <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-medium uppercase tracking-wide rounded bg-secondary text-secondary-foreground">
+                  <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-primary/10 text-primary">
                     {activeCategory.badge}
                   </span>
                 )}
               </div>
               <div
                 className={cn(
-                  'flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-md',
-                  'text-muted-foreground',
-                  'bg-muted/50',
+                  'flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 rounded-lg',
+                  'text-muted-foreground hover:text-foreground',
+                  'bg-muted/50 hover:bg-muted transition-colors',
                 )}
               >
-                <HugeiconsIcon icon={Cancel01Icon} size={12} className="sm:size-[14px]" strokeWidth={2} />
+                <HugeiconsIcon icon={Cancel01Icon} size={14} strokeWidth={2} />
               </div>
             </button>
 
             {/* Examples */}
-            <div className="p-1 sm:p-1.5">
-              {activeCategory.examples.map((example) => (
-                <button
+            <div className="p-2 sm:p-2.5 space-y-1">
+              {activeCategory.examples.map((example, index) => (
+                <motion.button
                   key={example.text}
                   onClick={() => handleExampleSelect(example.text, example.group)}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2, delay: index * 0.05 }}
                   className={cn(
-                    'group flex items-center justify-between w-full px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-sm',
-                    'text-left text-xs sm:text-sm transition-colors',
-                    'text-muted-foreground hover:text-foreground hover:bg-accent',
+                    'group flex items-center justify-between w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg',
+                    'text-left text-sm transition-all',
+                    'text-muted-foreground hover:text-foreground',
+                    'hover:bg-primary/5 hover:shadow-sm',
+                    'border border-transparent hover:border-primary/20',
                   )}
                 >
-                  <span className="line-clamp-1">{example.text}</span>
+                  <span className="line-clamp-1 font-medium">{example.text}</span>
                   <HugeiconsIcon
                     icon={ArrowRight01Icon}
-                    size={12}
-                    className="sm:size-[14px] shrink-0 ml-2 opacity-0 -translate-x-1 transition-all group-hover:opacity-50 group-hover:translate-x-0"
+                    size={14}
+                    className="shrink-0 ml-3 opacity-0 -translate-x-2 transition-all group-hover:opacity-70 group-hover:translate-x-0"
                     strokeWidth={2}
                   />
-                </button>
+                </motion.button>
               ))}
             </div>
           </motion.div>

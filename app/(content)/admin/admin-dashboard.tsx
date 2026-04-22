@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { formatCost } from '@/lib/cost-calculator';
 import {
   getCurrentMonthCosts,
-  getAllUserCosts,
+  getAllUsersWithCosts,
   getProUserCount,
   getModelUsageBreakdown,
   type UserCostSummary,
@@ -39,7 +39,7 @@ export function AdminDashboard() {
 
       const [monthCosts, userCosts, proCounts, models] = await Promise.all([
         getCurrentMonthCosts(),
-        getAllUserCosts(),
+        getAllUsersWithCosts(),
         getProUserCount(),
         getModelUsageBreakdown(),
       ]);

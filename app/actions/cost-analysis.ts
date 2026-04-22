@@ -149,7 +149,81 @@ export async function getCurrentMonthCosts() {
 }
 
 /**
- * Get all user costs from api_cost_tracking table
+ * Get all users with their cost data (includes users with zero usage)
+ */
+export async function getAllUsersWithCosts(): Promise<UserCostSummary[]> {
+  try {
+    // Get all users
+    const allUsers = await db
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      })
+      .from(user);
+
+    // Get all API costs grouped by userId
+    const costs = await db
+      .select({
+        userId: apiCostTracking.userId,
+        totalCost: sql<number>`COALESCE(SUM(${apiCostTracking.estimatedCost}), 0)`,
+        messageCount: sql<number>`COALESCE(COUNT(${apiCostTracking.id}), 0)`,
+        totalTokens: sql<number>`COALESCE(SUM(${apiCostTracking.inputTokens} + ${apiCostTracking.outputTokens}), 0)`,
+      })
+      .from(apiCostTracking)
+      .groupBy(apiCostTracking.userId);
+
+    // Create a map of costs by userId
+    const costMap = new Map(costs.map(c => [c.userId, c]));
+
+    // Get all subscriptions
+    const subscriptions = await db
+      .select({
+        userId: billingSubscription.userId,
+        status: billingSubscription.status,
+        discount: billingSubscription.discount,
+        metadata: billingSubscription.metadata,
+      })
+      .from(billingSubscription);
+
+    // Create a map of subscriptions by userId
+    const subMap = new Map(subscriptions.map(s => [s.userId, s]));
+
+    return allUsers.map(u => {
+      const costData = costMap.get(u.id);
+      const sub = subMap.get(u.id);
+      const isPro = sub?.status === 'active' || 
+                    sub?.status === 'trialing' || 
+                    sub?.status === 'past_due';
+      
+      const metadata = sub?.metadata as { manual_grant?: boolean } | null;
+      const hasDiscount = sub?.discount !== null;
+      const isCoupon = hasDiscount || metadata?.manual_grant === true;
+
+      const totalCost = costData?.totalCost || 0;
+      const messageCount = costData?.messageCount || 0;
+
+      return {
+        userId: u.id,
+        userName: u.name,
+        userEmail: u.email,
+        totalCost,
+        messageCount,
+        totalTokens: costData?.totalTokens || 0,
+        averageCostPerMessage: messageCount > 0 ? totalCost / messageCount : 0,
+        isPro,
+        isCoupon,
+        modelBreakdown: [],
+      };
+    });
+  } catch (error) {
+    console.error('Error getting all users with costs:', error);
+    return [];
+  }
+}
+
+/**
+ * Get all user costs from api_cost_tracking table (only users with API usage)
  */
 export async function getAllUserCosts(): Promise<UserCostSummary[]> {
   try {

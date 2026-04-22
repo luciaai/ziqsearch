@@ -645,21 +645,30 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
 
               return (
                 <SidebarMenuItem key={link.id}>
-                  <SidebarMenuButton 
-                    asChild={!link.onClick} 
-                    tooltip={link.label} 
-                    className="hover:bg-primary/10"
-                    onClick={link.onClick ? () => { closeMobileSidebar(); link.onClick?.(); } : undefined}
-                  >
-                    {link.onClick ? (
-                      <div className="flex items-center gap-2 w-full cursor-pointer">
-                        {content}
-                      </div>
-                    ) : link.external && link.href ? (
+                  {link.onClick ? (
+                    <SidebarMenuButton 
+                      tooltip={link.label} 
+                      className="hover:bg-primary/10"
+                      onClick={() => { closeMobileSidebar(); link.onClick?.(); }}
+                    >
+                      {content}
+                    </SidebarMenuButton>
+                  ) : link.external && link.href ? (
+                    <SidebarMenuButton 
+                      asChild
+                      tooltip={link.label} 
+                      className="hover:bg-primary/10"
+                    >
                       <a href={link.href} target="_blank" rel="noopener noreferrer" onClick={closeMobileSidebar} className="flex items-center gap-2 w-full">
                         {content}
                       </a>
-                    ) : link.href ? (
+                    </SidebarMenuButton>
+                  ) : link.href ? (
+                    <SidebarMenuButton 
+                      asChild
+                      tooltip={link.label} 
+                      className="hover:bg-primary/10"
+                    >
                       <Link
                         prefetch
                         href={link.href}
@@ -668,8 +677,8 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                       >
                         {content}
                       </Link>
-                    ) : null}
-                  </SidebarMenuButton>
+                    </SidebarMenuButton>
+                  ) : null}
                 </SidebarMenuItem>
               );
             })}

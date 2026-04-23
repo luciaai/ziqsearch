@@ -349,45 +349,23 @@ const UserProfile = memo(
                   try {
                     setSigningOut(true);
                     toast.loading('Signing out...');
-                    
-                    // Detect if mobile device
-                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                    
-                    if (isMobile) {
-                      // Use mobile-specific endpoint
-                      const response = await fetch('/api/mobile-signout', {
-                        method: 'POST',
-                        credentials: 'include',
-                      });
-                      
-                      if (response.ok) {
-                        localStorage.clear();
-                        sessionStorage.clear();
-                        toast.success('Signed out successfully');
-                        window.location.href = '/new';
-                      } else {
-                        throw new Error('Mobile signout failed');
-                      }
-                    } else {
-                      // Use normal better-auth signOut for desktop
-                      await signOut({
-                        fetchOptions: {
-                          onSuccess: () => {
-                            setSigningOut(false);
-                            localStorage.clear();
-                            sessionStorage.clear();
-                            toast.success('Signed out successfully');
-                            toast.dismiss();
-                            window.location.href = '/new';
-                          },
-                          onError: () => {
-                            setSigningOut(false);
-                            toast.error('Failed to sign out');
-                            window.location.reload();
-                          },
+                    await signOut({
+                      fetchOptions: {
+                        onSuccess: () => {
+                          setSigningOut(false);
+                          localStorage.clear();
+                          sessionStorage.clear();
+                          toast.dismiss();
+                          toast.success('Signed out successfully');
+                          window.location.href = '/new';
                         },
-                      });
-                    }
+                        onError: () => {
+                          setSigningOut(false);
+                          toast.error('Failed to sign out');
+                          window.location.reload();
+                        },
+                      },
+                    });
                   } catch (error) {
                     console.error('Sign out error:', error);
                     setSigningOut(false);

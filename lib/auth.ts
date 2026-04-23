@@ -58,6 +58,7 @@ export const auth = betterAuth({
     google: {
       clientId: serverEnv.GOOGLE_CLIENT_ID,
       clientSecret: serverEnv.GOOGLE_CLIENT_SECRET,
+      prompt: 'select_account', // Forces account selection
     },
     // twitter: {
     //   clientId: serverEnv.TWITTER_CLIENT_ID,

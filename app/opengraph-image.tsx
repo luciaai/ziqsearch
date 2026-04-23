@@ -20,18 +20,39 @@ export default async function OgImage() {
           padding: '80px',
         }}
       >
-        {/* Logo - Ziq with lightning bolt */}
-        <svg width="400" height="200" viewBox="0 0 1024 512" xmlns="http://www.w3.org/2000/svg">
+        {/* Logo - Ziq with lightning bolt above the I */}
+        <svg width="480" height="240" viewBox="0 0 240 120" fill="none" xmlns="http://www.w3.org/2000/svg">
           {/* Z letter - white */}
-          <path d="M 212 223 L 422 223 L 422 283 L 292 413 L 422 413 L 422 503 L 212 503 L 212 443 L 342 313 L 212 313 Z" fill="#ffffff"/>
+          <path
+            d="M 10 15 L 70 15 L 70 30 L 30 70 L 70 70 L 70 90 L 10 90 L 10 75 L 50 35 L 10 35 Z"
+            fill="#ffffff"
+          />
           
-          {/* Lightning bolt - green (#22c55e) */}
-          <path d="M 495 95 L 440 220 L 485 220 L 440 345 L 550 220 L 505 220 Z" fill="#22c55e"/>
+          {/* Green lightning bolt - positioned above I */}
+          <path
+            d="M 115 -10 L 85 15 L 98 15 L 80 35 L 115 10 L 102 10 Z"
+            fill="#22c55e"
+          />
           
-          {/* Q letter - white with tail */}
-          <path d="M 680 223 C 620 223 575 268 575 363 C 575 458 620 503 680 503 C 740 503 785 458 785 363 C 785 268 740 223 680 223 Z M 680 283 C 705 283 725 303 725 363 C 725 423 705 443 680 443 C 655 443 635 423 635 363 C 635 303 655 283 680 283 Z" fill="#ffffff"/>
-          {/* Q tail */}
-          <path d="M 710 420 L 785 503" stroke="#ffffff" stroke-width="50" stroke-linecap="round" fill="none"/>
+          {/* I letter - white rectangle */}
+          <path
+            d="M 85 38 L 115 38 L 115 90 L 85 90 Z"
+            fill="#ffffff"
+          />
+          
+          {/* Q letter - white circle with diagonal stem */}
+          <path
+            d="M 165 15 C 145 15 130 30 130 52.5 C 130 75 145 90 165 90 C 185 90 200 75 200 52.5 C 200 30 185 15 165 15 Z M 165 33 C 173 33 180 40 180 52.5 C 180 65 173 72 165 72 C 157 72 150 65 150 52.5 C 150 40 157 33 165 33 Z"
+            fill="#ffffff"
+          />
+          {/* Q stem - diagonal tail */}
+          <path
+            d="M 172 65 L 195 90"
+            stroke="#ffffff"
+            strokeWidth="15"
+            strokeLinecap="round"
+            fill="none"
+          />
         </svg>
         
         {/* Tagline */}

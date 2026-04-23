@@ -111,7 +111,9 @@ function SettingsContent() {
                 variant="outline"
                 size="sm"
                 className="w-full gap-2"
-                onClick={async () => {
+                type="button"
+                onClick={async (e) => {
+                  e.preventDefault();
                   try {
                     await signOut({
                       fetchOptions: {

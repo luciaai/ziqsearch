@@ -58,8 +58,6 @@ function SettingsContent() {
       await signOut({
         fetchOptions: {
           onSuccess: () => {
-            localStorage.clear();
-            sessionStorage.clear();
             toast.dismiss();
             toast.success('Signed out successfully');
             window.location.href = '/';

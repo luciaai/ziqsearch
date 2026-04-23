@@ -353,8 +353,6 @@ const UserProfile = memo(
                       fetchOptions: {
                         onSuccess: () => {
                           setSigningOut(false);
-                          localStorage.clear();
-                          sessionStorage.clear();
                           toast.dismiss();
                           toast.success('Signed out successfully');
                           window.location.href = '/new';

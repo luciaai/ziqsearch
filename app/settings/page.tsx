@@ -36,11 +36,42 @@ function SettingsContent() {
   const searchParams = useSearchParams();
   const defaultTab = searchParams.get('tab') || 'usage';
   const [activeTab, setActiveTab] = useState(defaultTab);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const [isCustomInstructionsEnabled, setIsCustomInstructionsEnabled] = useSyncedPreferences<boolean>(
     'scira-custom-instructions-enabled',
     true,
   );
   const [blurPersonalInfo, setBlurPersonalInfo] = useSyncedPreferences<boolean>('scira-blur-personal-info', false);
+
+  const handleSignOut = async () => {
+    if (isSigningOut) return;
+    
+    setIsSigningOut(true);
+    toast.loading('Signing out...');
+    
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      await signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success('Signed out successfully');
+            window.location.href = '/';
+          },
+          onError: (ctx) => {
+            console.error('Sign out error:', ctx);
+            toast.error('Failed to sign out');
+            setIsSigningOut(false);
+          },
+        },
+      });
+    } catch (error) {
+      console.error('Sign out error:', error);
+      toast.error('An error occurred');
+      setIsSigningOut(false);
+    }
+  };
 
   const tabs = [
     { value: 'usage', label: 'Usage', icon: Analytics01Icon },
@@ -112,32 +143,11 @@ function SettingsContent() {
                 size="sm"
                 className="w-full gap-2"
                 type="button"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  try {
-                    await signOut({
-                      fetchOptions: {
-                        onRequest: () => {
-                          toast.loading('Signing out...');
-                          localStorage.clear();
-                        },
-                        onSuccess: () => {
-                          toast.success('Signed out successfully');
-                          router.push('/sign-in');
-                        },
-                        onError: () => {
-                          toast.error('Failed to sign out');
-                        },
-                      },
-                    });
-                  } catch (error) {
-                    console.error('Sign out error:', error);
-                    toast.error('Failed to sign out');
-                  }
-                }}
+                disabled={isSigningOut}
+                onClick={handleSignOut}
               >
                 <HugeiconsIcon icon={LogoutIcon} size={16} strokeWidth={1.5} />
-                Sign Out
+                {isSigningOut ? 'Signing out...' : 'Sign Out'}
               </Button>
             </div>
           </Card>
@@ -219,31 +229,12 @@ function SettingsContent() {
                     variant="outline"
                     size="sm"
                     className="w-full gap-2"
-                    onClick={async () => {
-                      try {
-                        await signOut({
-                          fetchOptions: {
-                            onRequest: () => {
-                              toast.loading('Signing out...');
-                              localStorage.clear();
-                            },
-                            onSuccess: () => {
-                              toast.success('Signed out successfully');
-                              router.push('/sign-in');
-                            },
-                            onError: () => {
-                              toast.error('Failed to sign out');
-                            },
-                          },
-                        });
-                      } catch (error) {
-                        console.error('Sign out error:', error);
-                        toast.error('Failed to sign out');
-                      }
-                    }}
+                    type="button"
+                    disabled={isSigningOut}
+                    onClick={handleSignOut}
                   >
                     <HugeiconsIcon icon={LogoutIcon} size={16} strokeWidth={1.5} />
-                    Sign Out
+                    {isSigningOut ? 'Signing out...' : 'Sign Out'}
                   </Button>
                 </div>
               </div>

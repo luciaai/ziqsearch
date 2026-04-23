@@ -15,7 +15,7 @@ import { Analytics01Icon, Settings02Icon, Crown02Icon, ConnectIcon, Brain02Icon 
 import { useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useCallback, useEffect } from 'react';
 import { useSyncedPreferences } from '@/hooks/use-synced-preferences';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -43,7 +43,12 @@ function SettingsContent() {
   );
   const [blurPersonalInfo, setBlurPersonalInfo] = useSyncedPreferences<boolean>('scira-blur-personal-info', false);
 
-  const handleSignOut = async () => {
+  // Reset signing out state on mount
+  useEffect(() => {
+    setIsSigningOut(false);
+  }, []);
+
+  const handleSignOut = useCallback(async () => {
     console.log('[SIGNOUT] Button clicked, isSigningOut:', isSigningOut);
     if (isSigningOut) {
       console.log('[SIGNOUT] Already signing out, returning');
@@ -79,7 +84,7 @@ function SettingsContent() {
       toast.error('An error occurred');
       setIsSigningOut(false);
     }
-  };
+  }, [isSigningOut]);
 
   const tabs = [
     { value: 'usage', label: 'Usage', icon: Analytics01Icon },

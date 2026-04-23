@@ -43,9 +43,20 @@ function SettingsContent() {
   );
   const [blurPersonalInfo, setBlurPersonalInfo] = useSyncedPreferences<boolean>('scira-blur-personal-info', false);
 
-  // Reset signing out state on mount
+  // Reset signing out state on mount and close mobile sidebar
   useEffect(() => {
     setIsSigningOut(false);
+    
+    // Close mobile sidebar by triggering a click outside event
+    const closeSidebar = () => {
+      const overlay = document.querySelector('[data-slot="sheet-overlay"]');
+      if (overlay) {
+        (overlay as HTMLElement).click();
+      }
+    };
+    
+    // Small delay to ensure DOM is ready
+    setTimeout(closeSidebar, 100);
   }, []);
 
   const handleSignOut = useCallback(async () => {
@@ -135,8 +146,8 @@ function SettingsContent() {
       {/* Main Content */}
       <main className="flex-1 overflow-auto p-4 md:p-6 max-w-7xl mx-auto w-full">
         {/* User Profile - Mobile */}
-        <div className="lg:hidden mb-6 relative z-20">
-          <Card className="p-4 shadow-none relative z-20">
+        <div className="lg:hidden mb-6 relative z-[60]">
+          <Card className="p-4 shadow-none relative z-[60]">
             <div className="flex items-center gap-3">
               <Avatar className="h-12 w-12 overflow-hidden rounded-full mask-[radial-gradient(white,black)] [-webkit-mask-image:-webkit-radial-gradient(white,black)]">
                 <AvatarImage src={user?.image || ''} className={cn(blurPersonalInfo && 'blur-sm')} />

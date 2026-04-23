@@ -699,7 +699,7 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
           </SidebarMenuItem>
 
           {/* Recent Chats - With Date Grouping */}
-          {user && (
+          {mounted && user && (
             <>
               {/* Expanded state - Accordion with date groups */}
               <div className="group-data-[collapsible=icon]:hidden">

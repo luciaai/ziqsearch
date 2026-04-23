@@ -60,25 +60,47 @@ function SettingsContent() {
     toast.loading('Signing out...');
     
     try {
-      console.log('[SIGNOUT] Clearing storage');
-      localStorage.clear();
-      sessionStorage.clear();
+      // Detect if mobile device
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      console.log('[SIGNOUT] Is mobile:', isMobile);
       
-      console.log('[SIGNOUT] Calling signOut API');
-      await signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            console.log('[SIGNOUT] Success, redirecting');
-            toast.success('Signed out successfully');
-            window.location.href = '/';
+      if (isMobile) {
+        // Use mobile-specific endpoint for iOS/Android
+        console.log('[SIGNOUT] Using mobile signout endpoint');
+        const response = await fetch('/api/mobile-signout', {
+          method: 'POST',
+          credentials: 'include',
+        });
+        
+        if (response.ok) {
+          console.log('[SIGNOUT] Mobile signout success');
+          localStorage.clear();
+          sessionStorage.clear();
+          toast.success('Signed out successfully');
+          window.location.href = '/';
+        } else {
+          throw new Error('Mobile signout failed');
+        }
+      } else {
+        // Use normal better-auth signOut for desktop
+        console.log('[SIGNOUT] Using desktop signout');
+        await signOut({
+          fetchOptions: {
+            onSuccess: () => {
+              console.log('[SIGNOUT] Success, redirecting');
+              localStorage.clear();
+              sessionStorage.clear();
+              toast.success('Signed out successfully');
+              window.location.href = '/';
+            },
+            onError: (ctx) => {
+              console.error('[SIGNOUT] Error:', ctx);
+              toast.error('Failed to sign out');
+              setIsSigningOut(false);
+            },
           },
-          onError: (ctx) => {
-            console.error('[SIGNOUT] Error:', ctx);
-            toast.error('Failed to sign out');
-            setIsSigningOut(false);
-          },
-        },
-      });
+        });
+      }
     } catch (error) {
       console.error('[SIGNOUT] Exception:', error);
       toast.error('An error occurred');

@@ -173,20 +173,16 @@ function SettingsContent() {
               <Switch id="blur-personal-mobile" checked={!!blurPersonalInfo} onCheckedChange={setBlurPersonalInfo} />
             </div>
             <div className="mt-4">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full gap-2 cursor-pointer touch-manipulation"
+              <button
                 type="button"
                 disabled={isSigningOut}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleSignOut();
-                }}
+                onClick={handleSignOut}
+                className="w-full flex items-center justify-center gap-2 h-9 px-4 py-2 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 text-sm font-medium cursor-pointer"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 <HugeiconsIcon icon={LogoutIcon} size={16} strokeWidth={1.5} />
                 {isSigningOut ? 'Signing out...' : 'Sign Out'}
-              </Button>
+              </button>
             </div>
           </Card>
         </div>

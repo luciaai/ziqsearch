@@ -43,20 +43,11 @@ function SettingsContent() {
   );
   const [blurPersonalInfo, setBlurPersonalInfo] = useSyncedPreferences<boolean>('scira-blur-personal-info', false);
 
-  // Reset signing out state on mount and close mobile sidebar
+  // Restore body pointer-events that Radix UI Sheet disables but doesn't clean up on navigation
   useEffect(() => {
     setIsSigningOut(false);
-    
-    // Close mobile sidebar by triggering a click outside event
-    const closeSidebar = () => {
-      const overlay = document.querySelector('[data-slot="sheet-overlay"]');
-      if (overlay) {
-        (overlay as HTMLElement).click();
-      }
-    };
-    
-    // Small delay to ensure DOM is ready
-    setTimeout(closeSidebar, 100);
+    document.body.style.pointerEvents = '';
+    document.body.removeAttribute('data-scroll-locked');
   }, []);
 
   const handleSignOut = useCallback(async () => {

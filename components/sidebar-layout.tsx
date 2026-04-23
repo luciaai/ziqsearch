@@ -5,6 +5,7 @@ import { SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { ChatHistoryDialog } from '@/components/chat-history-dialog';
 import { useUser } from '@/contexts/user-context';
+import { usePathname } from 'next/navigation';
 
 export function SidebarLayout({ children }: { children: React.ReactNode }) {
   const { user, isProUser } = useUser();
@@ -13,6 +14,14 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
   const handleHistoryClick = useCallback(() => {
     setCommandDialogOpen(true);
   }, []);
+
+  const pathname = usePathname();
+
+  // Restore body pointer-events locked by Radix UI Sheet when navigating on mobile
+  useEffect(() => {
+    document.body.style.pointerEvents = '';
+    document.body.removeAttribute('data-scroll-locked');
+  }, [pathname]);
 
   // Keyboard shortcut for opening chat history (Cmd+K or Ctrl+K)
   useEffect(() => {

@@ -154,12 +154,11 @@ function SettingsContent() {
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full gap-2"
+                className="w-full gap-2 cursor-pointer touch-manipulation"
                 type="button"
                 disabled={isSigningOut}
-                onClick={handleSignOut}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleSignOut();
                 }}
               >
@@ -245,10 +244,13 @@ function SettingsContent() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full gap-2"
+                    className="w-full gap-2 cursor-pointer"
                     type="button"
                     disabled={isSigningOut}
-                    onClick={handleSignOut}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSignOut();
+                    }}
                   >
                     <HugeiconsIcon icon={LogoutIcon} size={16} strokeWidth={1.5} />
                     {isSigningOut ? 'Signing out...' : 'Sign Out'}

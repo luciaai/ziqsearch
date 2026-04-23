@@ -44,30 +44,38 @@ function SettingsContent() {
   const [blurPersonalInfo, setBlurPersonalInfo] = useSyncedPreferences<boolean>('scira-blur-personal-info', false);
 
   const handleSignOut = async () => {
-    if (isSigningOut) return;
+    console.log('[SIGNOUT] Button clicked, isSigningOut:', isSigningOut);
+    if (isSigningOut) {
+      console.log('[SIGNOUT] Already signing out, returning');
+      return;
+    }
     
+    console.log('[SIGNOUT] Starting sign out process');
     setIsSigningOut(true);
     toast.loading('Signing out...');
     
     try {
+      console.log('[SIGNOUT] Clearing storage');
       localStorage.clear();
       sessionStorage.clear();
       
+      console.log('[SIGNOUT] Calling signOut API');
       await signOut({
         fetchOptions: {
           onSuccess: () => {
+            console.log('[SIGNOUT] Success, redirecting');
             toast.success('Signed out successfully');
             window.location.href = '/';
           },
           onError: (ctx) => {
-            console.error('Sign out error:', ctx);
+            console.error('[SIGNOUT] Error:', ctx);
             toast.error('Failed to sign out');
             setIsSigningOut(false);
           },
         },
       });
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error('[SIGNOUT] Exception:', error);
       toast.error('An error occurred');
       setIsSigningOut(false);
     }
@@ -145,6 +153,10 @@ function SettingsContent() {
                 type="button"
                 disabled={isSigningOut}
                 onClick={handleSignOut}
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  handleSignOut();
+                }}
               >
                 <HugeiconsIcon icon={LogoutIcon} size={16} strokeWidth={1.5} />
                 {isSigningOut ? 'Signing out...' : 'Sign Out'}

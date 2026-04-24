@@ -58,11 +58,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="flex-1 flex flex-col items-center justify-center px-12 xl:px-20">
           {/* Logo and Title */}
           <div className="w-full max-w-md">
-            <Link href="/" className="inline-flex items-center gap-3 mb-16 group">
-              <SciraLogo className="size-12 transition-transform duration-300 group-hover:scale-110" />
-              <span className="text-5xl font-light tracking-tighter font-be-vietnam-pro text-foreground">
-                ziq
-              </span>
+            <Link href="/" className="inline-flex items-center mb-16 group">
+              <SciraLogo className="h-16 w-auto transition-transform duration-300 group-hover:scale-110" />
             </Link>
 
             {/* Tagline */}
@@ -159,9 +156,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="flex-1 lg:w-[55%] xl:w-[50%] flex flex-col bg-background lg:border-l lg:border-border">
         {/* Mobile Header */}
         <header className="lg:hidden flex items-center justify-center h-16 border-b border-border">
-          <Link href="/" className="flex items-center gap-2.5">
-            <SciraLogo className="size-6" />
-            <span className="text-2xl font-light tracking-tighter font-be-vietnam-pro">ziq</span>
+          <Link href="/" className="flex items-center">
+            <SciraLogo className="h-8 w-auto" />
           </Link>
         </header>
 

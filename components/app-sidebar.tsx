@@ -352,18 +352,13 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
         <SidebarMenu>
           <SidebarMenuItem>
             <div className="relative flex items-center w-full h-12 px-2 overflow-visible">
-              <div className="flex items-center gap-1 w-full group-data-[collapsible=icon]:justify-center">
-                <div className="flex items-center justify-center size-8 transition-opacity duration-200 group-data-[collapsible=icon]:group-hover:opacity-0">
-                  <SciraLogo width={26} height={26} />
-                </div>
-                <div className="flex flex-row items-center gap-2 leading-none group-data-[collapsible=icon]:hidden">
-                  <span className="font-be-vietnam-pro font-light tracking-tighter text-xl">Ziq</span>
-                  {mounted && user && isProUser && (
-                    <span className="animate-shimmer text-xs font-baumans inline-flex items-center justify-center min-w-6 h-4 px-1.5 pt-0 pb-0.5 rounded-md shadow-sm bg-linear-to-br from-secondary/30 via-primary/25 to-accent/30 text-foreground ring-1 ring-primary/25 ring-offset-1 ring-offset-background dark:bg-linear-to-br dark:from-primary dark:via-secondary dark:to-primary dark:text-foreground dark:ring-primary/40">
-                      pro
-                    </span>
-                  )}
-                </div>
+              <div className="flex items-center gap-2 w-full group-data-[collapsible=icon]:justify-center">
+                <SciraLogo width={32} height={32} className="group-data-[collapsible=icon]:w-[26px] group-data-[collapsible=icon]:h-[26px]" />
+                {mounted && user && isProUser && (
+                  <span className="animate-shimmer text-xs font-baumans inline-flex items-center justify-center min-w-6 h-4 px-1.5 pt-0 pb-0.5 rounded-md shadow-sm bg-linear-to-br from-secondary/30 via-primary/25 to-accent/30 text-foreground ring-1 ring-primary/25 ring-offset-1 ring-offset-background dark:bg-linear-to-br dark:from-primary dark:via-secondary dark:to-primary dark:text-foreground dark:ring-primary/40 group-data-[collapsible=icon]:hidden">
+                    pro
+                  </span>
+                )}
               </div>
 
               {/* Expanded state trigger on the right of the logo */}

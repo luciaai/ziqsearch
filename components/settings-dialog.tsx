@@ -920,7 +920,7 @@ export function UsageSection({ user }: any) {
 
   const chartConfig: ChartConfig = {
     messages: {
-      label: 'Messages',
+      label: 'Searches',
       theme: {
         light: 'oklch(0.4341 0.0392 41.9938)', // Primary color for light mode
         dark: 'oklch(0.9247 0.0524 66.1732)', // Lighter primary for dark mode

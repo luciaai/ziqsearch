@@ -8,6 +8,7 @@ import {
   getLightweightUser,
 } from '@/app/actions';
 import { trackApiCost } from '@/lib/api-cost-tracker';
+import { SEARCH_LIMITS } from '@/lib/constants';
 
 // Map scira selector to actual model and provider
 function getActualModelInfo(sciraSelector: string): { model: string; provider: string } {
@@ -222,7 +223,7 @@ function initializeChatAndChecks({
         }
 
         const shouldBypassLimits = shouldBypassRateLimits(model, user);
-        if (!shouldBypassLimits && messageCountResult.count !== undefined && messageCountResult.count >= 100) {
+        if (!shouldBypassLimits && messageCountResult.count !== undefined && messageCountResult.count >= SEARCH_LIMITS.DAILY_SEARCH_LIMIT) {
           throw new ChatSDKError('rate_limit:chat', 'Daily search limit reached');
         }
 
@@ -452,6 +453,11 @@ export async function POST(req: Request) {
 
   if (!criticalResult.canProceed) {
     throw criticalResult.error;
+  }
+
+  // Check extreme search limit for free users (after we have group from request)
+  if (!criticalResult.isProUser && group === 'extreme' && criticalResult.extremeSearchUsage !== undefined && criticalResult.extremeSearchUsage >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) {
+    throw new ChatSDKError('rate_limit:chat', 'Monthly extreme search limit reached. Upgrade to Pro for unlimited extreme searches.');
   }
 
   customInstructions = customInstructionsResult;
@@ -838,18 +844,13 @@ export async function POST(req: Request) {
           console.log(`✅ Request completed: ${processingTime.toFixed(2)}s (${event.finishReason})`);
 
           if (user?.id) {
-            // Track usage for statistics - always count searches regardless of Pro status or finish reason
-            try {
-              // Always increment message usage for statistics tracking
-              await incrementMessageUsage({ userId: user.id });
-
-              // Track extreme search usage - count any search in extreme mode
-              if (group === 'extreme') {
-                await incrementExtremeSearchUsage({ userId: user.id });
-              }
-            } catch (error) {
+            // Track usage for statistics - run in background to avoid blocking stream
+            Promise.all([
+              incrementMessageUsage({ userId: user.id }),
+              group === 'extreme' ? incrementExtremeSearchUsage({ userId: user.id }) : Promise.resolve(),
+            ]).catch((error) => {
               console.error('Failed to track usage:', error);
-            }
+            });
           }
         },
         onError(event) {

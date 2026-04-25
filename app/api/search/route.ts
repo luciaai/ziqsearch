@@ -837,22 +837,15 @@ export async function POST(req: Request) {
           const processingTime = (Date.now() - requestStartTime) / 1000;
           console.log(`✅ Request completed: ${processingTime.toFixed(2)}s (${event.finishReason})`);
 
-          if (user?.id && event.finishReason === 'stop') {
-            // Track usage in background
-            // Track usage synchronously - this is critical for billing and rate limiting
+          if (user?.id) {
+            // Track usage for statistics - always count searches regardless of Pro status or finish reason
             try {
-              if (!shouldBypassRateLimits(model, user)) {
-                await incrementMessageUsage({ userId: user.id });
-              }
+              // Always increment message usage for statistics tracking
+              await incrementMessageUsage({ userId: user.id });
 
-              // Track extreme search usage if used
+              // Track extreme search usage - count any search in extreme mode
               if (group === 'extreme') {
-                const extremeSearchUsed = event.steps?.some((step) =>
-                  step.toolCalls?.some((toolCall) => toolCall && toolCall.toolName === 'extreme_search'),
-                );
-                if (extremeSearchUsed) {
-                  await incrementExtremeSearchUsage({ userId: user.id });
-                }
+                await incrementExtremeSearchUsage({ userId: user.id });
               }
             } catch (error) {
               console.error('Failed to track usage:', error);

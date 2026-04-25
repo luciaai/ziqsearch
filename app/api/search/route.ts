@@ -223,7 +223,7 @@ function initializeChatAndChecks({
         }
 
         const shouldBypassLimits = shouldBypassRateLimits(model, user);
-        if (!shouldBypassLimits && messageCountResult.count !== undefined && messageCountResult.count >= SEARCH_LIMITS.DAILY_SEARCH_LIMIT) {
+        if (!shouldBypassLimits && messageCountResult.count !== undefined && messageCountResult.count >= 100) {
           throw new ChatSDKError('rate_limit:chat', 'Daily search limit reached');
         }
 
@@ -453,11 +453,6 @@ export async function POST(req: Request) {
 
   if (!criticalResult.canProceed) {
     throw criticalResult.error;
-  }
-
-  // Check extreme search limit for free users (after we have group from request)
-  if (!criticalResult.isProUser && group === 'extreme' && criticalResult.extremeSearchUsage !== undefined && criticalResult.extremeSearchUsage >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) {
-    throw new ChatSDKError('rate_limit:chat', 'Monthly extreme search limit reached. Upgrade to Pro for unlimited extreme searches.');
   }
 
   customInstructions = customInstructionsResult;

@@ -52,9 +52,8 @@ const categories: Category[] = [
   },
   {
     id: 'research',
-    name: 'Research',
+    name: 'Academic',
     icon: MicroscopeIcon,
-    badge: 'Deep',
     examples: [
       { text: 'Latest research on transformer architectures', group: 'academic' },
       { text: 'Compare RAG vs fine-tuning for LLMs with sources', group: 'extreme' },

@@ -587,22 +587,143 @@ export default function FAQPage() {
               </ProAccordionItem>
 
               <ProAccordionItem value="deepseek">
-                <ProAccordionTrigger>DeepSeek V3</ProAccordionTrigger>
+                <ProAccordionTrigger>DeepSeek Models (V3, V3.1, V3.2, R1)</ProAccordionTrigger>
                 <ProAccordionContent>
                   <p className="text-muted-foreground leading-relaxed mb-3">
-                    Open-source model with strong performance and cost-effectiveness.
+                    Open-source models with strong performance and cost-effectiveness. Multiple versions available including reasoning variants.
                   </p>
                   <p className="text-sm text-muted-foreground mb-2">
                     <strong>Strengths:</strong>
                   </p>
                   <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
                     <li>Strong general knowledge and reasoning</li>
-                    <li>Good balance of speed and quality</li>
-                    <li>Competitive with commercial models</li>
-                    <li>Open-source transparency</li>
+                    <li>Excellent coding capabilities</li>
+                    <li>R1 variants offer advanced reasoning</li>
+                    <li>Cost-effective and open-source</li>
                   </ul>
                   <p className="text-sm text-muted-foreground">
-                    <strong>Best for:</strong> General research, balanced performance, open-source preference
+                    <strong>Best for:</strong> Coding, reasoning tasks, cost-conscious research, open-source preference
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
+              <ProAccordionItem value="mistral">
+                <ProAccordionTrigger>Mistral Models (Ministral, Mistral Large, Magistral, Devstral)</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    European AI company offering efficient models from tiny (3B) to large (Mistral Large 3).
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Model Variants:</strong>
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
+                    <li><strong>Ministral (3B, 8B, 14B):</strong> Efficient small models with vision</li>
+                    <li><strong>Mistral Large/Medium:</strong> Flagship multimodal models</li>
+                    <li><strong>Magistral:</strong> Reasoning-focused variants</li>
+                    <li><strong>Devstral:</strong> Specialized for coding</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Best for:</strong> Efficient inference, European data privacy, coding (Devstral), reasoning (Magistral)
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
+              <ProAccordionItem value="qwen">
+                <ProAccordionTrigger>Qwen Models (Alibaba)</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    Alibaba's open-source models available in multiple sizes (4B, 32B) with thinking variants.
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Strengths:</strong>
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
+                    <li>Strong multilingual capabilities</li>
+                    <li>Efficient small models (4B)</li>
+                    <li>Thinking variants for reasoning</li>
+                    <li>Good coding performance</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Best for:</strong> Multilingual tasks, efficient inference, coding
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
+              <ProAccordionItem value="openai-advanced">
+                <ProAccordionTrigger>OpenAI Advanced (GPT-5, o3, o4, Codex)</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    OpenAI's latest flagship models including GPT-5 series, o-series reasoning models, and specialized Codex variants.
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Model Families:</strong>
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
+                    <li><strong>GPT-5 (Nano, Mini, Medium):</strong> Latest flagship series</li>
+                    <li><strong>GPT-5.1/5.2:</strong> Instant and Thinking variants</li>
+                    <li><strong>o3, o4 mini:</strong> Advanced reasoning models</li>
+                    <li><strong>Codex (Mini, Max):</strong> Specialized coding models</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Best for:</strong> Cutting-edge capabilities, complex reasoning (o-series), advanced coding (Codex)
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
+              <ProAccordionItem value="google-advanced">
+                <ProAccordionTrigger>Google Gemini (2.5, 3.0 Flash/Pro)</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    Google's multimodal models with exceptional speed and vision capabilities.
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Variants:</strong>
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
+                    <li><strong>Gemini 2.5 Flash Lite:</strong> Ultra-fast, efficient</li>
+                    <li><strong>Gemini 2.5 Pro:</strong> Balanced performance</li>
+                    <li><strong>Gemini 3.0 Flash/Pro:</strong> Latest generation with thinking</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Best for:</strong> Speed, multimodal tasks, video understanding, large context windows
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
+              <ProAccordionItem value="anthropic-advanced">
+                <ProAccordionTrigger>Anthropic Claude (Haiku, Sonnet)</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    Anthropic's models known for safety, helpfulness, and exceptional writing quality.
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Variants:</strong>
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
+                    <li><strong>Claude Haiku 4.5:</strong> Fast, efficient small model</li>
+                    <li><strong>Claude Sonnet 4.5:</strong> Flagship balanced model</li>
+                    <li>Thinking variants available for reasoning</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Best for:</strong> Writing, analysis, safety-critical tasks, following instructions
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
+              <ProAccordionItem value="other-models">
+                <ProAccordionTrigger>Other Models (Cohere, Llama, Kimi, Trinity)</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    Additional specialized models for specific use cases.
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
+                    <li><strong>Cohere Command A/R:</strong> Enterprise-focused models</li>
+                    <li><strong>Llama 3.3 70B:</strong> Meta's open-source flagship</li>
+                    <li><strong>Kimi K2:</strong> Long-context Chinese model with thinking</li>
+                    <li><strong>Trinity Mini:</strong> Arcee's small reasoning model</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Best for:</strong> Specialized tasks, long context (Kimi), open-source (Llama)
                   </p>
                 </ProAccordionContent>
               </ProAccordionItem>

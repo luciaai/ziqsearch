@@ -38,7 +38,6 @@ export default function FAQPage() {
           <div className="flex items-center justify-between h-14 px-6">
             <Link href="/" className="flex items-center gap-2.5 group">
               <SciraLogo className="size-6 transition-transform duration-300 group-hover:scale-110" />
-              <span className="text-xl font-light tracking-tighter font-be-vietnam-pro">Ziq</span>
             </Link>
 
             <div className="flex items-center gap-4">
@@ -49,7 +48,7 @@ export default function FAQPage() {
                 className="h-8 px-4 text-sm rounded-none"
                 onClick={() => router.push('/')}
               >
-                Try Ziq
+                Get Started
               </Button>
             </div>
           </div>

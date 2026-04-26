@@ -11,7 +11,6 @@ export default function PrivacyPage() {
           <div className="flex items-center justify-between h-14 px-6">
             <Link href="/" className="flex items-center gap-2.5 group">
               <SciraLogo className="size-5 transition-transform duration-300 group-hover:scale-110" />
-              <span className="text-lg font-light tracking-tighter font-be-vietnam-pro">Ziq</span>
             </Link>
             <Link
               href="/about"

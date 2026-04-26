@@ -494,6 +494,141 @@ export default function FAQPage() {
             </div>
           </div>
 
+          {/* AI Models */}
+          <div className="mb-12">
+            <div className="flex items-center gap-2 mb-6">
+              <Sparkles className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <h2 className="text-2xl font-light tracking-tight font-be-vietnam-pro">AI Models</h2>
+            </div>
+            
+            <ProAccordion type="single" collapsible value={openItem} onValueChange={setOpenItem}>
+              <ProAccordionItem value="grok">
+                <ProAccordionTrigger>Grok 2 & Grok 2 Mini</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    xAI's latest models with real-time web access and strong reasoning capabilities.
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Strengths:</strong>
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
+                    <li>Real-time information and current events</li>
+                    <li>Fast response times (especially Grok 2 Mini)</li>
+                    <li>Strong general knowledge and reasoning</li>
+                    <li>Good for quick searches and factual queries</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Best for:</strong> Current events, quick answers, general research, news
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
+              <ProAccordionItem value="gpt4">
+                <ProAccordionTrigger>GPT-4o & GPT-4 Turbo</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    OpenAI's flagship models with exceptional reasoning and multimodal capabilities.
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Strengths:</strong>
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
+                    <li>Superior reasoning and complex problem-solving</li>
+                    <li>Excellent at analyzing images and documents</li>
+                    <li>Strong creative writing and content generation</li>
+                    <li>Detailed, well-structured responses</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Best for:</strong> Complex analysis, image understanding, creative tasks, detailed explanations
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
+              <ProAccordionItem value="claude">
+                <ProAccordionTrigger>Claude 3.5 Sonnet</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    Anthropic's most capable model with exceptional writing quality and nuanced understanding.
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Strengths:</strong>
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
+                    <li>Exceptional writing quality and tone</li>
+                    <li>Strong analytical and critical thinking</li>
+                    <li>Excellent at following complex instructions</li>
+                    <li>Nuanced understanding of context</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Best for:</strong> Academic writing, research papers, detailed analysis, professional content
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
+              <ProAccordionItem value="gemini">
+                <ProAccordionTrigger>Gemini 2.0 Flash</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    Google's latest multimodal model with exceptional speed and efficiency.
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Strengths:</strong>
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
+                    <li>Extremely fast response times</li>
+                    <li>Strong multimodal capabilities (text, images, video)</li>
+                    <li>Good at structured data and factual queries</li>
+                    <li>Efficient for high-volume searches</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Best for:</strong> Quick searches, factual queries, image analysis, speed-critical tasks
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
+              <ProAccordionItem value="deepseek">
+                <ProAccordionTrigger>DeepSeek V3</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    Open-source model with strong performance and cost-effectiveness.
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Strengths:</strong>
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm mb-3">
+                    <li>Strong general knowledge and reasoning</li>
+                    <li>Good balance of speed and quality</li>
+                    <li>Competitive with commercial models</li>
+                    <li>Open-source transparency</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Best for:</strong> General research, balanced performance, open-source preference
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
+              <ProAccordionItem value="model-selection">
+                <ProAccordionTrigger>How do I choose the right model?</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    The best model depends on your specific task:
+                  </p>
+                  <ul className="list-disc list-inside space-y-2 text-muted-foreground text-sm">
+                    <li><strong>Speed matters:</strong> Grok 2 Mini or Gemini 2.0 Flash</li>
+                    <li><strong>Complex reasoning:</strong> GPT-4o or Claude 3.5 Sonnet</li>
+                    <li><strong>Academic writing:</strong> Claude 3.5 Sonnet</li>
+                    <li><strong>Current events:</strong> Grok 2 or Grok 2 Mini</li>
+                    <li><strong>Image analysis:</strong> GPT-4o or Gemini 2.0 Flash</li>
+                    <li><strong>Balanced performance:</strong> DeepSeek V3 or Grok 2</li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground mt-3">
+                    You can switch models anytime using the dropdown in the search bar.
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+            </ProAccordion>
+          </div>
+
           {/* Still Have Questions */}
           <div className="border-t border-border pt-12">
             <div className="text-center">

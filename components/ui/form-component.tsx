@@ -2283,7 +2283,7 @@ const GroupModeToggle: React.FC<GroupSelectorProps> = React.memo(
                 className={cn(
                   'flex items-center gap-1.5 px-3 h-6 rounded-md transition-all',
                   isExtreme
-                    ? 'bg-accent text-foreground hover:bg-accent/80'
+                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                     : !isAuthenticated
                       ? 'text-muted-foreground/50 cursor-pointer'
                       : !isProUser && extremeSearchCountExceeded

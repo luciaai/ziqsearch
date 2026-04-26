@@ -223,8 +223,8 @@ function initializeChatAndChecks({
         }
 
         const shouldBypassLimits = shouldBypassRateLimits(model, user);
-        if (!shouldBypassLimits && messageCountResult.count !== undefined && messageCountResult.count >= 100) {
-          throw new ChatSDKError('rate_limit:chat', 'Daily search limit reached');
+        if (!shouldBypassLimits && messageCountResult.count !== undefined && messageCountResult.count >= SEARCH_LIMITS.DAILY_SEARCH_LIMIT) {
+          throw new ChatSDKError('rate_limit:chat', 'Daily search limit reached. Upgrade to Pro for unlimited searches.');
         }
 
         const hasSubscription = !!user.subscription;
@@ -453,6 +453,13 @@ export async function POST(req: Request) {
 
   if (!criticalResult.canProceed) {
     throw criticalResult.error;
+  }
+
+  // Check extreme search limit for non-Pro users
+  if (group === 'extreme' && !criticalResult.isProUser) {
+    if (criticalResult.extremeSearchUsage !== undefined && criticalResult.extremeSearchUsage >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) {
+      throw new ChatSDKError('rate_limit:chat', `Extreme search limit reached (${SEARCH_LIMITS.EXTREME_SEARCH_LIMIT}/month). Upgrade to Pro for unlimited extreme searches.`);
+    }
   }
 
   customInstructions = customInstructionsResult;
@@ -877,9 +884,17 @@ export async function POST(req: Request) {
     },
     onError(error) {
       console.log('Error: ', error);
+      
+      // Handle ChatSDKError with specific messages
+      if (error instanceof ChatSDKError) {
+        return error.message;
+      }
+      
+      // Fallback for generic errors
       if (error instanceof Error && error.message.includes('Rate Limit')) {
         return 'Oops, you have reached the rate limit! Please try again later.';
       }
+      
       return 'Oops, an error occurred!';
     },
     onFinish: async ({ messages: streamedMessages }) => {

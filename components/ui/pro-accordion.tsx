@@ -30,13 +30,13 @@ const ProAccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        'flex flex-1 items-center justify-between py-6 text-left text-base font-medium text-foreground outline-none transition-all hover:text-foreground/80',
+        'group flex flex-1 items-center justify-between py-6 text-left text-base font-medium text-foreground outline-none transition-all hover:text-foreground/80 touch-manipulation',
         className,
       )}
       {...props}
     >
       {children}
-      <div className="h-6 w-6 flex items-center justify-center rounded-full border border-border bg-background/80 shrink-0 group-data-[state=open]:rotate-45 group-data-[state=open]:border-primary transition-transform duration-200">
+      <div className="h-6 w-6 flex items-center justify-center rounded-full border border-border bg-background/80 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-45 group-data-[state=open]:border-primary">
         <PlusIcon className="h-3.5 w-3.5 transition-transform duration-200 group-data-[state=open]:rotate-45" />
       </div>
     </AccordionPrimitive.Trigger>

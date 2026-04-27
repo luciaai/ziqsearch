@@ -169,18 +169,17 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Stats - Right aligned on desktop */}
+          {/* GitHub Attribution */}
           <div className="mt-16 lg:absolute lg:right-6 lg:top-24 lg:mt-0">
-            <div className="flex lg:flex-col gap-8 lg:gap-6">
-              <div>
-                <div className="text-3xl lg:text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">5M+</div>
-                <div className="text-xs text-muted-foreground mt-1">Searches</div>
-              </div>
-              <div>
-                <div className="text-3xl lg:text-4xl font-light tracking-tight text-foreground font-be-vietnam-pro">100K+</div>
-                <div className="text-xs text-muted-foreground mt-1">Users</div>
-              </div>
-            </div>
+            <Link
+              href="https://github.com/zaidmukaddam/miniperplx"
+              target="_blank"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+            >
+              <GithubLogoIcon className="w-5 h-5" />
+              <span>Forked from MiniPerplx</span>
+              <ArrowUpRight className="h-3 w-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
           </div>
         </div>
       </section>
@@ -229,46 +228,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Awards Section */}
-      <section className="border-t border-border">
-        <div className="max-w-6xl mx-auto px-6 py-16">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-            <div className="flex items-center gap-8">
-              <div className="flex items-center gap-3 group">
-                <Image
-                  src="https://cdn.prod.website-files.com/657b3d8ca1cab4015f06c850/680a4d679063da73487739e0_No1prgold-caps-removebg-preview.png"
-                  alt="Tiny Startups"
-                  width={32}
-                  height={32}
-                  className="opacity-60 group-hover:opacity-100 transition-opacity"
-                />
-                <div>
-                  <p className="text-xs font-medium text-foreground">#1 Product</p>
-                  <p className="text-xs text-muted-foreground">Tiny Startups</p>
-                </div>
-              </div>
-
-              <span className="w-px h-8 bg-border" />
-
-              <div className="flex items-center gap-3 group">
-                <Image
-                  src="/Winner-Medal-Weekly.svg"
-                  alt="Peerlist"
-                  width={32}
-                  height={32}
-                  className="opacity-60 group-hover:opacity-100 transition-opacity"
-                />
-                <div>
-                  <p className="text-xs font-medium text-foreground">#1 Project</p>
-                  <p className="text-xs text-muted-foreground">Peerlist</p>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
       {/* Built With Section */}
       <section className="border-t border-border">
         <div className="max-w-6xl mx-auto px-6 py-16">
@@ -287,37 +246,6 @@ export default function AboutPage() {
                 <ElevenLabsLogo />
                 <span className="text-sm text-muted-foreground">ElevenLabs</span>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured on Vercel */}
-      <section className="border-t border-border">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="px-6 py-16 lg:py-24 lg:pr-16">
-              <p className="text-xs text-muted-foreground tracking-wide mb-3">Press</p>
-              <h2 className="text-2xl font-light tracking-tight font-be-vietnam-pro mb-4">Featured on Vercel</h2>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                Recognized for innovative use of AI technology and contribution to the developer community through the Vercel AI SDK.
-              </p>
-              <Link
-                href="https://vercel.com/blog/ai-sdk-4-1"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-foreground/70 transition-colors group"
-                target="_blank"
-              >
-                Read the feature
-                <ArrowUpRight className="h-3 w-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </Link>
-            </div>
-            <div className="relative aspect-video lg:aspect-auto lg:h-full border-t lg:border-t-0 lg:border-l border-border overflow-hidden">
-              <Image
-                src="/vercel-featured.png"
-                alt="Featured on Vercel Blog"
-                fill
-                className="object-cover"
-              />
             </div>
           </div>
         </div>
@@ -684,8 +612,8 @@ export default function AboutPage() {
             <ProAccordionItem value="item-2">
               <ProAccordionTrigger>What&apos;s the difference between Free and Pro plans?</ProAccordionTrigger>
               <ProAccordionContent>
-                The Free plan includes 10 searches per day with basic AI models, while the Pro plan
-                ($10/month) unlocks unlimited searches, access to all AI models, PDF document analysis, Lookout
+                The Free plan includes {SEARCH_LIMITS.DAILY_SEARCH_LIMIT} searches per day with basic AI models, while the Pro plan
+                (${PRICING.PRO_MONTHLY}/month) unlocks unlimited searches, access to all AI models, PDF document analysis, Lookout
                 automations, and priority support.
               </ProAccordionContent>
             </ProAccordionItem>

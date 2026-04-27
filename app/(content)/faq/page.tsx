@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { SciraLogo } from '@/components/logos/scira-logo';
@@ -28,7 +28,13 @@ import {
 
 export default function FAQPage() {
   const router = useRouter();
-  const [openItem, setOpenItem] = useState<string>('');
+  const [openItem, setOpenItem] = useState<string | undefined>(undefined);
+
+  // Fix Radix UI Sheet pointer-events bug on mobile
+  useEffect(() => {
+    document.body.style.pointerEvents = '';
+    document.body.removeAttribute('data-scroll-locked');
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">

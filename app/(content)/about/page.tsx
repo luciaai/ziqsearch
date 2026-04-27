@@ -168,19 +168,6 @@ export default function AboutPage() {
               </Link>
             </div>
           </div>
-
-          {/* GitHub Attribution */}
-          <div className="mt-16 lg:absolute lg:right-6 lg:top-24 lg:mt-0">
-            <Link
-              href="https://github.com/zaidmukaddam/miniperplx"
-              target="_blank"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
-            >
-              <GithubLogoIcon className="w-5 h-5" />
-              <span>Forked from MiniPerplx</span>
-              <ArrowUpRight className="h-3 w-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -703,6 +690,14 @@ export default function AboutPage() {
             <div className="flex items-center gap-3">
               <SciraLogo className="size-4" />
               <span className="text-xs text-muted-foreground">© {new Date().getFullYear()} Ziq</span>
+              <span className="w-px h-3 bg-border/50" />
+              <Link
+                href="https://github.com/zaidmukaddam/scira"
+                target="_blank"
+                className="text-[10px] text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+              >
+                Based on Scira
+              </Link>
             </div>
             <div className="flex items-center gap-6">
               <Link href="/faq" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
@@ -715,7 +710,7 @@ export default function AboutPage() {
                 Privacy
               </Link>
               <span className="w-px h-4 bg-border" />
-<Link
+              <Link
                 href="https://x.com/ziqsearch"
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 target="_blank"

@@ -228,7 +228,16 @@ export default function AboutPage() {
               </div>
               <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
                 <ExaLogo />
-                <span className="text-sm text-muted-foreground">Exa Search</span>
+                <span className="text-sm text-muted-foreground">Exa</span>
+              </div>
+              <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
+                <span className="text-sm text-muted-foreground">Tavily</span>
+              </div>
+              <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
+                <span className="text-sm text-muted-foreground">Firecrawl</span>
+              </div>
+              <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
+                <span className="text-sm text-muted-foreground">Upstash</span>
               </div>
             </div>
           </div>

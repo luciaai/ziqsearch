@@ -1,6 +1,6 @@
 'use client';
 
-import { Brain, Search, ArrowUpRight, ArrowRight, Bot, GraduationCap, Eye, Filter, X } from 'lucide-react';
+import { Brain, Search, ArrowUpRight, ArrowRight, Bot, GraduationCap, Eye, Filter, X, Zap } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useMemo } from 'react';
@@ -16,7 +16,7 @@ import {
   ProAccordionContent,
 } from '@/components/ui/pro-accordion';
 import { useGitHubStars } from '@/hooks/use-github-stars';
-import { models } from '@/ai/providers';
+import { getFilteredModels } from '@/ai/providers';
 import { VercelLogo } from '@/components/logos/vercel-logo';
 import { ExaLogo } from '@/components/logos/exa-logo';
 import { ElevenLabsLogo } from '@/components/logos/elevenlabs-logo';
@@ -34,6 +34,7 @@ export default function AboutPage() {
   const [openCapabilities, setOpenCapabilities] = useState(false);
   const [showAllModels, setShowAllModels] = useState(false);
   const { data: githubStars, isLoading: isLoadingStars } = useGitHubStars();
+  const models = useMemo(() => getFilteredModels(), []);
   // Marketing hero: simple group selector (exclude Extreme)
   const visibleGroups = useMemo(
     () =>
@@ -81,7 +82,7 @@ export default function AboutPage() {
       </header>
 
       {/* Hero Section - Minimal & Impactful */}
-      <section className="relative">
+      <section className="relative bg-gradient-to-b from-purple-50/20 via-blue-50/10 to-background dark:from-purple-950/10 dark:via-blue-950/5 dark:to-background">
         <div className="max-w-6xl mx-auto px-6 pt-24 pb-20">
           <div className="max-w-3xl">
             {/* Badge */}
@@ -92,10 +93,10 @@ export default function AboutPage() {
             </div>
 
             {/* Title */}
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light tracking-tight leading-[1.05] text-foreground font-be-vietnam-pro mb-8">
-              Research at the
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light tracking-tight leading-[1.05] bg-gradient-to-r from-foreground via-foreground to-foreground/60 bg-clip-text text-transparent font-be-vietnam-pro mb-8">
+              Fast Research,
               <br />
-              speed of thought
+              Real Sources
             </h1>
 
             {/* Description */}
@@ -181,34 +182,34 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border">
             <div className="bg-background p-8 group">
-              <Brain className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors mb-6" />
-              <h3 className="text-base font-medium mb-2 text-foreground">Agentic Planning</h3>
+              <Search className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors mb-6" />
+              <h3 className="text-base font-medium mb-2 text-foreground">Cited Sources</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Breaks complex questions into steps, selects the right models and tools, executes workflows end to end.
+                Every answer includes citations to real sources you can verify. No hallucinations, just facts.
               </p>
             </div>
 
             <div className="bg-background p-8 group">
-              <Search className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors mb-6" />
-              <h3 className="text-base font-medium mb-2 text-foreground">Grounded Retrieval</h3>
+              <Brain className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors mb-6" />
+              <h3 className="text-base font-medium mb-2 text-foreground">75 AI Models</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Pulls up-to-date sources, extracts relevant parts, produces answers with citations you can audit.
+                Choose from 75 models including GPT, Claude, Grok, and Groq. Switch anytime to get the best answer.
+              </p>
+            </div>
+
+            <div className="bg-background p-8 group">
+              <Zap className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors mb-6" />
+              <h3 className="text-base font-medium mb-2 text-foreground">Multiple Search Modes</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Web search, academic research, YouTube analysis, code search, and more specialized modes.
               </p>
             </div>
 
             <div className="bg-background p-8 group">
               <Bot className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors mb-6" />
-              <h3 className="text-base font-medium mb-2 text-foreground">Extensible & Open</h3>
+              <h3 className="text-base font-medium mb-2 text-foreground">Open Source</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Open source by default. Self-host, bring your own models and tools, tailor to your stack.
-              </p>
-            </div>
-
-            <div className="bg-background p-8 group">
-              <Eye className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors mb-6" />
-              <h3 className="text-base font-medium mb-2 text-foreground">Lookouts</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Schedule recurring research agents to monitor topics and get updates when something changes.
+                Fully open source under AGPL-3.0. Transparent, auditable, and community-driven.
               </p>
             </div>
           </div>
@@ -228,10 +229,6 @@ export default function AboutPage() {
               <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
                 <ExaLogo />
                 <span className="text-sm text-muted-foreground">Exa Search</span>
-              </div>
-              <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
-                <ElevenLabsLogo />
-                <span className="text-sm text-muted-foreground">ElevenLabs</span>
               </div>
             </div>
           </div>

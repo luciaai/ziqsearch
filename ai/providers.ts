@@ -2026,13 +2026,39 @@ export function isModelRestrictedInRegion(modelValue: string, countryCode?: stri
 export function getFilteredModels(countryCode?: string): Model[] {
   let filteredModels = models;
 
-  // Filter out Gemini models if API key is not available
-  const hasGeminiKey = !!process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-  if (!hasGeminiKey) {
-    filteredModels = filteredModels.filter((model) => 
-      !model.value.includes('google') && !model.value.includes('gemini')
-    );
-  }
+  // Filter out models based on missing API keys
+  const hasGeminiKey = !!process.env.GOOGLE_GENERATIVE_AI_API_KEY && process.env.GOOGLE_GENERATIVE_AI_API_KEY !== 'api_key';
+  const hasMistralKey = !!process.env.MISTRAL_API_KEY;
+  const hasCohereKey = !!process.env.COHERE_API_KEY;
+  const hasHuggingFaceKey = !!process.env.HF_TOKEN;
+  const hasNovitaKey = !!process.env.NOVITA_API_KEY;
+  const hasAnannasKey = !!process.env.ANANNAS_API_KEY;
+  const hasBasetenKey = !!process.env.BASETEN_API_KEY;
+
+  filteredModels = filteredModels.filter((model) => {
+    // Filter Gemini models
+    if ((model.value.includes('google') || model.value.includes('gemini')) && !hasGeminiKey) return false;
+    
+    // Filter Mistral models
+    if ((model.value.includes('mistral') || model.value.includes('ministral') || model.value.includes('devstral') || model.value.includes('magistral')) && !hasMistralKey) return false;
+    
+    // Filter Cohere models
+    if (model.value.includes('cmd') && !hasCohereKey) return false;
+    
+    // Filter HuggingFace models
+    if (model.value.includes('huggingface') && !hasHuggingFaceKey) return false;
+    
+    // Filter Novita models
+    if (model.value.includes('novita') && !hasNovitaKey) return false;
+    
+    // Filter Anannas models
+    if (model.value.includes('anannas') && !hasAnannasKey) return false;
+    
+    // Filter Baseten models
+    if (model.value.includes('baseten') && !hasBasetenKey) return false;
+    
+    return true;
+  });
 
   // Filter by region restrictions
   if (!countryCode || !RESTRICTED_REGIONS.includes(countryCode.toUpperCase())) {

@@ -1,49 +1,21 @@
-# Scira
+# Ziq
 
-Research at the speed of thought. The agentic research platform that plans, retrieves, and cites — so you can think faster.
+Fast Research, Real Sources. The agentic research platform that plans, retrieves, and cites — delivering verified answers in seconds.
 
-<a href="https://vercel.com/oss">
-  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
-</a>
+![Ziq](/app/opengraph-image.png)
 
-<br />
+🔗 **[Try Ziq at ziqsearch.com](https://ziqsearch.com)**
 
-![Scira](/app/opengraph-image.png)
+## Built With
 
-<br />
-
-🔗 **[Try Scira at scira.ai](https://scira.ai)**
-
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/zaidmukaddam/scira)
-
-## Powered By
-
-<div align="center">
-
-|          [Vercel AI SDK](https://sdk.vercel.ai/docs)          |                [Exa AI](https://exa.ai)                |             [Upstash](https://upstash.com)              |
-| :-----------------------------------------------------------: | :----------------------------------------------------: | :-----------------------------------------------------: |
-| <img src="/public/one.svg" alt="Vercel AI SDK" height="40" /> | <img src="/public/exa.png" alt="Exa AI" height="40" /> | <img src="/public/upstash.svg" alt="Upstash" height="40" /> |
-|            For AI model integration and streaming             |          For web search and content retrieval          |        For serverless Redis and rate limiting           |
-
-</div>
-
-## Special Thanks
-
-<div align="center" markdown="1">
-
-[![Warp](https://github.com/user-attachments/assets/2bda420d-4211-4900-a37e-e3c7056d799c)](https://www.warp.dev/?utm_source=github&utm_medium=referral&utm_campaign=scira)<br>
-
-### **[Warp, the intelligent terminal](https://www.warp.dev/?utm_source=github&utm_medium=referral&utm_campaign=scira)**<br>
-
-[Available for MacOS, Linux, & Windows](https://www.warp.dev/?utm_source=github&utm_medium=referral&utm_campaign=scira)<br>
-[Visit warp.dev to learn more](https://www.warp.dev/?utm_source=github&utm_medium=referral&utm_campaign=scira)
-
-</div>
+- **[Vercel AI SDK](https://sdk.vercel.ai/docs)** - AI model integration and streaming
+- **[Exa AI](https://exa.ai)** - Web search and content retrieval
+- **[Upstash](https://upstash.com)** - Serverless Redis and rate limiting
 
 ## How It Works
 
-1. **Ask anything** — Type a question, upload a PDF, or paste a URL. Pick a mode or let Scira decide for you.
-2. **Scira plans & retrieves** — The agent breaks your question into sub-tasks, searches live sources, and cross-checks the evidence.
+1. **Ask anything** — Type a question, upload a PDF, or paste a URL. Pick a mode or let Ziq decide for you.
+2. **Ziq plans & retrieves** — The agent breaks your question into sub-tasks, searches live sources, and cross-checks the evidence.
 3. **Get cited answers** — Receive a grounded answer with inline citations. Click any source to verify it yourself.
 
 ## Features

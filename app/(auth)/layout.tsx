@@ -65,9 +65,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             {/* Tagline */}
             <div className="mb-16">
               <p className="text-2xl xl:text-3xl font-light tracking-tight leading-snug text-foreground/90">
-                Research that moves
+                Think it. Find it.
                 <br />
-                at the speed of thought.
+                Cite it.
               </p>
             </div>
 

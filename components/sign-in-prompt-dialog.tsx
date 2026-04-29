@@ -116,7 +116,29 @@ const SignInButton = ({ provider, loading, setLoading }: SignInButtonProps) => {
 
 export function SignInPromptDialog({ open, onOpenChange }: SignInPromptDialogProps) {
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const isMobile = useIsMobile();
+
+  const handleEmailSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailLoading(true);
+
+    try {
+      await authClient.signIn.email({
+        email,
+        password,
+        callbackURL: '/',
+      });
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Email sign-in error:', error);
+    } finally {
+      setEmailLoading(false);
+    }
+  };
 
   const content = (
     <>
@@ -126,25 +148,82 @@ export function SignInPromptDialog({ open, onOpenChange }: SignInPromptDialogPro
         <p className="text-sm text-muted-foreground">Save conversations and sync across devices</p>
       </div>
 
-      {/* Auth Options */}
-      <div className="space-y-2 mb-4">
-        <SignInButton provider="google" loading={googleLoading} setLoading={setGoogleLoading} />
-      </div>
+      {!showEmailForm ? (
+        <>
+          {/* Auth Options */}
+          <div className="space-y-2 mb-4">
+            <SignInButton provider="google" loading={googleLoading} setLoading={setGoogleLoading} />
+            <Button
+              variant="outline"
+              className="w-full h-11 px-4 font-normal text-sm border-0!"
+              onClick={() => setShowEmailForm(true)}
+            >
+              <span className="text-sm font-medium">Continue with Email</span>
+            </Button>
+          </div>
 
-      {/* Divider */}
-      <div className="relative my-4">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border"></div>
-        </div>
-        <div className="relative flex justify-center text-xs">
-          <span className="px-2 bg-background text-muted-foreground">or</span>
-        </div>
-      </div>
+          {/* Divider */}
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border"></div>
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="px-2 bg-background text-muted-foreground">or</span>
+            </div>
+          </div>
 
-      {/* Guest Option */}
-      <Button variant="ghost" onClick={() => onOpenChange(false)} className="w-full h-10 font-normal text-sm">
-        Continue without account
-      </Button>
+          {/* Guest Option */}
+          <Button variant="ghost" onClick={() => onOpenChange(false)} className="w-full h-10 font-normal text-sm">
+            Continue without account
+          </Button>
+        </>
+      ) : (
+        <>
+          {/* Email Sign-In Form */}
+          <form onSubmit={handleEmailSignIn} className="space-y-3 mb-4">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full h-11 px-4 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-foreground/20"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+              className="w-full h-11 px-4 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-foreground/20"
+            />
+            <Button
+              type="submit"
+              disabled={emailLoading}
+              className="w-full h-11 text-sm bg-foreground text-background hover:bg-foreground/90"
+            >
+              {emailLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  Signing in...
+                </>
+              ) : (
+                'Sign in'
+              )}
+            </Button>
+          </form>
+
+          {/* Back Button */}
+          <Button
+            variant="ghost"
+            onClick={() => setShowEmailForm(false)}
+            className="w-full h-10 font-normal text-sm"
+          >
+            Back to options
+          </Button>
+        </>
+      )}
 
       {/* Legal */}
       <p className="text-xs text-muted-foreground text-center mt-4">
@@ -169,25 +248,82 @@ export function SignInPromptDialog({ open, onOpenChange }: SignInPromptDialogPro
             <p className="text-sm text-muted-foreground pt-1">Save conversations and sync across devices</p>
           </DrawerHeader>
           <div className="overflow-y-auto pt-4">
-            {/* Auth Options */}
-            <div className="space-y-2 mb-4">
-              <SignInButton provider="google" loading={googleLoading} setLoading={setGoogleLoading} />
-            </div>
+            {!showEmailForm ? (
+              <>
+                {/* Auth Options */}
+                <div className="space-y-2 mb-4">
+                  <SignInButton provider="google" loading={googleLoading} setLoading={setGoogleLoading} />
+                  <Button
+                    variant="outline"
+                    className="w-full h-11 px-4 font-normal text-sm border-0!"
+                    onClick={() => setShowEmailForm(true)}
+                  >
+                    <span className="text-sm font-medium">Continue with Email</span>
+                  </Button>
+                </div>
 
-            {/* Divider */}
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border"></div>
-              </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="px-2 bg-background text-muted-foreground">or</span>
-              </div>
-            </div>
+                {/* Divider */}
+                <div className="relative my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border"></div>
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="px-2 bg-background text-muted-foreground">or</span>
+                  </div>
+                </div>
 
-            {/* Guest Option */}
-            <Button variant="ghost" onClick={() => onOpenChange(false)} className="w-full h-10 font-normal text-sm">
-              Continue without account
-            </Button>
+                {/* Guest Option */}
+                <Button variant="ghost" onClick={() => onOpenChange(false)} className="w-full h-10 font-normal text-sm">
+                  Continue without account
+                </Button>
+              </>
+            ) : (
+              <>
+                {/* Email Sign-In Form */}
+                <form onSubmit={handleEmailSignIn} className="space-y-3 mb-4">
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full h-11 px-4 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-foreground/20"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={8}
+                    className="w-full h-11 px-4 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-foreground/20"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={emailLoading}
+                    className="w-full h-11 text-sm bg-foreground text-background hover:bg-foreground/90"
+                  >
+                    {emailLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        Signing in...
+                      </>
+                    ) : (
+                      'Sign in'
+                    )}
+                  </Button>
+                </form>
+
+                {/* Back Button */}
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowEmailForm(false)}
+                  className="w-full h-10 font-normal text-sm"
+                >
+                  Back to options
+                </Button>
+              </>
+            )}
 
             {/* Legal */}
             <p className="text-xs text-muted-foreground text-center mt-4">

@@ -65,7 +65,7 @@ export default async function OgImage() {
             textAlign: 'center',
           }}
         >
-          Research in speed of thought
+          Think it. Find it. Cite it.
         </div>
         
         {/* Description */}

@@ -12,10 +12,13 @@ const resend = new Resend(serverEnv.RESEND_API_KEY);
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { type, message, email, name } = body;
+    const { type, message, email, name, feedback: feedbackText, chatId } = body;
+
+    // Support both old format (message) and new format (feedback)
+    const actualMessage = feedbackText || message;
 
     // Validate required fields
-    if (!type || !message) {
+    if (!type || !actualMessage) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -23,9 +26,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Auto-generate subject from first 60 chars of message
-    const subject = message.length > 60 
-      ? message.substring(0, 60).trim() + '...' 
-      : message.trim();
+    const subject = actualMessage.length > 60 
+      ? actualMessage.substring(0, 60).trim() + '...' 
+      : actualMessage.trim();
 
     // Get current user if authenticated
     const session = await auth.api.getSession({
@@ -45,7 +48,7 @@ export async function POST(req: NextRequest) {
       name: userName,
       type,
       subject,
-      message,
+      message: actualMessage,
       status: 'new',
     });
 
@@ -61,9 +64,10 @@ export async function POST(req: NextRequest) {
           <p><strong>Type:</strong> ${type}</p>
           <p><strong>From:</strong> ${userName} (${userEmail})</p>
           <p><strong>Subject:</strong> ${subject}</p>
+          ${chatId ? `<p><strong>Chat:</strong> <a href="https://www.ziqsearch.com/search/${chatId}">View conversation</a></p>` : ''}
           <hr />
           <p><strong>Message:</strong></p>
-          <p>${message.replace(/\n/g, '<br>')}</p>
+          <p>${actualMessage.replace(/\n/g, '<br>')}</p>
           <hr />
           <p><small>Feedback ID: ${feedbackId}</small></p>
           <p><small>View in admin: https://www.ziqsearch.com/admin/feedback</small></p>

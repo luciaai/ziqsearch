@@ -15,7 +15,7 @@ import { Providers } from './providers';
 export const metadata: Metadata = {
   metadataBase: new URL('https://ziqsearch.com'),
   title: {
-    default: 'Ziq - Research in speed of thought.',
+    default: 'Ziq - Think it. Find it. Cite it.',
     template: '%s | Ziq',
   },
   description:
@@ -23,6 +23,22 @@ export const metadata: Metadata = {
   openGraph: {
     url: 'https://ziqsearch.com',
     siteName: 'Ziq',
+    title: 'Ziq - Think it. Find it. Cite it.',
+    description: 'Ziq is a free Agentic Research Platform that finds, analyzes, and cites information from the live web.',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'Ziq - Think it. Find it. Cite it.',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ziq - Think it. Find it. Cite it.',
+    description: 'Ziq is a free Agentic Research Platform that finds, analyzes, and cites information from the live web.',
+    images: ['/opengraph-image'],
   },
   keywords: [
     'agentic research platform',

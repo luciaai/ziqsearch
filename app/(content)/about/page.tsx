@@ -94,9 +94,9 @@ export default function AboutPage() {
 
             {/* Title */}
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light tracking-tight leading-[1.05] bg-gradient-to-r from-foreground via-foreground to-foreground/60 bg-clip-text text-transparent font-be-vietnam-pro mb-8">
-              Fast Research,
+              Think it. Find it.
               <br />
-              Real Sources
+              Cite it.
             </h1>
 
             {/* Description */}
@@ -706,6 +706,9 @@ export default function AboutPage() {
               </Link>
             </div>
             <div className="flex items-center gap-6">
+              <Link href="/testimonials" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                Testimonials
+              </Link>
               <Link href="/faq" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                 FAQ
               </Link>

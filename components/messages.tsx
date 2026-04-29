@@ -9,6 +9,7 @@ import { ChatMessage, CustomUIDataTypes } from '@/lib/types';
 import { UseChatHelpers } from '@ai-sdk/react';
 import { ComprehensiveUserData } from '@/lib/user-data-server';
 import { useDataStream } from './data-stream-provider';
+import { SearchFeedback } from '@/components/search-feedback';
 
 // Define interface for part, messageIndex and partIndex objects
 interface PartInfo {
@@ -456,6 +457,11 @@ const Messages: React.FC<MessagesProps> = ({
           selectedVisibilityType={selectedVisibilityType}
           handleRetry={handleRetry}
         />
+      )}
+
+      {/* Show feedback prompt after messages are complete */}
+      {status === 'ready' && memoizedMessages.length > 0 && memoizedMessages[memoizedMessages.length - 1]?.role === 'assistant' && (
+        <SearchFeedback chatId={chatId} messageCount={memoizedMessages.length} />
       )}
 
       <div ref={messagesEndRef} />

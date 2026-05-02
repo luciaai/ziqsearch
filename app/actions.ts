@@ -3422,6 +3422,7 @@ export async function testLookoutAction({ id }: { id: string }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-cron-secret': process.env.CRON_SECRET || '',
         },
         body: JSON.stringify({
           lookoutId: lookout.id,

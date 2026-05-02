@@ -651,5 +651,19 @@ $$
   }
 }
 
-// Export with QStash signature verification
-export const POST = verifySignatureAppRouter(handler);
+// Internal test handler that bypasses signature verification
+async function internalTestHandler(req: Request) {
+  const cron_secret = req.headers.get('x-cron-secret');
+  
+  // Check if this is an internal test call
+  if (cron_secret && cron_secret === process.env.CRON_SECRET) {
+    console.log('🧪 Internal test call detected, bypassing signature verification');
+    return handler(req);
+  }
+  
+  // Otherwise, require QStash signature verification
+  return verifySignatureAppRouter(handler)(req);
+}
+
+// Export with conditional QStash signature verification
+export const POST = internalTestHandler;

@@ -655,6 +655,9 @@ $$
 export async function POST(req: Request) {
   const cron_secret = req.headers.get('x-cron-secret');
   
+  console.log('🔍 Received x-cron-secret header:', cron_secret ? 'present' : 'missing');
+  console.log('🔍 Expected CRON_SECRET:', process.env.CRON_SECRET ? 'present' : 'missing');
+  
   // Check if this is an internal test call
   if (cron_secret && cron_secret === process.env.CRON_SECRET) {
     console.log('🧪 Internal test call detected, bypassing signature verification');
@@ -662,7 +665,7 @@ export async function POST(req: Request) {
   }
   
   // Otherwise, verify QStash signature
-  console.log('🔐 Verifying QStash signature');
+  console.log('🔐 Verifying QStash signature (no valid cron secret found)');
   const verified = verifySignatureAppRouter(handler);
   return verified(req);
 }

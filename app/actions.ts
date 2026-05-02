@@ -3412,7 +3412,7 @@ export async function testLookoutAction({ id }: { id: string }) {
     }
 
     const webhookUrl = process.env.NODE_ENV === 'development'
-      ? (process.env.NGROK_URL || 'https://ziqsearch.com') + '/api/lookout'
+      ? (process.env.NGROK_URL || 'http://localhost:3000') + '/api/lookout'
       : `https://ziqsearch.com/api/lookout`;
 
     // Make a POST request to the lookout API endpoint to trigger the run
@@ -3422,7 +3422,7 @@ export async function testLookoutAction({ id }: { id: string }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-cron-secret': process.env.CRON_SECRET || '',
+          'x-cron-secret': serverEnv.CRON_SECRET,
         },
         body: JSON.stringify({
           lookoutId: lookout.id,

@@ -651,8 +651,8 @@ $$
   }
 }
 
-// Internal test handler that bypasses signature verification
-async function internalTestHandler(req: Request) {
+// Wrapper to handle both internal test calls and QStash calls
+export async function POST(req: Request) {
   const cron_secret = req.headers.get('x-cron-secret');
   
   // Check if this is an internal test call
@@ -661,9 +661,8 @@ async function internalTestHandler(req: Request) {
     return handler(req);
   }
   
-  // Otherwise, require QStash signature verification
-  return verifySignatureAppRouter(handler)(req);
+  // Otherwise, verify QStash signature
+  console.log('🔐 Verifying QStash signature');
+  const verified = verifySignatureAppRouter(handler);
+  return verified(req);
 }
-
-// Export with conditional QStash signature verification
-export const POST = internalTestHandler;

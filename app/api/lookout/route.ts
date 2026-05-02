@@ -22,7 +22,7 @@ import { sendLookoutCompletionEmail } from '@/lib/email';
 import { db } from '@/lib/db';
 import { subscription, dodosubscription } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
+import { serverEnv } from '@/env/server';
 
 // Import extreme search tool
 import { extremeSearchTool } from '@/lib/tools';
@@ -651,21 +651,21 @@ $$
   }
 }
 
-// Wrapper to handle both internal test calls and QStash calls
+// Authenticate all requests with CRON_SECRET
 export async function POST(req: Request) {
   const cron_secret = req.headers.get('x-cron-secret');
   
   console.log('🔍 Received x-cron-secret header:', cron_secret ? 'present' : 'missing');
-  console.log('🔍 Expected CRON_SECRET:', process.env.CRON_SECRET ? 'present' : 'missing');
+  console.log('🔍 CRON_SECRET configured:', serverEnv.CRON_SECRET ? 'yes' : 'no');
   
-  // Check if this is an internal test call
-  if (cron_secret && cron_secret === process.env.CRON_SECRET) {
-    console.log('🧪 Internal test call detected, bypassing signature verification');
-    return handler(req);
+  if (!cron_secret || cron_secret !== serverEnv.CRON_SECRET) {
+    console.error('❌ Unauthorized: invalid or missing CRON_SECRET');
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { 
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
   
-  // Otherwise, verify QStash signature
-  console.log('🔐 Verifying QStash signature (no valid cron secret found)');
-  const verified = verifySignatureAppRouter(handler);
-  return verified(req);
+  console.log('✅ Authorized via CRON_SECRET');
+  return handler(req);
 }

@@ -3117,6 +3117,7 @@ export async function createScheduledLookout({
             }),
             headers: {
               'Content-Type': 'application/json',
+              'x-cron-secret': serverEnv.CRON_SECRET,
             },
           });
 
@@ -3321,6 +3322,7 @@ export async function updateLookoutAction({
           }),
           headers: {
             'Content-Type': 'application/json',
+            'x-cron-secret': serverEnv.CRON_SECRET,
           },
         });
 

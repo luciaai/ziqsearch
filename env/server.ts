@@ -40,6 +40,8 @@ export const serverEnv = createEnv({
     SUPADATA_API_KEY: z.string().min(1),
     QSTASH_TOKEN: z.string().min(1),
     QSTASH_URL: z.string().optional(),
+    QSTASH_CURRENT_SIGNING_KEY: z.string().min(1),
+    QSTASH_NEXT_SIGNING_KEY: z.string().min(1),
     RESEND_API_KEY: z.string().min(1),
     SUPERMEMORY_API_KEY: z.string().min(1),
     ALLOWED_ORIGINS: z.string().optional().default('http://localhost:3000'),

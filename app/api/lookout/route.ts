@@ -22,6 +22,7 @@ import { sendLookoutCompletionEmail } from '@/lib/email';
 import { db } from '@/lib/db';
 import { subscription, dodosubscription } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
 
 // Import extreme search tool
 import { extremeSearchTool } from '@/lib/tools';
@@ -85,8 +86,9 @@ function getStreamContext() {
   return globalStreamContext;
 }
 
-export async function POST(req: Request) {
+async function handler(req: Request) {
   console.log('🔍 Lookout API endpoint hit from QStash');
+  console.log('📋 Request headers:', Object.fromEntries(req.headers.entries()));
 
   const requestStartTime = Date.now();
   let runDuration = 0;
@@ -641,6 +643,13 @@ $$
     }
   } catch (error) {
     console.error('Error in lookout API:', error);
-    return new Response('Internal server error', { status: 500 });
+    console.error('Error details:', error instanceof Error ? error.message : String(error));
+    return new Response(JSON.stringify({ error: 'Internal server error', details: error instanceof Error ? error.message : String(error) }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
+
+// Export with QStash signature verification
+export const POST = verifySignatureAppRouter(handler);

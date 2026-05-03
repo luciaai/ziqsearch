@@ -20,7 +20,7 @@ import { v7 as uuidv7 } from 'uuid';
 import { CronExpressionParser } from 'cron-parser';
 import { sendLookoutCompletionEmail } from '@/lib/email';
 import { db } from '@/lib/db';
-import { subscription, dodosubscription } from '@/lib/db/schema';
+import { subscription, dodosubscription, billingSubscription } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { serverEnv } from '@/env/server';
 
@@ -48,7 +48,6 @@ async function checkUserIsProById(userId: string): Promise<boolean> {
     // Check for Dodo subscriptions
     const dodoSubscriptions = await db.select().from(dodosubscription).where(eq(dodosubscription.userId, userId));
 
-    // Check if any Dodo subscription is active
     const activeDodoSubscription = dodoSubscriptions.find((sub) => {
       const now = new Date();
       const isActive = sub.status === 'active' && (!sub.currentPeriodEnd || new Date(sub.currentPeriodEnd) > now);
@@ -56,6 +55,18 @@ async function checkUserIsProById(userId: string): Promise<boolean> {
     });
 
     if (activeDodoSubscription) {
+      return true;
+    }
+
+    // Check for Stripe subscriptions
+    const stripeSubscriptions = await db.select().from(billingSubscription).where(eq(billingSubscription.userId, userId));
+
+    const activeStripeSubscription = stripeSubscriptions.find((sub) => {
+      const now = new Date();
+      return sub.status === 'active' && new Date(sub.currentPeriodEnd) > now;
+    });
+
+    if (activeStripeSubscription) {
       return true;
     }
 
@@ -94,17 +105,7 @@ async function handler(req: Request) {
   let runError: string | undefined;
 
   try {
-    const { lookoutId, prompt, userId, _secret } = await req.json();
-
-    // Verify secret from body (works for both QStash scheduled calls and test button)
-    if (!_secret || _secret !== serverEnv.CRON_SECRET) {
-      console.error('❌ Unauthorized: invalid or missing secret');
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-    console.log('✅ Authorized');
+    const { lookoutId, prompt, userId } = await req.json();
 
     console.log('--------------------------------');
     console.log('Lookout ID:', lookoutId);
@@ -663,3 +664,4 @@ $$
 export async function POST(req: Request) {
   return handler(req);
 }
+

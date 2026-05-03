@@ -3114,7 +3114,6 @@ export async function createScheduledLookout({
               lookoutId: lookout.id,
               prompt,
               userId: user.id,
-              _secret: serverEnv.CRON_SECRET,
             }),
             headers: {
               'Content-Type': 'application/json',
@@ -3319,7 +3318,6 @@ export async function updateLookoutAction({
             lookoutId: id,
             prompt: prompt.trim(),
             userId: user.id,
-            _secret: serverEnv.CRON_SECRET,
           }),
           headers: {
             'Content-Type': 'application/json',
@@ -3422,7 +3420,6 @@ export async function testLookoutAction({ id }: { id: string }) {
         lookoutId: lookout.id,
         prompt: lookout.prompt,
         userId: user.id,
-        _secret: serverEnv.CRON_SECRET,
       }),
     });
 

@@ -198,11 +198,6 @@ export async function checkImageModeration(images: string[]) {
   const { text } = await generateText({
     model: groq('meta-llama/llama-guard-4-12b'),
     messages,
-    providerOptions: {
-      groq: {
-        service_tier: 'flex',
-      },
-    },
   });
   return text;
 }

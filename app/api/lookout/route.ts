@@ -22,7 +22,6 @@ import { sendLookoutCompletionEmail } from '@/lib/email';
 import { db } from '@/lib/db';
 import { subscription, dodosubscription, billingSubscription } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { serverEnv } from '@/env/server';
 
 // Import extreme search tool
 import { extremeSearchTool } from '@/lib/tools';
@@ -664,4 +663,3 @@ $$
 export async function POST(req: Request) {
   return handler(req);
 }
-

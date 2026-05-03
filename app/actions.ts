@@ -190,16 +190,29 @@ export async function suggestQuestions(history: any[]) {
 }
 
 export async function checkImageModeration(images: string[]) {
-  const messages: ModelMessage[] = images.map((image) => ({
-    role: 'user',
-    content: [{ type: 'image', image: image }],
-  }));
+  const messages: ModelMessage[] = [
+    {
+      role: 'user',
+      content: [
+        ...images.map((image) => ({ type: 'image' as const, image: image })),
+        {
+          type: 'text',
+          text: 'Are any of these images unsafe, explicit, or violating content policies? Reply with only "safe" or "unsafe".',
+        },
+      ],
+    },
+  ];
 
   const { text } = await generateText({
-    model: groq('openai/gpt-oss-safeguard-20b'),
+    model: groq('meta-llama/llama-4-scout-17b-16e-instruct'),
     messages,
   });
-  return text;
+
+  const lower = text.toLowerCase().trim();
+  if (lower.includes('unsafe')) {
+    return 'unsafe\nContent policy violation';
+  }
+  return 'safe';
 }
 
 export async function generateTitleFromUserMessage({ message }: { message: UIMessage }) {

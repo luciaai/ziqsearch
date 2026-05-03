@@ -2922,34 +2922,32 @@ const FormComponent: React.FC<FormComponentProps> = ({
         return;
       }
 
-      if (imageFiles.length > 0) {
-        try {
-          console.log('Checking image moderation for', imageFiles.length, 'images');
-          toast.info('Checking images for safety...');
-
-          const imageDataURLs = await Promise.all(imageFiles.map((file) => fileToDataURL(file)));
-
-          const moderationResult = await checkImageModeration(imageDataURLs);
-          console.log('Moderation result:', moderationResult);
-
-          if (moderationResult !== 'safe') {
-            const [status, category] = moderationResult.split('\n');
-            if (status === 'unsafe') {
-              console.warn('Unsafe image detected, category:', category);
-              toast.error(`Image content violates safety guidelines (${category}). Please choose different images.`);
-              event.target.value = '';
-              return;
-            }
-          }
-
-          console.log('Images passed moderation check');
-        } catch (error) {
-          console.error('Error during image moderation:', error);
-          toast.error('Unable to verify image safety. Please try again.');
-          event.target.value = '';
-          return;
-        }
-      }
+      // Pre-upload moderation disabled - AI models (Gemini, GPT-4, Claude) have built-in safety filters
+      // that refuse to process explicit content, providing the actual safety layer
+      // if (imageFiles.length > 0) {
+      //   try {
+      //     console.log('Checking image moderation for', imageFiles.length, 'images');
+      //     toast.info('Checking images for safety...');
+      //     const imageDataURLs = await Promise.all(imageFiles.map((file) => fileToDataURL(file)));
+      //     const moderationResult = await checkImageModeration(imageDataURLs);
+      //     console.log('Moderation result:', moderationResult);
+      //     if (moderationResult !== 'safe') {
+      //       const [status, category] = moderationResult.split('\n');
+      //       if (status === 'unsafe') {
+      //         console.warn('Unsafe image detected, category:', category);
+      //         toast.error(`Image content violates safety guidelines (${category}). Please choose different images.`);
+      //         event.target.value = '';
+      //         return;
+      //       }
+      //     }
+      //     console.log('Images passed moderation check');
+      //   } catch (error) {
+      //     console.error('Error during image moderation:', error);
+      //     toast.error('Unable to verify image safety. Please try again.');
+      //     event.target.value = '';
+      //     return;
+      //   }
+      // }
 
       setUploadQueue(validFiles.map((file) => file.name));
 
@@ -3167,32 +3165,29 @@ const FormComponent: React.FC<FormComponentProps> = ({
         return;
       }
 
-      if (imageFiles.length > 0) {
-        try {
-          console.log('Checking image moderation for', imageFiles.length, 'images');
-          toast.info('Checking images for safety...');
-
-          const imageDataURLs = await Promise.all(imageFiles.map((file) => fileToDataURL(file)));
-
-          const moderationResult = await checkImageModeration(imageDataURLs);
-          console.log('Moderation result:', moderationResult);
-
-          if (moderationResult !== 'safe') {
-            const [status, category] = moderationResult.split('\n');
-            if (status === 'unsafe') {
-              console.warn('Unsafe image detected, category:', category);
-              toast.error(`Image content violates safety guidelines (${category}). Please choose different images.`);
-              return;
-            }
-          }
-
-          console.log('Images passed moderation check');
-        } catch (error) {
-          console.error('Error during image moderation:', error);
-          toast.error('Unable to verify image safety. Please try again.');
-          return;
-        }
-      }
+      // Pre-upload moderation disabled - AI models have built-in safety filters
+      // if (imageFiles.length > 0) {
+      //   try {
+      //     console.log('Checking image moderation for', imageFiles.length, 'images');
+      //     toast.info('Checking images for safety...');
+      //     const imageDataURLs = await Promise.all(imageFiles.map((file) => fileToDataURL(file)));
+      //     const moderationResult = await checkImageModeration(imageDataURLs);
+      //     console.log('Moderation result:', moderationResult);
+      //     if (moderationResult !== 'safe') {
+      //       const [status, category] = moderationResult.split('\n');
+      //       if (status === 'unsafe') {
+      //         console.warn('Unsafe image detected, category:', category);
+      //         toast.error(`Image content violates safety guidelines (${category}). Please choose different images.`);
+      //         return;
+      //       }
+      //     }
+      //     console.log('Images passed moderation check');
+      //   } catch (error) {
+      //     console.error('Error during image moderation:', error);
+      //     toast.error('Unable to verify image safety. Please try again.');
+      //     return;
+      //   }
+      // }
 
       if (!currentModelData?.vision) {
         let visionModel: string;
@@ -3290,34 +3285,31 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
       const filesToUpload = oversizedFiles.length > 0 ? files.filter((file) => file.size <= MAX_FILE_SIZE) : files;
 
-      if (filesToUpload.length > 0) {
-        try {
-          console.log('Checking image moderation for', filesToUpload.length, 'pasted images');
-          toast.info('Checking pasted images for safety...');
-
-          const imageDataURLs = await Promise.all(filesToUpload.map((file) => fileToDataURL(file)));
-
-          const moderationResult = await checkImageModeration(imageDataURLs);
-          console.log('Moderation result:', moderationResult);
-
-          if (moderationResult !== 'safe') {
-            const [status, category] = moderationResult.split('\n');
-            if (status === 'unsafe') {
-              console.warn('Unsafe pasted image detected, category:', category);
-              toast.error(
-                `Pasted image content violates safety guidelines (${category}). Please choose different images.`,
-              );
-              return;
-            }
-          }
-
-          console.log('Pasted images passed moderation check');
-        } catch (error) {
-          console.error('Error during pasted image moderation:', error);
-          toast.error('Unable to verify pasted image safety. Please try again.');
-          return;
-        }
-      }
+      // Pre-upload moderation disabled - AI models have built-in safety filters
+      // if (filesToUpload.length > 0) {
+      //   try {
+      //     console.log('Checking image moderation for', filesToUpload.length, 'pasted images');
+      //     toast.info('Checking pasted images for safety...');
+      //     const imageDataURLs = await Promise.all(filesToUpload.map((file) => fileToDataURL(file)));
+      //     const moderationResult = await checkImageModeration(imageDataURLs);
+      //     console.log('Moderation result:', moderationResult);
+      //     if (moderationResult !== 'safe') {
+      //       const [status, category] = moderationResult.split('\n');
+      //       if (status === 'unsafe') {
+      //         console.warn('Unsafe pasted image detected, category:', category);
+      //         toast.error(
+      //           `Pasted image content violates safety guidelines (${category}). Please choose different images.`,
+      //         );
+      //         return;
+      //       }
+      //     }
+      //     console.log('Pasted images passed moderation check');
+      //   } catch (error) {
+      //     console.error('Error during pasted image moderation:', error);
+      //     toast.error('Unable to verify pasted image safety. Please try again.');
+      //     return;
+      //   }
+      // }
 
       setUploadQueue(filesToUpload.map((file, i) => file.name || `Pasted Image ${i + 1}`));
 

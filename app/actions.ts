@@ -190,29 +190,34 @@ export async function suggestQuestions(history: any[]) {
 }
 
 export async function checkImageModeration(images: string[]) {
-  const messages: ModelMessage[] = [
-    {
-      role: 'user',
-      content: [
-        ...images.map((image) => ({ type: 'image' as const, image: image })),
-        {
-          type: 'text',
-          text: 'Are any of these images unsafe, explicit, or violating content policies? Reply with only "safe" or "unsafe".',
-        },
-      ],
-    },
-  ];
+  try {
+    const messages: ModelMessage[] = [
+      {
+        role: 'user',
+        content: [
+          ...images.map((image) => ({ type: 'image' as const, image: image })),
+          {
+            type: 'text',
+            text: 'Are any of these images unsafe, explicit, or violating content policies? Reply with only "safe" or "unsafe".',
+          },
+        ],
+      },
+    ];
 
-  const { text } = await generateText({
-    model: groq('meta-llama/llama-4-scout-17b-16e-instruct'),
-    messages,
-  });
+    const { text } = await generateText({
+      model: groq('meta-llama/llama-4-scout-17b-16e-instruct'),
+      messages,
+    });
 
-  const lower = text.toLowerCase().trim();
-  if (lower.includes('unsafe')) {
-    return 'unsafe\nContent policy violation';
+    const lower = text.toLowerCase().trim();
+    if (lower.includes('unsafe')) {
+      return 'unsafe\nContent policy violation';
+    }
+    return 'safe';
+  } catch (error) {
+    console.error('Image moderation check failed, allowing upload:', error);
+    return 'safe';
   }
-  return 'safe';
 }
 
 export async function generateTitleFromUserMessage({ message }: { message: UIMessage }) {

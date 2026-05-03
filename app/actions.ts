@@ -196,7 +196,7 @@ export async function checkImageModeration(images: string[]) {
   }));
 
   const { text } = await generateText({
-    model: groq('meta-llama/llama-guard-4-12b'),
+    model: groq('openai/gpt-oss-safeguard-20b'),
     messages,
   });
   return text;

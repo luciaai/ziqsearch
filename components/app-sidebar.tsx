@@ -437,87 +437,54 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
             </SidebarMenuItem>
           )}
 
-          {/* Research Tools - Collapsible when expanded, individual icons when collapsed */}
+          {/* Lookout */}
           {mounted && user && (
-            <>
-              {/* Expanded state - Accordion */}
-              <div className="group-data-[collapsible=icon]:hidden">
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="research-tools" className="border-none">
-                    <SidebarMenuItem>
-                      <AccordionTrigger className="px-2 py-2 hover:no-underline [&>svg]:size-3 [&>svg]:text-sidebar-foreground/50">
-                        <div className="flex items-center gap-2">
-                          <HugeiconsIcon icon={SearchList02Icon} size={18} />
-                          <span className="text-sm font-medium text-foreground">Research Tools</span>
-                        </div>
-                      </AccordionTrigger>
-                    </SidebarMenuItem>
-                    <AccordionContent className="pb-0">
-                      {/* Lookout */}
-                      <SidebarMenuItem>
-                        <SidebarMenuButton
-                          asChild
-                          tooltip="Lookout - Automated searches on your schedule"
-                          className={cn(
-                            'hover:bg-primary/10 transition-all duration-200',
-                            pathname === '/lookout' || pathname?.startsWith('/lookout/')
-                              ? 'bg-primary/15 text-foreground font-medium'
-                              : '',
-                          )}
-                        >
-                          <Link
-                            prefetch={true}
-                            href="/lookout"
-                            onClick={closeMobileSidebar}
-                            className="flex items-center gap-2 pl-8"
-                          >
-                            <HugeiconsIcon icon={BinocularsIcon} size={18} />
-                            <span>Lookout</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip="Lookout - Automated searches on your schedule"
+                className={cn(
+                  'hover:bg-primary/10 transition-all duration-200',
+                  pathname === '/lookout' || pathname?.startsWith('/lookout/')
+                    ? 'bg-primary/15 text-foreground font-medium'
+                    : '',
+                )}
+              >
+                <Link
+                  prefetch={true}
+                  href="/lookout"
+                  onClick={closeMobileSidebar}
+                  className="flex items-center gap-2"
+                >
+                  <HugeiconsIcon icon={BinocularsIcon} size={18} />
+                  <span>Lookout</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
 
-                      {/* Citations */}
-                      <SidebarMenuItem>
-                        <SidebarMenuButton
-                          asChild
-                          tooltip="Citation Generator - Generate citations from URLs"
-                          className={cn(
-                            'hover:bg-primary/10 transition-all duration-200',
-                            pathname === '/citations' ? 'bg-primary/15 text-foreground font-medium' : '',
-                          )}
-                        >
-                          <Link
-                            prefetch={true}
-                            href="/citations"
-                            onClick={closeMobileSidebar}
-                            className="flex items-center gap-2 pl-8"
-                          >
-                            <BookIcon size={18} weight="regular" />
-                            <span>Citations</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </div>
-
-              {/* Collapsed state - Show only heading icon */}
-              <div className="hidden group-data-[collapsible=icon]:block">
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    tooltip="Research Tools"
-                    className="hover:bg-primary/10 transition-all duration-200"
-                  >
-                    <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full cursor-default">
-                      <HugeiconsIcon icon={SearchList02Icon} size={18} />
-                    </div>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </div>
-            </>
+          {/* Citations */}
+          {mounted && user && (
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip="Citation Generator - Generate citations from URLs"
+                className={cn(
+                  'hover:bg-primary/10 transition-all duration-200',
+                  pathname === '/citations' ? 'bg-primary/15 text-foreground font-medium' : '',
+                )}
+              >
+                <Link
+                  prefetch={true}
+                  href="/citations"
+                  onClick={closeMobileSidebar}
+                  className="flex items-center gap-2"
+                >
+                  <BookIcon size={18} weight="regular" />
+                  <span>Citations</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           )}
 
           {/* X / Twitter - Collapsible when expanded, individual icons when collapsed */}

@@ -295,7 +295,7 @@ export default function FAQPage() {
                     <strong>How to use:</strong>
                   </p>
                   <ol className="list-decimal list-inside space-y-1 text-muted-foreground text-sm">
-                    <li>Go to Research Tools → Citations in the sidebar</li>
+                    <li>Go to Citations in the sidebar</li>
                     <li>Paste the URL of your source</li>
                     <li>Click Generate Citation</li>
                     <li>Copy the citation in your preferred format</li>
@@ -318,7 +318,7 @@ export default function FAQPage() {
                     <strong>How to use:</strong>
                   </p>
                   <ol className="list-decimal list-inside space-y-1 text-muted-foreground text-sm">
-                    <li>Go to Research Tools → Lookout in the sidebar</li>
+                    <li>Go to Lookout in the sidebar</li>
                     <li>Create a new Lookout with your search query</li>
                     <li>Set the frequency (daily, weekly, etc.)</li>
                     <li>Receive updates when new relevant information is found</li>

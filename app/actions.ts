@@ -3114,10 +3114,10 @@ export async function createScheduledLookout({
               lookoutId: lookout.id,
               prompt,
               userId: user.id,
+              _secret: serverEnv.CRON_SECRET,
             }),
             headers: {
               'Content-Type': 'application/json',
-              'x-cron-secret': serverEnv.CRON_SECRET,
             },
           });
 
@@ -3319,10 +3319,10 @@ export async function updateLookoutAction({
             lookoutId: id,
             prompt: prompt.trim(),
             userId: user.id,
+            _secret: serverEnv.CRON_SECRET,
           }),
           headers: {
             'Content-Type': 'application/json',
-            'x-cron-secret': serverEnv.CRON_SECRET,
           },
         });
 
@@ -3413,29 +3413,22 @@ export async function testLookoutAction({ id }: { id: string }) {
       throw new Error(`Cannot test lookout with status: ${lookout.status}`);
     }
 
-    const webhookUrl = process.env.NODE_ENV === 'development'
-      ? (process.env.NGROK_URL || 'http://localhost:3000') + '/api/lookout'
-      : `https://ziqsearch.com/api/lookout`;
+    const webhookUrl = `https://ziqsearch.com/api/lookout`;
 
-    // Make a POST request to the lookout API endpoint to trigger the run
-    const response = await fetch(
-      webhookUrl,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-cron-secret': serverEnv.CRON_SECRET,
-        },
-        body: JSON.stringify({
-          lookoutId: lookout.id,
-          prompt: lookout.prompt,
-          userId: user.id,
-        }),
-      },
-    );
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        lookoutId: lookout.id,
+        prompt: lookout.prompt,
+        userId: user.id,
+        _secret: serverEnv.CRON_SECRET,
+      }),
+    });
 
     if (!response.ok) {
-      throw new Error(`Failed to trigger lookout test: ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`Failed to trigger lookout test: ${response.status} ${errorText}`);
     }
 
     return { success: true, message: 'Lookout test started successfully' };

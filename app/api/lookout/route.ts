@@ -87,15 +87,24 @@ function getStreamContext() {
 }
 
 async function handler(req: Request) {
-  console.log('🔍 Lookout API endpoint hit from QStash');
-  console.log('📋 Request headers:', Object.fromEntries(req.headers.entries()));
+  console.log('🔍 Lookout API endpoint hit');
 
   const requestStartTime = Date.now();
   let runDuration = 0;
   let runError: string | undefined;
 
   try {
-    const { lookoutId, prompt, userId } = await req.json();
+    const { lookoutId, prompt, userId, _secret } = await req.json();
+
+    // Verify secret from body (works for both QStash scheduled calls and test button)
+    if (!_secret || _secret !== serverEnv.CRON_SECRET) {
+      console.error('❌ Unauthorized: invalid or missing secret');
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    console.log('✅ Authorized');
 
     console.log('--------------------------------');
     console.log('Lookout ID:', lookoutId);
@@ -651,21 +660,6 @@ $$
   }
 }
 
-// Authenticate all requests with CRON_SECRET
 export async function POST(req: Request) {
-  const cron_secret = req.headers.get('x-cron-secret');
-  
-  console.log('🔍 Received x-cron-secret header:', cron_secret ? 'present' : 'missing');
-  console.log('🔍 CRON_SECRET configured:', serverEnv.CRON_SECRET ? 'yes' : 'no');
-  
-  if (!cron_secret || cron_secret !== serverEnv.CRON_SECRET) {
-    console.error('❌ Unauthorized: invalid or missing CRON_SECRET');
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { 
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-  
-  console.log('✅ Authorized via CRON_SECRET');
   return handler(req);
 }

@@ -543,7 +543,7 @@ export async function POST(req: Request) {
           (latitude && longitude && userPreferencesResult?.preferences?.['scira-location-metadata-enabled'] === true
             ? `\n\nThe user's location is ${latitude}, ${longitude}.`
             : ''),
-        toolChoice: 'auto',
+        toolChoice: activeTools.length === 0 ? 'none' : 'auto',
         ...(model === 'scira-anthropic' || model === 'scira-anthropic-think'
           ? {
             headers: {

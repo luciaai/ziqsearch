@@ -346,7 +346,7 @@ const groupTools = {
   reddit: ['reddit_search', 'datetime'] as const,
   stocks: ['stock_chart', 'currency_converter', 'datetime'] as const,
   crypto: ['coin_data', 'coin_ohlc', 'coin_data_by_contract', 'datetime'] as const,
-  chat: [] as const,
+  chat: ['datetime', 'text_translate', 'code_interpreter'] as const,
   extreme: ['extreme_search'] as const,
   x: ['x_search'] as const,
   memory: ['datetime', 'search_memories', 'add_memory'] as const,
@@ -1662,8 +1662,10 @@ ${REDDIT_LINK_FORMAT_EXAMPLES}`,
   Today's date is ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' })}.
 
   ### Guidelines:
-  - You do not have access to any tools. You can code like a professional software engineer.
-  - Markdown is the only formatting you can use.
+  - You have access to basic utility tools: datetime (for current time/date), text translation, and code interpreter
+  - You do NOT have web search - if the user needs current information from the web, suggest they switch to Web mode
+  - You can code like a professional software engineer and run code using the code interpreter
+  - Markdown is the only formatting you can use
   - Do not ask for clarification before giving your best response
   - You can use latex formatting:
     - Use $ for inline equations

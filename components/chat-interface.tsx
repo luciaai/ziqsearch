@@ -143,7 +143,6 @@ const ChatInterface = memo(
       queueMicrotask(() => measureHeaderMenuAlignment());
     }, [pathname, localChatTitle, headerMenuOpen, measureHeaderMenuAlignment]);
 
-    const [selectedModel, setSelectedModel] = useLocalStorage('scira-selected-model', 'scira-default');
     const initialGroupDefault = (
       groupParam ? (groupParam as unknown as SearchGroupId) : ('web' as SearchGroupId)
     ) as SearchGroupId;
@@ -212,6 +211,10 @@ const ChatInterface = memo(
       shouldCheckLimits: shouldCheckUserLimits,
       shouldBypassLimitsForModel,
     } = useUser();
+
+    // Use cheap model for unauthenticated users, regular default for authenticated
+    const defaultModel = user ? 'scira-default' : 'scira-nano';
+    const [selectedModel, setSelectedModel] = useLocalStorage('scira-selected-model', defaultModel);
 
     const { setDataStream } = useDataStream();
 

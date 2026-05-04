@@ -262,6 +262,7 @@ interface Model {
   pro: boolean;
   requiresAuth: boolean;
   freeUnlimited: boolean;
+  allowUnauthenticated?: boolean; // If true, unauthenticated users can use this model
   maxOutputTokens: number;
   extreme?: boolean;
   fast?: boolean;
@@ -283,7 +284,24 @@ export const models: Model[] = [
     pro: false,
     requiresAuth: false,
     freeUnlimited: false,
+    allowUnauthenticated: true,
     maxOutputTokens: 16000,
+  },
+  {
+    value: 'scira-nano',
+    label: 'Llama 3.3 70B',
+    description: "Meta's versatile open-source LLM via Groq",
+    vision: false,
+    reasoning: false,
+    experimental: false,
+    category: 'Free',
+    pdf: false,
+    pro: false,
+    requiresAuth: false,
+    freeUnlimited: false,
+    allowUnauthenticated: true,
+    maxOutputTokens: 8000,
+    fast: true,
   },
   {
     value: 'scira-grok-3',
@@ -522,8 +540,9 @@ export const models: Model[] = [
     category: 'Free',
     pdf: true,
     pro: false,
-    requiresAuth: true,
+    requiresAuth: false,
     freeUnlimited: false,
+    allowUnauthenticated: true,
     maxOutputTokens: 10000,
     extreme: true,
     isNew: true,
@@ -538,8 +557,9 @@ export const models: Model[] = [
     category: 'Free',
     pdf: true,
     pro: false,
-    requiresAuth: true,
+    requiresAuth: false,
     freeUnlimited: false,
+    allowUnauthenticated: true,
     maxOutputTokens: 16000,
     isNew: true,
   },
@@ -1934,6 +1954,11 @@ export function canUseModel(modelValue: string, user: any, isProUser: boolean): 
 
   if (!model) {
     return { canUse: false, reason: 'Model not found' };
+  }
+
+  // Check if unauthenticated user is trying to use a model not allowed for them
+  if (!user && !model.allowUnauthenticated) {
+    return { canUse: false, reason: 'authentication_required' };
   }
 
   // Check if model requires authentication

@@ -42,6 +42,7 @@ import {
   shouldBypassRateLimits,
   getModelParameters,
   getMaxOutputTokens,
+  canUseModel,
 } from '@/ai/providers';
 import {
   createStreamId,
@@ -388,18 +389,19 @@ export async function POST(req: Request) {
   }
 
   // Early exit checks (no DB operations needed)
-  if (!lightweightUser) {
-    if (requiresAuthentication(model)) {
-      return new ChatSDKError('unauthorized:model', `${model} requires authentication`).toResponse();
+  const modelCheck = canUseModel(model, lightweightUser, lightweightUser?.isProUser || false);
+  if (!modelCheck.canUse) {
+    if (modelCheck.reason === 'authentication_required') {
+      return new ChatSDKError('unauthorized:model', `${model} requires authentication. Sign up for free to access more models.`).toResponse();
     }
-    if (group === 'extreme') {
-      return new ChatSDKError('unauthorized:auth', 'Authentication required to use Extreme Search mode').toResponse();
-    }
-  } else {
-    // Fast auth checks using lightweight user (no additional DB calls)
-    if (requiresProSubscription(model) && !lightweightUser.isProUser) {
+    if (modelCheck.reason === 'pro_subscription_required') {
       return new ChatSDKError('upgrade_required:model', `${model} requires a Pro subscription`).toResponse();
     }
+    return new ChatSDKError('unauthorized:model', `Cannot use model ${model}`).toResponse();
+  }
+  
+  if (!lightweightUser && group === 'extreme') {
+    return new ChatSDKError('unauthorized:auth', 'Authentication required to use Extreme Search mode').toResponse();
   }
 
   // Start config and custom instructions in parallel

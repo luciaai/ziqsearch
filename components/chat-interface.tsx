@@ -143,15 +143,17 @@ const ChatInterface = memo(
       queueMicrotask(() => measureHeaderMenuAlignment());
     }, [pathname, localChatTitle, headerMenuOpen, measureHeaderMenuAlignment]);
 
+    // For new chats, always start with 'web' mode. For existing chats, use persisted value
+    const isNewChat = !initialChatId;
     const initialGroupDefault = (
-      groupParam ? (groupParam as unknown as SearchGroupId) : ('web' as SearchGroupId)
+      groupParam ? (groupParam as unknown as SearchGroupId) : (isNewChat ? 'web' : ('web' as SearchGroupId))
     ) as SearchGroupId;
     const [selectedGroup, setSelectedGroup] = useLocalStorage<SearchGroupId>(
       'scira-selected-group',
       initialGroupDefault,
     );
     const effectiveSelectedGroup = (
-      groupParam ? (groupParam as unknown as SearchGroupId) : selectedGroup
+      groupParam ? (groupParam as unknown as SearchGroupId) : (isNewChat ? 'web' : selectedGroup)
     ) as SearchGroupId;
     const [selectedConnectors, setSelectedConnectors] = useState<ConnectorProvider[]>([]);
     const [isCustomInstructionsEnabled, setIsCustomInstructionsEnabled] = useLocalStorage(
@@ -224,6 +226,13 @@ const ChatInterface = memo(
       }),
       [query, q],
     );
+
+    // Reset to web mode for new chats
+    useEffect(() => {
+      if (isNewChat && selectedGroup !== 'web') {
+        setSelectedGroup('web');
+      }
+    }, [isNewChat, selectedGroup, setSelectedGroup]);
 
     useEffect(() => {
       // keep local title in sync if prop changes (e.g., server updated)

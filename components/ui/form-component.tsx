@@ -2271,36 +2271,6 @@ const GroupModeToggle: React.FC<GroupSelectorProps> = React.memo(
               </PopoverContent>
             </Popover>
           )}
-
-          {/* Extreme Mode Side */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleToggleExtreme}
-                disabled={!isProUser && extremeSearchCountExceeded && !isExtreme}
-                className={cn(
-                  'flex items-center gap-1.5 px-3 h-6 rounded-md transition-all',
-                  isExtreme
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                    : !isAuthenticated
-                      ? 'text-muted-foreground/50 cursor-pointer'
-                      : !isProUser && extremeSearchCountExceeded
-                        ? 'text-muted-foreground/30 cursor-not-allowed'
-                        : 'text-muted-foreground hover:bg-accent',
-                )}
-              >
-                <HugeiconsIcon icon={AtomicPowerIcon} size={30} color="currentColor" strokeWidth={1.5} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent
-              side="bottom"
-              className="max-w-[200px] rounded-lg border border-border bg-popover p-2 text-left [&_svg.bg-primary]:bg-popover! [&_svg.fill-primary]:fill-popover!"
-            >
-              {extremeTooltipContent}
-            </TooltipContent>
-          </Tooltip>
         </div>
       </div>
     );
@@ -3753,6 +3723,47 @@ const FormComponent: React.FC<FormComponentProps> = ({
                   onKeyDown={isEnhancing || isTypewriting ? undefined : handleKeyDown}
                   onPaste={isEnhancing || isTypewriting ? undefined : handlePaste}
                 />
+              )}
+
+              {/* Deep Research Toggle - Inside input area */}
+              {user && (
+                <div className="px-4 pb-2 bg-muted border-t border-border/50">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (selectedGroup === 'extreme') {
+                        setSelectedGroup('web');
+                      } else {
+                        // Check if user needs to sign in
+                        if (!user) {
+                          window.location.href = '/sign-in';
+                          return;
+                        }
+                        // Check if limit exceeded
+                        if (!isProUser && usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) {
+                          return;
+                        }
+                        setSelectedGroup('extreme');
+                      }
+                    }}
+                    disabled={!isProUser && !!usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT && selectedGroup !== 'extreme'}
+                    className={cn(
+                      'flex items-center gap-2 text-xs font-medium transition-all rounded-md px-2.5 py-1.5 mt-2',
+                      selectedGroup === 'extreme'
+                        ? 'text-primary bg-primary/10 hover:bg-primary/15 border border-primary/20'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent border border-transparent',
+                      !isProUser && usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT && selectedGroup !== 'extreme' && 'opacity-50 cursor-not-allowed',
+                    )}
+                  >
+                    <HugeiconsIcon icon={AtomicPowerIcon} size={14} strokeWidth={2} />
+                    <span>Deep Research: {selectedGroup === 'extreme' ? 'ON' : 'OFF'}</span>
+                    {!isProUser && usageData && (
+                      <span className="text-[10px] ml-auto opacity-70">
+                        {usageData.extremeSearchCount}/{SEARCH_LIMITS.EXTREME_SEARCH_LIMIT}
+                      </span>
+                    )}
+                  </button>
+                </div>
               )}
 
               {/* Toolbar as a separate block - no absolute positioning */}

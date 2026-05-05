@@ -227,12 +227,13 @@ const ChatInterface = memo(
       [query, q],
     );
 
-    // Reset to web mode for new chats
+    // Reset to web mode for new chats (only on mount)
     useEffect(() => {
-      if (isNewChat && selectedGroup !== 'web') {
+      if (isNewChat) {
         setSelectedGroup('web');
       }
-    }, [isNewChat, selectedGroup, setSelectedGroup]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isNewChat]);
 
     useEffect(() => {
       // keep local title in sync if prop changes (e.g., server updated)

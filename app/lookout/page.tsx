@@ -230,6 +230,25 @@ export default function LookoutPage() {
     }
   };
 
+  const handleReset = async (id: string) => {
+    try {
+      const response = await fetch('/api/lookout', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lookoutId: id, action: 'reset' }),
+      });
+
+      if (response.ok) {
+        // Refresh the lookouts list
+        await manualRefresh();
+      } else {
+        console.error('Failed to reset lookout');
+      }
+    } catch (error) {
+      console.error('Error resetting lookout:', error);
+    }
+  };
+
   const handleLookoutChange = (newLookout: Lookout) => {
     setSelectedLookout(newLookout);
   };
@@ -478,6 +497,7 @@ export default function LookoutPage() {
                         onDelete={handleDelete}
                         onTest={handleTest}
                         onEdit={handleEdit}
+                        onReset={handleReset}
                         onOpenDetails={handleOpenLookoutDetails}
                       />
                     ))}
@@ -501,6 +521,7 @@ export default function LookoutPage() {
                         onDelete={handleDelete}
                         onTest={handleTest}
                         onEdit={handleEdit}
+                        onReset={handleReset}
                         onOpenDetails={handleOpenLookoutDetails}
                         showActions={false}
                       />

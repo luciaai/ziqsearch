@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { HugeiconsIcon } from '@/components/ui/hugeicons';
-import { PauseIcon, PlayIcon, Archive01Icon, Delete02Icon, TestTubeIcon, Settings01Icon } from '@hugeicons/core-free-icons';
+import { PauseIcon, PlayIcon, Archive01Icon, Delete02Icon, TestTubeIcon, Settings01Icon, RefreshIcon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
 import { BorderTrail } from '@/components/core/border-trail';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -15,6 +15,7 @@ interface ActionButtonsProps {
   onDelete: (id: string) => void;
   onTest: (id: string) => void;
   onEdit: (id: string) => void;
+  onReset?: (id: string) => void;
 }
 
 export function ActionButtons({
@@ -25,6 +26,7 @@ export function ActionButtons({
   onDelete,
   onTest,
   onEdit,
+  onReset,
 }: ActionButtonsProps) {
   const handleStatusChange = (newStatus: 'active' | 'paused' | 'archived' | 'running') => {
     onStatusChange(lookoutId, newStatus);
@@ -40,6 +42,12 @@ export function ActionButtons({
 
   const handleEdit = () => {
     onEdit(lookoutId);
+  };
+
+  const handleReset = () => {
+    if (onReset) {
+      onReset(lookoutId);
+    }
   };
 
   // Don't show actions for archived lookouts in main view - they only get delete
@@ -100,31 +108,51 @@ export function ActionButtons({
       )}
 
       {status === 'running' && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8 relative overflow-hidden" disabled={true}>
-              <BorderTrail
-                className="bg-primary/60"
-                size={24}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: 'linear',
-                }}
-              />
-              <HugeiconsIcon
-                icon={PlayIcon}
-                size={16}
-                color="currentColor"
-                strokeWidth={1.5}
-                className="text-primary"
-              />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Lookout is currently running</p>
-          </TooltipContent>
-        </Tooltip>
+        <>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8 relative overflow-hidden" disabled={true}>
+                <BorderTrail
+                  className="bg-primary/60"
+                  size={24}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'linear',
+                  }}
+                />
+                <HugeiconsIcon
+                  icon={PlayIcon}
+                  size={16}
+                  color="currentColor"
+                  strokeWidth={1.5}
+                  className="text-primary"
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Lookout is currently running</p>
+            </TooltipContent>
+          </Tooltip>
+          
+          {/* Reset button for stuck lookouts */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-orange-500 hover:text-orange-600"
+                onClick={handleReset}
+                disabled={isMutating}
+              >
+                <HugeiconsIcon icon={RefreshIcon} size={16} color="currentColor" strokeWidth={1.5} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Reset stuck lookout</p>
+            </TooltipContent>
+          </Tooltip>
+        </>
       )}
 
       {/* Edit button */}

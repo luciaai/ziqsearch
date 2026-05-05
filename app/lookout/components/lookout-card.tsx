@@ -31,6 +31,7 @@ interface LookoutCardProps {
   onDelete: (id: string) => void;
   onTest: (id: string) => void;
   onEdit: (id: string) => void;
+  onReset?: (id: string) => void;
   onOpenDetails: (lookout: Lookout) => void;
   showActions?: boolean;
 }
@@ -42,6 +43,7 @@ export function LookoutCard({
   onDelete,
   onTest,
   onEdit,
+  onReset,
   onOpenDetails,
   showActions = true,
 }: LookoutCardProps) {
@@ -94,6 +96,7 @@ export function LookoutCard({
                 onDelete={onDelete}
                 onTest={onTest}
                 onEdit={onEdit}
+                onReset={onReset}
               />
             </div>
           )}

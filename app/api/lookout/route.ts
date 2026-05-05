@@ -663,3 +663,53 @@ $$
 export async function POST(req: Request) {
   return handler(req);
 }
+
+// PATCH endpoint to manually reset stuck lookouts
+export async function PATCH(req: Request) {
+  try {
+    const { lookoutId, action } = await req.json();
+
+    if (!lookoutId) {
+      return new Response(JSON.stringify({ error: 'lookoutId is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Handle reset action for stuck lookouts
+    if (action === 'reset') {
+      const lookout = await getLookoutById({ id: lookoutId });
+      
+      if (!lookout) {
+        return new Response(JSON.stringify({ error: 'Lookout not found' }), {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Reset from 'running' to 'active'
+      await updateLookoutStatus({
+        id: lookoutId,
+        status: 'active',
+      });
+
+      console.log(`✅ Manually reset lookout ${lookoutId} from running to active`);
+
+      return new Response(JSON.stringify({ success: true, message: 'Lookout reset successfully' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    return new Response(JSON.stringify({ error: 'Invalid action' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Error in PATCH /api/lookout:', error);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}

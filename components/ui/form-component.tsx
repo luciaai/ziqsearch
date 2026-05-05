@@ -3442,7 +3442,10 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
   const submitForm = useCallback(() => {
     // Prevent multiple rapid submissions
-    if (isSubmittingRef.current) {
+    if (isSubmittingRef.current || isProcessing) {
+      if (isProcessing) {
+        toast.error('A search is already in progress. Please wait for it to finish or click the stop button to cancel.');
+      }
       return;
     }
 
@@ -3463,7 +3466,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
     setTimeout(() => {
       isSubmittingRef.current = false;
     }, 500);
-  }, [onSubmit, resetSuggestedQuestions, inputRef]);
+  }, [onSubmit, resetSuggestedQuestions, inputRef, isProcessing]);
 
   const triggerFileInput = useCallback(() => {
     if (attachments.length >= MAX_FILES) {

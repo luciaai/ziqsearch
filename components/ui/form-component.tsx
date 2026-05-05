@@ -3725,47 +3725,6 @@ const FormComponent: React.FC<FormComponentProps> = ({
                 />
               )}
 
-              {/* Deep Research Toggle - Inside input area */}
-              {user && (
-                <div className="px-4 pb-2 bg-muted border-t border-border/50">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (selectedGroup === 'extreme') {
-                        setSelectedGroup('web');
-                      } else {
-                        // Check if user needs to sign in
-                        if (!user) {
-                          window.location.href = '/sign-in';
-                          return;
-                        }
-                        // Check if limit exceeded
-                        if (!isProUser && usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) {
-                          return;
-                        }
-                        setSelectedGroup('extreme');
-                      }
-                    }}
-                    disabled={!isProUser && !!usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT && selectedGroup !== 'extreme'}
-                    className={cn(
-                      'flex items-center gap-2 text-xs font-medium transition-all rounded-md px-2.5 py-1.5 mt-2',
-                      selectedGroup === 'extreme'
-                        ? 'text-primary bg-primary/10 hover:bg-primary/15 border border-primary/20'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent border border-transparent',
-                      !isProUser && usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT && selectedGroup !== 'extreme' && 'opacity-50 cursor-not-allowed',
-                    )}
-                  >
-                    <HugeiconsIcon icon={AtomicPowerIcon} size={14} strokeWidth={2} />
-                    <span>Deep Research: {selectedGroup === 'extreme' ? 'ON' : 'OFF'}</span>
-                    {!isProUser && usageData && (
-                      <span className="text-[10px] ml-auto opacity-70">
-                        {usageData.extremeSearchCount}/{SEARCH_LIMITS.EXTREME_SEARCH_LIMIT}
-                      </span>
-                    )}
-                  </button>
-                </div>
-              )}
-
               {/* Toolbar as a separate block - no absolute positioning */}
               <div
                 className={cn(
@@ -4028,6 +3987,62 @@ const FormComponent: React.FC<FormComponentProps> = ({
                   )}
                 </div>
               </div>
+
+              {/* Deep Research Toggle - Below toolbar */}
+              {user && (
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/50 border-t border-border/30">
+                  <div className="flex items-center gap-2">
+                    <HugeiconsIcon icon={AtomicPowerIcon} size={16} strokeWidth={2} className="text-muted-foreground" />
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">Deep Research</span>
+                      <span className="text-xs text-muted-foreground">
+                        {selectedGroup === 'extreme' ? 'Enhanced search with 3x sources' : 'Standard search mode'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {!isProUser && usageData && (
+                      <span className="text-xs text-muted-foreground">
+                        {usageData.extremeSearchCount}/{SEARCH_LIMITS.EXTREME_SEARCH_LIMIT}
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={selectedGroup === 'extreme'}
+                      onClick={() => {
+                        if (selectedGroup === 'extreme') {
+                          setSelectedGroup('web');
+                        } else {
+                          // Check if user needs to sign in
+                          if (!user) {
+                            window.location.href = '/sign-in';
+                            return;
+                          }
+                          // Check if limit exceeded
+                          if (!isProUser && usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) {
+                            toast.error('You\'ve used all your deep research searches this month. Upgrade to Pro for unlimited access.');
+                            return;
+                          }
+                          setSelectedGroup('extreme');
+                        }
+                      }}
+                      disabled={!isProUser && !!usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT && selectedGroup !== 'extreme'}
+                      className={cn(
+                        'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+                        selectedGroup === 'extreme' ? 'bg-primary' : 'bg-input',
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          'pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform',
+                          selectedGroup === 'extreme' ? 'translate-x-6' : 'translate-x-0.5',
+                        )}
+                      />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

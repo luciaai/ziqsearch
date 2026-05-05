@@ -3904,11 +3904,8 @@ const FormComponent: React.FC<FormComponentProps> = ({
                           onClick={(event) => {
                             event.preventDefault();
                             event.stopPropagation();
-                            if (!isEnhancing && !isTypewriting) {
-                              stop();
-                            }
+                            stop();
                           }}
-                          disabled={isEnhancing || isTypewriting}
                         >
                           <span className="block">
                             <StopIcon size={14} />

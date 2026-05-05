@@ -2548,7 +2548,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
       return;
     }
     if (!input || input.trim().length === 0) {
-      toast.error('Please enter a prompt to enhance');
+      toast.error('Please enter text in the input box before using the enhance feature.');
       return;
     }
     if (isProcessing || isEnhancing) return;
@@ -2571,12 +2571,12 @@ const FormComponent: React.FC<FormComponentProps> = ({
         inputRef.current?.focus();
       } else {
         setInput(originalInput);
-        toast.error(result?.error || 'Failed to enhance prompt', { id: 'enhance-prompt' });
+        toast.error(result?.error || 'Unable to enhance your prompt. Please try again or write it manually.', { id: 'enhance-prompt' });
         setIsEnhancing(false);
       }
     } catch (e) {
       setInput(originalInput);
-      toast.error('Failed to enhance prompt', { id: 'enhance-prompt' });
+      toast.error('Unable to enhance your prompt. Please try again or write it manually.', { id: 'enhance-prompt' });
       setIsEnhancing(false);
     }
   }, [
@@ -2605,12 +2605,12 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
         // Environment and feature checks
         if (typeof window === 'undefined') {
-          toast.error('Voice recording is only available in the browser.');
+          toast.error('Voice recording is not available in this environment. Please type your message instead.');
           return;
         }
 
         if (!navigator.mediaDevices?.getUserMedia) {
-          toast.error('Voice recording is not supported in this browser.');
+          toast.error('Your browser doesn\'t support voice recording. Try Chrome, Safari, or Edge, or type your message instead.');
           return;
         }
 
@@ -2620,7 +2620,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
           if (permApi?.query) {
             const status = await permApi.query({ name: 'microphone' as any });
             if (status?.state === 'denied') {
-              toast.error('Microphone access is denied. Enable it in your browser settings.');
+              toast.error('Microphone access is blocked. Go to your browser settings and allow microphone access for this site.');
               return;
             }
           }
@@ -2686,7 +2686,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
               }
             } catch (error) {
               console.error('Error during transcription request:', error);
-              toast.error('Failed to transcribe audio. Please try again.');
+              toast.error('Could not convert your voice to text. Please try recording again or type your message.');
             } finally {
               cleanupMediaRecorder();
             }
@@ -2695,7 +2695,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
         recorder.addEventListener('error', (e) => {
           console.error('MediaRecorder error:', e);
-          toast.error('Recording failed. Please try again or switch browser.');
+          toast.error('Voice recording failed. Try again, use a different browser (Chrome/Safari/Edge), or type your message.');
           cleanupMediaRecorder();
         });
 
@@ -2707,7 +2707,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
         setIsRecording(true);
       } catch (error) {
         console.error('Error accessing microphone:', error);
-        toast.error('Could not access microphone. Please allow mic permission.');
+        toast.error('Cannot access your microphone. Click the microphone icon in your browser\'s address bar and allow access.');
         setIsRecording(false);
       }
     }
@@ -2720,7 +2720,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
       if (newValue.length > MAX_INPUT_CHARS) {
         setInput(newValue);
-        toast.error(`Your input exceeds the maximum of ${MAX_INPUT_CHARS} characters.`);
+        toast.error(`Your message is too long (max ${MAX_INPUT_CHARS} characters). Please shorten it and try again.`);
       } else {
         setInput(newValue);
       }
@@ -2809,7 +2809,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
       }
     } catch (error) {
       console.error('Error uploading file:', error);
-      toast.error(`Failed to upload ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error(`Could not upload "${file.name}". ${error instanceof Error ? error.message : 'Please try again or use a different file.'}`);
       throw error;
     }
   }, []);
@@ -2857,7 +2857,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
           'Unsupported files:',
           unsupportedFiles.map((f) => `${f.name} (${f.type})`),
         );
-        toast.error(`Some files are not supported: ${unsupportedFiles.map((f) => f.name).join(', ')}`);
+        toast.error(`These files are not supported: ${unsupportedFiles.map((f) => f.name).join(', ')}. Only images (JPG, PNG, GIF, WebP) and PDFs are allowed.`);
       }
 
       if (blockedPdfFiles.length > 0) {
@@ -2890,7 +2890,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
           setSelectedModel(compatibleModel.value);
         } else {
           console.warn('No PDF-compatible model found');
-          toast.error('PDFs are only supported by Gemini and Claude models');
+          toast.error('PDF files only work with Gemini and Claude AI models. Please switch to one of these models or remove the PDF.');
 
           if (imageFiles.length === 0) {
             event.target.value = '';
@@ -2911,7 +2911,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
       const totalAttachments = attachments.length + validFiles.length;
       if (totalAttachments > MAX_FILES) {
-        toast.error(`You can only attach up to ${MAX_FILES} files.`);
+        toast.error(`Maximum ${MAX_FILES} files allowed. Please remove some files and try again.`);
         event.target.value = '';
         return;
       }
@@ -2975,11 +2975,11 @@ const FormComponent: React.FC<FormComponentProps> = ({
             `${uploadedAttachments.length} file${uploadedAttachments.length > 1 ? 's' : ''} uploaded successfully`,
           );
         } else {
-          toast.error('No files were successfully uploaded');
+          toast.error('File upload failed. Please check your internet connection and try again.');
         }
       } catch (error) {
         console.error('Error uploading files!', error);
-        toast.error('Failed to upload one or more files. Please try again.');
+        toast.error('Some files could not be uploaded. Check your internet connection and try again.');
       } finally {
         setUploadQueue([]);
         event.target.value = '';
@@ -3055,7 +3055,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
       );
 
       if (allFiles.length === 0) {
-        toast.error('No files detected in drop');
+        toast.error('No files detected. Please drag and drop image or PDF files into this area.');
         return;
       }
 
@@ -3097,7 +3097,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
           'Unsupported files:',
           unsupportedFiles.map((f) => `${f.name} (${f.type})`),
         );
-        toast.error(`Some files not supported: ${unsupportedFiles.map((f) => f.name).join(', ')}`);
+        toast.error(`These files are not supported: ${unsupportedFiles.map((f) => f.name).join(', ')}. Only images and PDFs are allowed.`);
       }
 
       if (oversizedFiles.length > 0) {
@@ -3105,7 +3105,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
           'Oversized files:',
           oversizedFiles.map((f) => `${f.name} (${f.size} bytes)`),
         );
-        toast.error(`Some files exceed the 5MB limit: ${oversizedFiles.map((f) => f.name).join(', ')}`);
+        toast.error(`These files are too large (max 5MB each): ${oversizedFiles.map((f) => f.name).join(', ')}. Please compress or use smaller files.`);
       }
 
       if (blockedPdfFiles.length > 0) {
@@ -3122,7 +3122,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
       }
 
       if (imageFiles.length === 0 && pdfFiles.length === 0) {
-        toast.error('Only image and PDF files are supported');
+        toast.error('Only image files (JPG, PNG, GIF, WebP) and PDF documents are supported. Please use different files.');
         return;
       }
 
@@ -3138,7 +3138,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
           toast.info(`Switching to ${compatibleModel.label} to support PDF files`);
         } else {
           console.warn('No PDF-compatible model found');
-          toast.error('PDFs are only supported by Gemini and Claude models');
+          toast.error('PDF files only work with Gemini and Claude AI models. Please switch to one of these models or remove the PDF.');
           if (imageFiles.length === 0) return;
         }
       }
@@ -3155,13 +3155,13 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
       const totalAttachments = attachments.length + validFiles.length;
       if (totalAttachments > MAX_FILES) {
-        toast.error(`You can only attach up to ${MAX_FILES} files.`);
+        toast.error(`Maximum ${MAX_FILES} files allowed. Please remove some files and try again.`);
         return;
       }
 
       if (validFiles.length === 0) {
         console.error('No valid files to upload after filtering');
-        toast.error('No valid files to upload');
+        toast.error('No valid files found. Please use image files (JPG, PNG, GIF, WebP) or PDFs under 5MB.');
         return;
       }
 
@@ -3235,7 +3235,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
               `${uploadedAttachments.length} file${uploadedAttachments.length > 1 ? 's' : ''} uploaded successfully`,
             );
           } else {
-            toast.error('No files were successfully uploaded');
+            toast.error('File upload failed. Please check your internet connection and try again.');
           }
         } catch (error) {
           console.error('Error during file upload:', error);
@@ -3259,7 +3259,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
       const totalAttachments = attachments.length + imageItems.length;
       if (totalAttachments > MAX_FILES) {
-        toast.error(`You can only attach up to ${MAX_FILES} files.`);
+        toast.error(`Maximum ${MAX_FILES} files allowed. Please remove some files and try again.`);
         return;
       }
 
@@ -3357,24 +3357,24 @@ const FormComponent: React.FC<FormComponentProps> = ({
       event.preventDefault();
 
       if (status !== 'ready') {
-        toast.error('Please wait for the current response to complete!');
+        toast.error('A search is already running. Wait for it to finish or click the stop button to cancel.');
         return;
       }
 
       if (isRecording) {
-        toast.error('Please stop recording before submitting!');
+        toast.error('Stop your voice recording first, then submit your message.');
         return;
       }
 
       const shouldBypassLimitsForThisModel = shouldBypassRateLimits(selectedModel, user);
 
       if (isLimitBlocked && !shouldBypassLimitsForThisModel) {
-        toast.error('Daily search limit reached. Please upgrade to Pro for unlimited searches.');
+        toast.error('You\'ve used all 7 free searches today. Upgrade to Pro for unlimited searches or wait until tomorrow.');
         return;
       }
 
       if (input.length > MAX_INPUT_CHARS) {
-        toast.error(`Your input exceeds the maximum of ${MAX_INPUT_CHARS} characters. Please shorten your message.`);
+        toast.error(`Your message is too long (max ${MAX_INPUT_CHARS} characters). Please shorten it before sending.`);
         return;
       }
 
@@ -3470,7 +3470,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
   const triggerFileInput = useCallback(() => {
     if (attachments.length >= MAX_FILES) {
-      toast.error(`You can only attach up to ${MAX_FILES} images.`);
+      toast.error(`Maximum ${MAX_FILES} files allowed. Please remove some files before adding more.`);
       return;
     }
 

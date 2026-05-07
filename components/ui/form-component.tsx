@@ -2715,10 +2715,14 @@ const FormComponent: React.FC<FormComponentProps> = ({
   );
 
   const handleToggleExtreme = useCallback(() => {
+    const allGroups = getSearchGroups();
+    
     if (selectedGroup === 'extreme') {
       // Switch back to web mode
-      const webGroup = { id: 'web' as SearchGroupId } as SearchGroup;
-      handleGroupSelect(webGroup);
+      const webGroup = allGroups.find((group) => group.id === 'web');
+      if (webGroup) {
+        handleGroupSelect(webGroup);
+      }
     } else {
       // Check if user needs to sign in
       if (!user) {
@@ -2731,8 +2735,10 @@ const FormComponent: React.FC<FormComponentProps> = ({
         return;
       }
       // Switch to extreme mode using handleGroupSelect for proper model switching
-      const extremeGroup = { id: 'extreme' as SearchGroupId } as SearchGroup;
-      handleGroupSelect(extremeGroup);
+      const extremeGroup = allGroups.find((group) => group.id === 'extreme');
+      if (extremeGroup) {
+        handleGroupSelect(extremeGroup);
+      }
     }
   }, [selectedGroup, handleGroupSelect, user, isProUser, usageData]);
 

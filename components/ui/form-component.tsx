@@ -1881,34 +1881,6 @@ const GroupModeToggle: React.FC<GroupSelectorProps> = React.memo(
       );
     }, [isExtreme, isProUser, isAuthenticated, extremeSearchCountExceeded, usageData]);
 
-    const handleToggleExtreme = useCallback(() => {
-      if (isExtreme) {
-        // Switch back to web mode
-        const webGroup = dynamicSearchGroups.find((group) => group.id === 'web');
-        if (webGroup) {
-          onGroupSelect(webGroup);
-        }
-      } else {
-        // Check if user is authenticated before allowing extreme mode
-        if (!isAuthenticated) {
-          // Redirect to sign in page
-          window.location.href = '/sign-in';
-          return;
-        }
-
-        // Check if extreme search limit is exceeded (for non-Pro users)
-        if (!isProUser && extremeSearchCountExceeded) {
-          // Don't switch - user has exceeded their limit
-          return;
-        }
-
-        // Switch to extreme mode
-        const extremeGroup = dynamicSearchGroups.find((group) => group.id === 'extreme');
-        if (extremeGroup) {
-          onGroupSelect(extremeGroup);
-        }
-      }
-    }, [isExtreme, onGroupSelect, dynamicSearchGroups, isAuthenticated, isProUser, extremeSearchCountExceeded]);
 
     const handleWebProviderChange = useCallback(
       (provider: SearchProvider) => {
@@ -2741,6 +2713,28 @@ const FormComponent: React.FC<FormComponentProps> = ({
     },
     [setSelectedGroup, clearGroupParam, inputRef, isEnhancing, isTypewriting, selectedModel, setSelectedModel, user, isProUser],
   );
+
+  const handleToggleExtreme = useCallback(() => {
+    if (selectedGroup === 'extreme') {
+      // Switch back to web mode
+      const webGroup = { id: 'web' as SearchGroupId } as SearchGroup;
+      handleGroupSelect(webGroup);
+    } else {
+      // Check if user needs to sign in
+      if (!user) {
+        window.location.href = '/sign-in';
+        return;
+      }
+      // Check if limit exceeded
+      if (!isProUser && usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) {
+        toast.error('You\'ve used all your deep research searches this month. Upgrade to Pro for unlimited access.');
+        return;
+      }
+      // Switch to extreme mode using handleGroupSelect for proper model switching
+      const extremeGroup = { id: 'extreme' as SearchGroupId } as SearchGroup;
+      handleGroupSelect(extremeGroup);
+    }
+  }, [selectedGroup, handleGroupSelect, user, isProUser, usageData]);
 
   const handleConnectorToggle = useCallback(
     (provider: ConnectorProvider) => {
@@ -4010,23 +4004,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
                       type="button"
                       role="switch"
                       aria-checked={selectedGroup === 'extreme'}
-                      onClick={() => {
-                        if (selectedGroup === 'extreme') {
-                          setSelectedGroup('web');
-                        } else {
-                          // Check if user needs to sign in
-                          if (!user) {
-                            window.location.href = '/sign-in';
-                            return;
-                          }
-                          // Check if limit exceeded
-                          if (!isProUser && usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) {
-                            toast.error('You\'ve used all your deep research searches this month. Upgrade to Pro for unlimited access.');
-                            return;
-                          }
-                          setSelectedGroup('extreme');
-                        }
-                      }}
+                      onClick={handleToggleExtreme}
                       disabled={!isProUser && !!usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT && selectedGroup !== 'extreme'}
                       className={cn(
                         'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',

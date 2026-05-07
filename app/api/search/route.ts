@@ -52,7 +52,7 @@ import {
   incrementExtremeSearchUsage,
   incrementMessageUsage,
 } from '@/lib/db/queries';
-import { ChatSDKError } from '@/lib/errors';
+import { ChatSDKError, parseAIError } from '@/lib/errors';
 import { createResumableStreamContext, type ResumableStreamContext } from 'resumable-stream';
 import { after } from 'next/server';
 import { CustomInstructions } from '@/lib/db/schema';
@@ -885,19 +885,16 @@ export async function POST(req: Request) {
       );
     },
     onError(error) {
-      console.log('Error: ', error);
+      console.error('Stream error:', error);
       
       // Handle ChatSDKError with specific messages
       if (error instanceof ChatSDKError) {
         return error.message;
       }
       
-      // Fallback for generic errors
-      if (error instanceof Error && error.message.includes('Rate Limit')) {
-        return 'Oops, you have reached the rate limit! Please try again later.';
-      }
-      
-      return 'Oops, an error occurred!';
+      // Parse AI SDK errors into user-friendly messages
+      const parsedError = parseAIError(error);
+      return parsedError.message;
     },
     onFinish: async ({ messages: streamedMessages }) => {
       if (!lightweightUser) {

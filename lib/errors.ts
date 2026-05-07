@@ -6,9 +6,12 @@ export type ErrorType =
   | 'rate_limit'
   | 'upgrade_required'
   | 'model_restricted'
-  | 'offline';
+  | 'offline'
+  | 'model_unavailable'
+  | 'api_error'
+  | 'insufficient_credits';
 
-export type Surface = 'chat' | 'auth' | 'api' | 'stream' | 'database' | 'history' | 'model';
+export type Surface = 'chat' | 'auth' | 'api' | 'stream' | 'database' | 'history' | 'model' | 'provider';
 
 export type ErrorCode = `${ErrorType}:${Surface}`;
 
@@ -22,6 +25,7 @@ export const visibilityBySurface: Record<Surface, ErrorVisibility> = {
   api: 'response',
   history: 'response',
   model: 'response',
+  provider: 'response',
 };
 
 export class ChatSDKError extends Error {
@@ -109,6 +113,24 @@ export function getMessageByErrorCode(errorCode: ErrorCode): string {
     case 'forbidden:api':
       return 'Access denied';
 
+    case 'model_unavailable:model':
+      return 'This AI model is temporarily unavailable. Please try a different model or try again in a few minutes.';
+    case 'model_unavailable:provider':
+      return 'The AI service is currently experiencing issues. Please try again in a few minutes or select a different model.';
+    
+    case 'api_error:provider':
+      return 'There was a problem connecting to the AI service. Please try again.';
+    case 'api_error:model':
+      return 'The AI model encountered an error. Please try again or select a different model.';
+    
+    case 'insufficient_credits:provider':
+      return 'The AI service has run out of credits. Our team has been notified and will resolve this shortly. Please try again later.';
+    case 'insufficient_credits:model':
+      return 'This AI model is temporarily unavailable due to quota limits. Please try a different model.';
+    
+    case 'rate_limit:provider':
+      return 'The AI service is experiencing high demand. Please wait a moment and try again.';
+
     default:
       return 'Something went wrong. Please try again later.';
   }
@@ -131,6 +153,12 @@ function getStatusCodeByType(type: ErrorType) {
     case 'model_restricted':
       return 403;
     case 'offline':
+      return 503;
+    case 'model_unavailable':
+      return 503;
+    case 'api_error':
+      return 502;
+    case 'insufficient_credits':
       return 503;
     default:
       return 500;
@@ -201,4 +229,48 @@ export function getErrorIcon(error: ChatSDKError): 'warning' | 'error' | 'upgrad
   if (isProRequired(error) || isRateLimited(error)) return 'upgrade';
   if (error.type === 'offline') return 'warning';
   return 'error';
+}
+
+// Helper function to parse AI SDK errors and convert to user-friendly ChatSDKError
+export function parseAIError(error: any): ChatSDKError {
+  const errorMessage = error?.message || error?.toString() || '';
+  const errorString = errorMessage.toLowerCase();
+
+  // Check for API key issues
+  if (errorString.includes('api key') || errorString.includes('api_key') || errorString.includes('authentication')) {
+    return new ChatSDKError('api_error:provider', 'API authentication failed');
+  }
+
+  // Check for quota/credit issues
+  if (errorString.includes('quota') || errorString.includes('insufficient') || errorString.includes('credit')) {
+    return new ChatSDKError('insufficient_credits:provider', 'Service quota exceeded');
+  }
+
+  // Check for rate limiting
+  if (errorString.includes('rate limit') || errorString.includes('too many requests') || errorString.includes('429')) {
+    return new ChatSDKError('rate_limit:provider', 'Rate limit exceeded');
+  }
+
+  // Check for model unavailability
+  if (errorString.includes('model') && (errorString.includes('unavailable') || errorString.includes('not found') || errorString.includes('does not exist'))) {
+    return new ChatSDKError('model_unavailable:model', 'Model not available');
+  }
+
+  // Check for service unavailability
+  if (errorString.includes('503') || errorString.includes('service unavailable') || errorString.includes('temporarily unavailable')) {
+    return new ChatSDKError('model_unavailable:provider', 'Service temporarily unavailable');
+  }
+
+  // Check for timeout
+  if (errorString.includes('timeout') || errorString.includes('timed out')) {
+    return new ChatSDKError('api_error:provider', 'Request timed out');
+  }
+
+  // Check for network errors
+  if (errorString.includes('network') || errorString.includes('econnrefused') || errorString.includes('enotfound')) {
+    return new ChatSDKError('offline:chat', 'Network connection failed');
+  }
+
+  // Generic API error
+  return new ChatSDKError('api_error:provider', 'AI service error');
 }

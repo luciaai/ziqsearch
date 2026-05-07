@@ -2751,6 +2751,32 @@ const FormComponent: React.FC<FormComponentProps> = ({
     [setSelectedConnectors],
   );
 
+  const transcribeAudio = useCallback(async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('audio', file);
+
+    try {
+      console.log('Transcribing audio:', file.name);
+      const response = await fetch('/api/transcribe', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Transcription successful');
+        return data.text || '';
+      } else {
+        const errorText = await response.text();
+        console.error('Transcription failed:', response.status, errorText);
+        throw new Error(`Failed to transcribe audio: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Transcription error:', error);
+      throw error;
+    }
+  }, []);
+
   const uploadFile = useCallback(async (file: File): Promise<Attachment> => {
     const formData = new FormData();
     formData.append('file', file);
@@ -2793,6 +2819,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
       const imageFiles: File[] = [];
       const pdfFiles: File[] = [];
+      const audioFiles: File[] = [];
       const unsupportedFiles: File[] = [];
       const oversizedFiles: File[] = [];
       const blockedPdfFiles: File[] = [];
@@ -2811,6 +2838,8 @@ const FormComponent: React.FC<FormComponentProps> = ({
           } else {
             pdfFiles.push(file);
           }
+        } else if (file.type.startsWith('audio/')) {
+          audioFiles.push(file);
         } else {
           unsupportedFiles.push(file);
         }
@@ -2821,7 +2850,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
           'Unsupported files:',
           unsupportedFiles.map((f) => `${f.name} (${f.type})`),
         );
-        toast.error(`These files are not supported: ${unsupportedFiles.map((f) => f.name).join(', ')}. Only images (JPG, PNG, GIF, WebP) and PDFs are allowed.`);
+        toast.error(`These files are not supported: ${unsupportedFiles.map((f) => f.name).join(', ')}. Only images, PDFs, and audio files are allowed.`);
       }
 
       if (blockedPdfFiles.length > 0) {
@@ -2837,7 +2866,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
         });
       }
 
-      if (imageFiles.length === 0 && pdfFiles.length === 0) {
+      if (imageFiles.length === 0 && pdfFiles.length === 0 && audioFiles.length === 0) {
         console.log('No supported files found');
         event.target.value = '';
         return;
@@ -2918,8 +2947,37 @@ const FormComponent: React.FC<FormComponentProps> = ({
       try {
         console.log('Starting upload of', validFiles.length, 'files');
 
+        // Handle audio files separately - transcribe them
+        if (audioFiles.length > 0) {
+          toast.info(`Transcribing ${audioFiles.length} audio file${audioFiles.length > 1 ? 's' : ''}...`);
+          
+          const transcripts: string[] = [];
+          for (const audioFile of audioFiles) {
+            try {
+              console.log(`Transcribing: ${audioFile.name}`);
+              const transcript = await transcribeAudio(audioFile);
+              if (transcript) {
+                transcripts.push(`[Audio: ${audioFile.name}]\n${transcript}`);
+              }
+            } catch (err) {
+              console.error(`Failed to transcribe ${audioFile.name}:`, err);
+              toast.error(`Could not transcribe "${audioFile.name}"`);
+            }
+          }
+
+          if (transcripts.length > 0) {
+            const transcriptText = transcripts.join('\n\n');
+            const separator = input.trim() ? '\n\n' : '';
+            setInput(input + separator + transcriptText);
+            toast.success(`${transcripts.length} audio file${transcripts.length > 1 ? 's' : ''} transcribed successfully`);
+          }
+        }
+
+        // Upload image and PDF files as attachments
+        const filesToUpload = [...imageFiles, ...pdfFiles];
         const uploadedAttachments: Attachment[] = [];
-        for (const file of validFiles) {
+        
+        for (const file of filesToUpload) {
           try {
             console.log(`Uploading file: ${file.name} (${file.type})`);
             const attachment = await uploadFile(file);
@@ -2938,7 +2996,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
           toast.success(
             `${uploadedAttachments.length} file${uploadedAttachments.length > 1 ? 's' : ''} uploaded successfully`,
           );
-        } else {
+        } else if (audioFiles.length === 0) {
           toast.error('File upload failed. Please check your internet connection and try again.');
         }
       } catch (error) {
@@ -2949,7 +3007,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
         event.target.value = '';
       }
     },
-    [attachments.length, setAttachments, selectedModel, setSelectedModel, isProUser, uploadFile],
+    [attachments.length, setAttachments, selectedModel, setSelectedModel, isProUser, uploadFile, transcribeAudio, input, setInput],
   );
 
   const removeAttachment = useCallback(
@@ -3027,6 +3085,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
       const imageFiles: File[] = [];
       const pdfFiles: File[] = [];
+      const audioFiles: File[] = [];
       const unsupportedFiles: File[] = [];
       const oversizedFiles: File[] = [];
       const blockedPdfFiles: File[] = [];
@@ -3047,6 +3106,8 @@ const FormComponent: React.FC<FormComponentProps> = ({
           } else {
             pdfFiles.push(file);
           }
+        } else if (file.type.startsWith('audio/')) {
+          audioFiles.push(file);
         } else {
           unsupportedFiles.push(file);
         }
@@ -3061,7 +3122,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
           'Unsupported files:',
           unsupportedFiles.map((f) => `${f.name} (${f.type})`),
         );
-        toast.error(`These files are not supported: ${unsupportedFiles.map((f) => f.name).join(', ')}. Only images and PDFs are allowed.`);
+        toast.error(`These files are not supported: ${unsupportedFiles.map((f) => f.name).join(', ')}. Only images, PDFs, and audio files are allowed.`);
       }
 
       if (oversizedFiles.length > 0) {
@@ -3085,7 +3146,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
         });
       }
 
-      if (imageFiles.length === 0 && pdfFiles.length === 0) {
+      if (imageFiles.length === 0 && pdfFiles.length === 0 && audioFiles.length === 0) {
         toast.error('Only image files (JPG, PNG, GIF, WebP) and PDF documents are supported. Please use different files.');
         return;
       }
@@ -3178,8 +3239,37 @@ const FormComponent: React.FC<FormComponentProps> = ({
         try {
           console.log('Beginning upload of', validFiles.length, 'files');
 
+          // Handle audio files separately - transcribe them
+          if (audioFiles.length > 0) {
+            toast.info(`Transcribing ${audioFiles.length} audio file${audioFiles.length > 1 ? 's' : ''}...`);
+            
+            const transcripts: string[] = [];
+            for (const audioFile of audioFiles) {
+              try {
+                console.log(`Transcribing: ${audioFile.name}`);
+                const transcript = await transcribeAudio(audioFile);
+                if (transcript) {
+                  transcripts.push(`[Audio: ${audioFile.name}]\n${transcript}`);
+                }
+              } catch (err) {
+                console.error(`Failed to transcribe ${audioFile.name}:`, err);
+                toast.error(`Could not transcribe "${audioFile.name}"`);
+              }
+            }
+
+            if (transcripts.length > 0) {
+              const transcriptText = transcripts.join('\n\n');
+              const separator = input.trim() ? '\n\n' : '';
+              setInput(input + separator + transcriptText);
+              toast.success(`${transcripts.length} audio file${transcripts.length > 1 ? 's' : ''} transcribed successfully`);
+            }
+          }
+
+          // Upload image and PDF files as attachments
+          const filesToUpload = [...imageFiles, ...pdfFiles];
           const uploadedAttachments: Attachment[] = [];
-          for (const file of validFiles) {
+          
+          for (const file of filesToUpload) {
             try {
               console.log(`Uploading file: ${file.name} (${file.type})`);
               const attachment = await uploadFile(file);
@@ -3198,7 +3288,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
             toast.success(
               `${uploadedAttachments.length} file${uploadedAttachments.length > 1 ? 's' : ''} uploaded successfully`,
             );
-          } else {
+          } else if (audioFiles.length === 0) {
             toast.error('File upload failed. Please check your internet connection and try again.');
           }
         } catch (error) {
@@ -3209,7 +3299,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
         }
       }, 100);
     },
-    [attachments.length, setAttachments, uploadFile, selectedModel, setSelectedModel, getFirstVisionModel, isProUser],
+    [attachments.length, setAttachments, uploadFile, selectedModel, setSelectedModel, getFirstVisionModel, isProUser, transcribeAudio, input, setInput],
   );
 
   const handlePaste = useCallback(

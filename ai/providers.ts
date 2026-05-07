@@ -1983,10 +1983,13 @@ export function shouldBypassRateLimits(modelValue: string, user: any): boolean {
 // Get acceptable file types for a model
 export function getAcceptedFileTypes(modelValue: string, isProUser: boolean): string {
   const model = getModelConfig(modelValue);
+  // Audio files are supported for all users (will be transcribed)
+  const audioTypes = '.mp3,.wav,.m4a,.ogg,.webm,.aac,.flac';
+  
   if (model?.pdf && isProUser) {
-    return 'image/*,.pdf';
+    return `image/*,.pdf,${audioTypes}`;
   }
-  return 'image/*';
+  return `image/*,${audioTypes}`;
 }
 
 // Check if a model supports extreme mode

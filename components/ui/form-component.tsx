@@ -2715,32 +2715,35 @@ const FormComponent: React.FC<FormComponentProps> = ({
   );
 
   const handleToggleExtreme = useCallback(() => {
-    const allGroups = getSearchGroups();
+    console.log('[Toggle] Clicked! Current group:', selectedGroup);
+    console.log('[Toggle] User:', user ? 'logged in' : 'not logged in');
+    console.log('[Toggle] isProUser:', isProUser);
+    console.log('[Toggle] usageData:', usageData);
     
     if (selectedGroup === 'extreme') {
       // Switch back to web mode
-      const webGroup = allGroups.find((group) => group.id === 'web');
-      if (webGroup) {
-        handleGroupSelect(webGroup);
-      }
+      console.log('[Toggle] Switching to web');
+      setSelectedGroup('web');
+      console.log('[Toggle] setSelectedGroup called with "web"');
     } else {
       // Check if user needs to sign in
       if (!user) {
+        console.log('[Toggle] No user, redirecting to sign-in');
         window.location.href = '/sign-in';
         return;
       }
       // Check if limit exceeded
       if (!isProUser && usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) {
+        console.log('[Toggle] Limit exceeded');
         toast.error('You\'ve used all your deep research searches this month. Upgrade to Pro for unlimited access.');
         return;
       }
-      // Switch to extreme mode using handleGroupSelect for proper model switching
-      const extremeGroup = allGroups.find((group) => group.id === 'extreme');
-      if (extremeGroup) {
-        handleGroupSelect(extremeGroup);
-      }
+      // Switch to extreme mode
+      console.log('[Toggle] Switching to extreme');
+      setSelectedGroup('extreme');
+      console.log('[Toggle] setSelectedGroup called with "extreme"');
     }
-  }, [selectedGroup, handleGroupSelect, user, isProUser, usageData]);
+  }, [selectedGroup, setSelectedGroup, user, isProUser, usageData]);
 
   const handleConnectorToggle = useCallback(
     (provider: ConnectorProvider) => {

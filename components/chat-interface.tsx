@@ -153,7 +153,7 @@ const ChatInterface = memo(
       initialGroupDefault,
     );
     const effectiveSelectedGroup = (
-      groupParam ? (groupParam as unknown as SearchGroupId) : (isNewChat ? 'web' : selectedGroup)
+      groupParam ? (groupParam as unknown as SearchGroupId) : selectedGroup
     ) as SearchGroupId;
     const [selectedConnectors, setSelectedConnectors] = useState<ConnectorProvider[]>([]);
     const [isCustomInstructionsEnabled, setIsCustomInstructionsEnabled] = useLocalStorage(

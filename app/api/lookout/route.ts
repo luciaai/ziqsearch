@@ -23,8 +23,8 @@ import { db } from '@/lib/db';
 import { subscription, dodosubscription, billingSubscription } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
-// Import extreme search tool
-import { extremeSearchTool } from '@/lib/tools';
+// Import search tools
+import { extremeSearchTool, webSearchTool, academicSearchTool, xSearchTool, youtubeSearchTool } from '@/lib/tools';
 import { ChatMessage } from '@/lib/types';
 
 // Helper function to check if a user is pro by userId
@@ -201,13 +201,27 @@ async function handler(req: Request) {
       execute: async ({ writer: dataStream }) => {
         const streamStartTime = Date.now();
 
+        // Determine which tool to use based on searchMode
+        const searchMode = lookout.searchMode || 'web';
+        const toolMap: Record<string, { name: string; tool: any; description: string }> = {
+          web: { name: 'web_search', tool: webSearchTool(dataStream), description: 'Web Search' },
+          extreme: { name: 'extreme_search', tool: extremeSearchTool(dataStream), description: 'Deep Research (Extreme)' },
+          academic: { name: 'academic_search', tool: academicSearchTool(dataStream), description: 'Academic Search' },
+          x: { name: 'x_search', tool: xSearchTool(dataStream), description: 'X/Twitter Search' },
+          youtube: { name: 'youtube_search', tool: youtubeSearchTool, description: 'YouTube Search' },
+        };
+
+        const selectedTool = toolMap[searchMode] || toolMap.web;
+        const tools: Record<string, any> = { [selectedTool.name]: selectedTool.tool };
+        const activeTools: string[] = [selectedTool.name];
+
         // Start streaming
         const result = streamText({
           model: scira.languageModel('scira-grok-4-fast-think'),
           messages: await convertToModelMessages([userMessage]),
           stopWhen: stepCountIs(2),
           maxRetries: 10,
-          activeTools: ['extreme_search'],
+          activeTools: activeTools as any,
           system: `# Scira AI Scheduled Research Assistant
 
 You are an advanced research assistant focused on deep analysis and comprehensive understanding with focus to be backed by citations in a 3-page research paper format.
@@ -219,7 +233,7 @@ You are an advanced research assistant focused on deep analysis and comprehensiv
 ## 🚨 CRITICAL OPERATION RULES
 
 ### Immediate Tool Execution
-- ⚠️ **MANDATORY**: Run extreme_search tool INSTANTLY when processing ANY scheduled query - NO EXCEPTIONS
+- ⚠️ **MANDATORY**: Run the ${selectedTool.description} tool (${selectedTool.name}) INSTANTLY when processing ANY scheduled query - NO EXCEPTIONS
 - ⚠️ **NO PRE-ANALYSIS**: Do NOT write any text before running the tool
 - ⚠️ **ONE TOOL ONLY**: Run the tool once and only once per scheduled search
 - ⚠️ **NO CLARIFICATION**: Never ask for clarification - make best interpretation and run immediately
@@ -237,13 +251,9 @@ You are an advanced research assistant focused on deep analysis and comprehensiv
 
 ## 🛠️ TOOL GUIDELINES
 
-### Extreme Search Tool
-- **Purpose**: Multi-step research planning with parallel web and academic searches
-- **Capabilities**:
-  - Autonomous research planning
-    - Parallel web and academic searches
-    - Deep analysis of findings
-    - Cross-referencing and validation
+### ${selectedTool.description}
+- **Tool Name**: ${selectedTool.name}
+- **Purpose**: Perform ${selectedTool.description.toLowerCase()} to gather relevant information
 - ⚠️ **MANDATORY**: Run the tool FIRST before any response
 - ⚠️ **ONE TIME ONLY**: Run the tool once and only once, then write the response
 - ⚠️ **NO PRE-ANALYSIS**: Do NOT write any analysis before running the tool
@@ -375,7 +385,7 @@ $$
 
 ## 🚫 PROHIBITED ACTIONS
 
-- ❌ **Multiple Tool Calls**: Don't run extreme_search multiple times
+- ❌ **Multiple Tool Calls**: Don't run the search tool multiple times
 - ❌ **Pre-Tool Thoughts**: Never write analysis before running the tool
 - ❌ **Response Prefaces**: Don't start with "According to my search" or "Based on the results"
 - ❌ **UNSUPPORTED CLAIMS**: Never make any factual statement without immediate citation
@@ -392,9 +402,7 @@ $$
 - ❌ **SHORT RESPONSES**: Never write brief responses - aim for 3-page research paper format
 - ❌ **BULLET-POINT RESPONSES**: Use paragraphs for main content, bullets only for Key Points section`,
           toolChoice: 'auto',
-          tools: {
-            extreme_search: extremeSearchTool(dataStream),
-          },
+          tools,
           onChunk(event) {
             if (event.chunk.type === 'tool-call') {
               console.log('Called Tool: ', event.chunk.toolName);

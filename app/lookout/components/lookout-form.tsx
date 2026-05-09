@@ -97,6 +97,28 @@ export function LookoutForm({
         </div>
       </div>
 
+      {/* Search Mode Selection */}
+      <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+        <Label className="text-sm font-medium sm:pt-2 sm:w-20 sm:flex-shrink-0">Search Mode</Label>
+        <div className="flex-1">
+          <Select name="searchMode" defaultValue={editingLookout?.searchMode || 'web'}>
+            <SelectTrigger className="h-9">
+              <SelectValue placeholder="Select search mode" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="web">Web Search (Standard)</SelectItem>
+              <SelectItem value="extreme">Deep Research (Extreme) ⭐</SelectItem>
+              <SelectItem value="academic">Academic Search</SelectItem>
+              <SelectItem value="x">X/Twitter Search</SelectItem>
+              <SelectItem value="youtube">YouTube Search 🎥</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground mt-1.5">
+            Choose the type of search to perform. Deep Research uses your extreme search quota.
+          </p>
+        </div>
+      </div>
+
       {/* Frequency Selection */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
         <Label className="text-sm font-medium sm:pt-2 sm:w-20 sm:flex-shrink-0">Frequency</Label>

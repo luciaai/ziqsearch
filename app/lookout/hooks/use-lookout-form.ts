@@ -184,6 +184,7 @@ export function useLookoutForm(detectedTimezone: string = DEFAULT_FORM_VALUES.TI
       const timezone = (formData.get('timezone') as string) || DEFAULT_FORM_VALUES.TIMEZONE;
       const date = formData.get('date') as string;
       const dayOfWeek = formData.get('dayOfWeek') as string;
+      const searchMode = (formData.get('searchMode') as string) || 'web';
 
       // Handle weekly day selection
       let adjustedTime = time;
@@ -197,6 +198,7 @@ export function useLookoutForm(detectedTimezone: string = DEFAULT_FORM_VALUES.TI
         frequency: frequency as 'once' | 'daily' | 'weekly' | 'monthly',
         time: adjustedTime,
         timezone,
+        searchMode,
         date: frequency === 'once' ? date : undefined,
         onSuccess: () => handleDialogOpenChange(false),
       });
@@ -215,6 +217,7 @@ export function useLookoutForm(detectedTimezone: string = DEFAULT_FORM_VALUES.TI
       const time = formData.get('time') as string;
       const timezone = formData.get('timezone') as string;
       const dayOfWeek = formData.get('dayOfWeek') as string;
+      const searchMode = (formData.get('searchMode') as string) || 'web';
 
       updateLookout({
         id: editingLookout.id,
@@ -223,6 +226,7 @@ export function useLookoutForm(detectedTimezone: string = DEFAULT_FORM_VALUES.TI
         frequency: frequency as 'once' | 'daily' | 'weekly' | 'monthly',
         time: frequency === 'weekly' && dayOfWeek ? `${time}:${dayOfWeek}` : time,
         timezone,
+        searchMode,
         onSuccess: () => handleDialogOpenChange(false),
       });
     },

@@ -358,6 +358,7 @@ export const lookout = pgTable('lookout', {
   nextRunAt: timestamp('next_run_at').notNull(),
   qstashScheduleId: text('qstash_schedule_id'),
   status: text('status').notNull().default('active'), // 'active', 'paused', 'archived', 'running'
+  searchMode: text('search_mode').notNull().default('web'), // 'web', 'extreme', 'academic', 'x', 'youtube'
   lastRunAt: timestamp('last_run_at'),
   lastRunChatId: text('last_run_chat_id'),
   // Store all run history as JSON

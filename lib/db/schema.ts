@@ -359,6 +359,7 @@ export const lookout = pgTable('lookout', {
   qstashScheduleId: text('qstash_schedule_id'),
   status: text('status').notNull().default('active'), // 'active', 'paused', 'archived', 'running'
   searchMode: text('search_mode').notNull().default('web'), // 'web', 'extreme', 'academic', 'x', 'youtube'
+  websiteUrl: text('website_url'), // Optional: Monitor specific website (e.g., 'blog.openai.com')
   lastRunAt: timestamp('last_run_at'),
   lastRunChatId: text('last_run_chat_id'),
   // Store all run history as JSON

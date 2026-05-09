@@ -119,6 +119,22 @@ export function LookoutForm({
         </div>
       </div>
 
+      {/* Website URL (Optional) */}
+      <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+        <Label className="text-sm font-medium sm:pt-2 sm:w-20 sm:flex-shrink-0">Website</Label>
+        <div className="flex-1">
+          <Input
+            name="websiteUrl"
+            placeholder="e.g., blog.openai.com or marketwatch.com (optional)"
+            className="h-9"
+            defaultValue={editingLookout?.websiteUrl || ''}
+          />
+          <p className="text-xs text-muted-foreground mt-1.5">
+            Optional: Monitor a specific website for new content. Leave blank to search the entire web.
+          </p>
+        </div>
+      </div>
+
       {/* Frequency Selection */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
         <Label className="text-sm font-medium sm:pt-2 sm:w-20 sm:flex-shrink-0">Frequency</Label>

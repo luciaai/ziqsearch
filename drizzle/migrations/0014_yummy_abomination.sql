@@ -1,0 +1,1 @@
+ALTER TABLE "lookout" ADD COLUMN "website_url" text;

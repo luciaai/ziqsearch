@@ -159,12 +159,26 @@ async function handler(req: Request) {
       visibility: 'private',
     });
 
+    // Modify prompt to include site filter if websiteUrl is provided
+    let finalPrompt = prompt;
+    if (lookout.websiteUrl) {
+      // Extract domain from URL (remove protocol and www)
+      const domain = lookout.websiteUrl
+        .replace(/^https?:\/\//, '')
+        .replace(/^www\./, '')
+        .split('/')[0];
+      
+      // Append site filter to the prompt
+      finalPrompt = `${prompt}\n\nIMPORTANT: Only search and analyze content from the website: ${domain}. Use site:${domain} in your search queries.`;
+      console.log('📍 Website-specific lookout - Domain:', domain);
+    }
+
     // Create user message
     const userMessage = {
       id: uuidv7(),
       role: 'user' as const,
-      content: prompt,
-      parts: [{ type: 'text' as const, text: prompt }],
+      content: finalPrompt,
+      parts: [{ type: 'text' as const, text: finalPrompt }],
       experimental_attachments: [],
     };
 

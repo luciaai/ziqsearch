@@ -185,6 +185,7 @@ export function useLookoutForm(detectedTimezone: string = DEFAULT_FORM_VALUES.TI
       const date = formData.get('date') as string;
       const dayOfWeek = formData.get('dayOfWeek') as string;
       const searchMode = (formData.get('searchMode') as string) || 'web';
+      const websiteUrl = formData.get('websiteUrl') as string;
 
       // Handle weekly day selection
       let adjustedTime = time;
@@ -199,6 +200,7 @@ export function useLookoutForm(detectedTimezone: string = DEFAULT_FORM_VALUES.TI
         time: adjustedTime,
         timezone,
         searchMode,
+        websiteUrl: websiteUrl?.trim() || undefined,
         date: frequency === 'once' ? date : undefined,
         onSuccess: () => handleDialogOpenChange(false),
       });
@@ -218,6 +220,7 @@ export function useLookoutForm(detectedTimezone: string = DEFAULT_FORM_VALUES.TI
       const timezone = formData.get('timezone') as string;
       const dayOfWeek = formData.get('dayOfWeek') as string;
       const searchMode = (formData.get('searchMode') as string) || 'web';
+      const websiteUrl = formData.get('websiteUrl') as string;
 
       updateLookout({
         id: editingLookout.id,
@@ -227,6 +230,7 @@ export function useLookoutForm(detectedTimezone: string = DEFAULT_FORM_VALUES.TI
         time: frequency === 'weekly' && dayOfWeek ? `${time}:${dayOfWeek}` : time,
         timezone,
         searchMode,
+        websiteUrl: websiteUrl?.trim() || undefined,
         onSuccess: () => handleDialogOpenChange(false),
       });
     },

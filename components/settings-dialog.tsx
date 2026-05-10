@@ -42,7 +42,8 @@ import {
   RobotIcon,
 } from '@phosphor-icons/react';
 
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, SunIcon } from 'lucide-react';
+import { ThemeSwitcher } from '@/components/theme-switcher';
 import Link from 'next/link';
 import { useState, useEffect, useMemo, memo, useCallback } from 'react';
 import { toast } from 'sonner';
@@ -477,6 +478,31 @@ export function PreferencesSection({
         </TabsList>
 
         <TabsContent value="general" className="space-y-6 mt-4">
+          {/* Theme Section */}
+          <div className="space-y-3">
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-primary/10">
+                  <SunIcon className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-sm">Appearance</h4>
+                  <p className="text-xs text-muted-foreground">Customize the look and feel</p>
+                </div>
+              </div>
+
+              <div className="flex items-start justify-between p-3 rounded-lg border bg-card">
+                <div className="flex-1 mr-3">
+                  <Label className="text-sm font-medium">Theme</Label>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Choose your preferred color scheme
+                  </p>
+                </div>
+                <ThemeSwitcher />
+              </div>
+            </div>
+          </div>
+
           {/* Custom Instructions Section */}
           <div className="space-y-3">
             <div className="space-y-2.5">

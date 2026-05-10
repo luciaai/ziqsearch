@@ -162,7 +162,6 @@ export async function POST(req: Request) {
         reasoningEffort: 'none',
         parallelToolCalls: false,
         structuredOutputs: true,
-        serviceTier: 'auto',
       } satisfies GroqProviderOptions,
     },
     maxRetries: 10,

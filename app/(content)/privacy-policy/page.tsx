@@ -75,6 +75,11 @@ export default function PrivacyPage() {
             card details, bank information, UPI details, or other sensitive payment data. All payment information is
             handled directly by our payment processor (Stripe) and is subject to their privacy policy and security standards.
           </p>
+          <p>
+            <strong>No Personalized Advertising:</strong> Ziq does not use personalized advertising, does not sell your
+            data to advertisers, and does not track you across websites for advertising purposes. We are an ad-free platform
+            focused solely on providing you with the best search experience.
+          </p>
 
           <h2>How We Use Your Information</h2>
           <p>We use your information for the following purposes:</p>

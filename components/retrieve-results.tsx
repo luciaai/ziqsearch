@@ -161,7 +161,12 @@ export const RetrieveSingleResult: React.FC<{ result: RetrieveResponse }> = ({ r
   return (
     <div className="border border-neutral-200 rounded-xl my-4 overflow-hidden dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm">
       {singleResult.image && (
-        <div className="h-36 overflow-hidden relative">
+        <a 
+          href={singleResult.url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="block h-36 overflow-hidden relative hover:opacity-90 transition-opacity cursor-pointer"
+        >
           <Image
             src={getProxiedImageUrl(singleResult.image)}
             alt={singleResult.title || 'Featured image'}
@@ -173,7 +178,7 @@ export const RetrieveSingleResult: React.FC<{ result: RetrieveResponse }> = ({ r
               e.currentTarget.style.display = 'none';
             }}
           />
-        </div>
+        </a>
       )}
 
       <div className="p-4">
@@ -345,7 +350,12 @@ const EnhancedSourceCard: React.FC<{ result: RetrieveResult; index: number }> = 
         {/* Image on left - 20% (only if image exists) */}
         {result.image && (
           <div className="w-[20%] shrink-0">
-            <div className="h-full min-h-[120px] overflow-hidden relative">
+            <a 
+              href={result.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block h-full min-h-[120px] overflow-hidden relative hover:opacity-90 transition-opacity cursor-pointer"
+            >
               <Image
                 src={getProxiedImageUrl(result.image)}
                 alt={result.title || 'Featured image'}
@@ -357,7 +367,7 @@ const EnhancedSourceCard: React.FC<{ result: RetrieveResult; index: number }> = 
                   e.currentTarget.style.display = 'none';
                 }}
               />
-            </div>
+            </a>
           </div>
         )}
 

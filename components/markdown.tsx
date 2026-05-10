@@ -1361,19 +1361,10 @@ const MobileHoverCard: React.FC<{
   const title = citationText || (typeof text === 'string' ? text : '');
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (isMobile) {
-      if (isOpen) {
-        // If preview is already open, allow navigation
-        // Don't prevent default, let the link work normally
-        setIsOpen(false);
-      } else {
-        // First tap: show preview
-        e.preventDefault();
-        setIsOpen(true);
-      }
-    }
-    // On desktop, let the link work normally (hover will show preview)
-  }, [isMobile, isOpen]);
+    // On both mobile and desktop, let links work on first click
+    // Preview will show on hover (desktop) or long-press (mobile)
+    // This provides better UX - users expect links to work immediately
+  }, []);
 
   // Always use controlled mode to prevent mode switching during hydration
   // On desktop, HoverCard's hover events will trigger onOpenChange naturally

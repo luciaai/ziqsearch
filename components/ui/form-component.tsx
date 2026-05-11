@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
+import { FontSizeSlider } from '@/components/font-size-slider';
+import { useFontSizeContext } from '@/contexts/font-size-context';
 import {
   models,
   requiresAuthentication,
@@ -2279,6 +2281,9 @@ const FormComponent: React.FC<FormComponentProps> = ({
   selectedConnectors = [],
   setSelectedConnectors,
 }) => {
+  const { fontSize } = useFontSizeContext();
+  const scale = fontSize / 100;
+  
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
   const isMounted = useRef(true);
   const isCompositionActive = useRef(false);
@@ -3618,21 +3623,21 @@ const FormComponent: React.FC<FormComponentProps> = ({
   }, []);
 
   return (
-    <div className={cn('flex flex-col w-full max-w-2xl mx-auto')}>
+    <div className={cn('flex flex-col w-full max-w-4xl mx-auto')}>
       <TooltipProvider>
-        <div
-          className={cn(
-            'relative w-full flex flex-col gap-1 rounded-xl transition-all duration-300 font-sans!',
-            hasInteracted ? 'z-50' : 'z-10',
-            isDragging && 'ring-1 ring-border',
-            attachments.length > 0 || uploadQueue.length > 0
-              ? 'bg-primary/5 border border-ring/20 backdrop-blur-md! p-1 shadow-none!'
-              : 'bg-transparent',
-          )}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
+          <div
+            className={cn(
+              'relative w-full flex flex-col gap-1 rounded-xl transition-all duration-300 font-sans!',
+              hasInteracted ? 'z-50' : 'z-10',
+              isDragging && 'ring-1 ring-border',
+              attachments.length > 0 || uploadQueue.length > 0
+                ? 'bg-primary/5 border border-ring/20 backdrop-blur-md! p-1 shadow-none!'
+                : 'bg-transparent',
+            )}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
           <AnimatePresence>
             {isDragging && (
               <motion.div
@@ -3808,6 +3813,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
                     WebkitTouchCallout: 'none',
                     minHeight: undefined,
                     resize: 'none',
+                    fontSize: `${fontSize}%`,
                   }}
                   rows={1}
                   autoFocus={!isEnhancing && !isTypewriting}
@@ -3831,16 +3837,6 @@ const FormComponent: React.FC<FormComponentProps> = ({
                 )}
               >
                 <div className={cn('flex items-center gap-2')}>
-                  <GroupModeToggle
-                    selectedGroup={selectedGroup}
-                    onGroupSelect={handleGroupSelect}
-                    status={status}
-                    onOpenSettings={onOpenSettings}
-                    isProUser={isProUser}
-                    isAuthenticated={!!user}
-                    usageData={usageData}
-                  />
-
                   {selectedGroup === 'connectors' && setSelectedConnectors && (
                     <ConnectorSelector
                       selectedConnectors={selectedConnectors}
@@ -4122,6 +4118,24 @@ const FormComponent: React.FC<FormComponentProps> = ({
               )}
             </div>
           </div>
+        </div>
+        
+        {/* Font size control - below search bar on far left */}
+        <div className="mt-3 flex justify-start">
+          <FontSizeSlider />
+        </div>
+        
+        {/* Search mode buttons - directly under slider */}
+        <div className="mt-2 flex justify-start">
+          <GroupModeToggle
+            selectedGroup={selectedGroup}
+            onGroupSelect={handleGroupSelect}
+            status={status}
+            onOpenSettings={onOpenSettings}
+            isProUser={isProUser}
+            isAuthenticated={!!user}
+            usageData={usageData}
+          />
         </div>
 
         {/* Pro Upgrade Dialog */}

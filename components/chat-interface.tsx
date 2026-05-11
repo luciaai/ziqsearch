@@ -26,6 +26,7 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarInset, useSidebar, SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import FormComponent from '@/components/ui/form-component';
+import { useFontSizeContext } from '@/contexts/font-size-context';
 import { ShareDialog } from '@/components/share/share-dialog';
 import { ExampleCategories } from '@/components/example-categories';
 import { SciraLogo } from '@/components/logos/scira-logo';
@@ -89,6 +90,7 @@ const ChatInterface = memo(
     isOwner = true,
     chatTitle,
   }: ChatInterfaceProps): React.JSX.Element => {
+    const { fontSize } = useFontSizeContext();
     const router = useRouter();
     const pathname = usePathname();
     const queryClient = useQueryClient();
@@ -1059,12 +1061,15 @@ const ChatInterface = memo(
             />
 
             <div
-              className={`w-full p-2 sm:p-4 relative ${status === 'ready' && messages.length === 0
+              className={`w-full p-0 relative ${status === 'ready' && messages.length === 0
                 ? 'flex-1 flex! flex-col! items-center! justify-center!' // Center everything when no messages
                 : 'flex flex-col! mt-4' // Add top margin when showing messages
                 }`}
             >
-              <div className={`w-full max-w-[95%] md:max-w-5xl space-y-6 p-0 mx-auto transition-all duration-300`}>
+              <div 
+                className={`w-full md:max-w-6xl space-y-6 p-0 mx-auto transition-all duration-300`}
+                style={{ zoom: `${fontSize}%` }}
+              >
                 {status === 'ready' && messages.length === 0 && (
                   <div className="text-center m-0 mb-2">
                     {/* Mobile sidebar trigger for main page */}
@@ -1200,8 +1205,8 @@ const ChatInterface = memo(
                     className={cn(
                       'transition-all duration-100',
                       messages.length === 0 && !chatState.hasSubmitted
-                        ? 'relative w-full max-w-[95%] md:max-w-5xl mx-auto'
-                        : `fixed bottom-0 z-20 pb-6! sm:pb-2.5! mt-1 p-0 w-full max-w-[95%] md:max-w-5xl mx-auto ${state === 'expanded'
+                        ? 'relative w-full md:max-w-6xl mx-auto'
+                        : `fixed bottom-0 z-20 pb-6! sm:pb-2.5! mt-1 p-0 w-full md:max-w-6xl mx-auto ${state === 'expanded'
                           ? 'left-0 right-0 md:left-[calc(var(--sidebar-width))] md:right-0'
                           : 'left-0 right-0 md:left-[calc(var(--sidebar-width-icon))] md:right-0'
                         }`,
@@ -1274,7 +1279,7 @@ const ChatInterface = memo(
               {/* Show limit exceeded message */}
               {isLimitBlocked && messages.length > 0 && (
                 <div
-                  className={`fixed bottom-8 sm:bottom-4 right-0 w-full max-w-[95%] md:max-w-5xl mx-auto z-20 ${state === 'expanded'
+                  className={`fixed bottom-8 sm:bottom-4 right-0 w-full md:max-w-6xl mx-auto z-20 ${state === 'expanded'
                     ? 'left-0 md:left-[calc(var(--sidebar-width))]'
                     : 'left-0 md:left-[calc(var(--sidebar-width-icon))]'
                     }`}

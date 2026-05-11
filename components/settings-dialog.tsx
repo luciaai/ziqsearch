@@ -83,7 +83,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import { LineChart, Line, Area, AreaChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { CONNECTOR_CONFIGS, CONNECTOR_ICONS, type ConnectorProvider } from '@/lib/connectors';
 
-interface SettingsDialogProps {
+interface SettingsDialogProps{
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user: any;

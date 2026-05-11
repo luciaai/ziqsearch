@@ -4,6 +4,8 @@ import { ReasoningUIPart, DataUIPart, isToolUIPart, isStaticToolUIPart } from 'a
 import { ReasoningPartView } from '@/components/reasoning-part';
 import { MarkdownRenderer } from '@/components/markdown';
 import { ChatTextHighlighter } from '@/components/chat-text-highlighter';
+import { FontSizeSlider } from '@/components/font-size-slider';
+import { useFontSizeContext } from '@/contexts/font-size-context';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -26,6 +28,33 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
+
+// Text part wrapper with font size control
+function TextPartWithFontSize({ children }: { children: React.ReactNode }) {
+  const { fontSize } = useFontSizeContext();
+  
+  // Convert percentage to scale (100% = 1, 120% = 1.2, etc.)
+  const scale = fontSize / 100;
+  
+  return (
+    <div>
+      {/* Font size control - top left */}
+      <div className="mb-3">
+        <FontSizeSlider />
+      </div>
+      
+      <div 
+        style={{ 
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          width: `${100 / scale}%`,
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
 
 // Tool-specific components (eagerly loaded for better UX)
 import { SearchLoadingState } from '@/components/tool-invocation-list-view';
@@ -281,11 +310,11 @@ export const MessagePartRenderer = memo<MessagePartRendererProps>(
 
       return (
         <div key={`${messageIndex}-${partIndex}-text`} className="mt-2">
-          <div>
+          <TextPartWithFontSize>
             <ChatTextHighlighter onHighlight={onHighlight} removeHighlightOnClick={true}>
               <MarkdownRenderer content={cleanText} />
             </ChatTextHighlighter>
-          </div>
+          </TextPartWithFontSize>
 
           {/* Action buttons below the text */}
           {shouldShowActionButtons && (

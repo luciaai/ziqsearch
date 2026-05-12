@@ -1069,8 +1069,8 @@ const ChatInterface = memo(
               <div 
                 className={`w-full md:max-w-6xl space-y-6 p-0 mx-auto transition-all duration-300`}
                 style={{ 
-                  transform: `scale(${fontSize / 100})`,
-                  transformOrigin: 'top center',
+                  zoom: `${fontSize}%`,
+                  WebkitTextSizeAdjust: `${fontSize}%`,
                 }}
               >
                 {status === 'ready' && messages.length === 0 && (

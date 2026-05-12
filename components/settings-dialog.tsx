@@ -44,6 +44,7 @@ import {
 
 import { ExternalLink, SunIcon } from 'lucide-react';
 import { ThemeSwitcher } from '@/components/theme-switcher';
+import { useFontSizeContext } from '@/contexts/font-size-context';
 import Link from 'next/link';
 import { useState, useEffect, useMemo, memo, useCallback } from 'react';
 import { toast } from 'sonner';
@@ -335,6 +336,86 @@ function ExtremeSearchProviderSelector({
   );
 }
 
+// Font Size Control Component
+function FontSizeControl() {
+  const { fontSize, setFontSize } = useFontSizeContext();
+
+  return (
+    <div className="space-y-3">
+      <div className="space-y-2.5">
+        <div className="flex items-center gap-2.5">
+          <div className="p-1.5 rounded-lg bg-primary/10">
+            <SunIcon className="h-3.5 w-3.5 text-primary" />
+          </div>
+          <div>
+            <h4 className="font-semibold text-sm">Text Size</h4>
+            <p className="text-xs text-muted-foreground">Adjust the size of text throughout the app</p>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-lg border bg-card space-y-4">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium">Font Size: {fontSize}%</Label>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setFontSize(100)}
+              className="h-7 text-xs"
+            >
+              Reset
+            </Button>
+          </div>
+          
+          {/* Preview Text */}
+          <div className="p-3 rounded-md bg-muted/50 border border-border/50">
+            <p 
+              className="text-foreground transition-all duration-200"
+              style={{ zoom: `${fontSize}%` }}
+            >
+              The quick brown fox jumps over the lazy dog
+            </p>
+          </div>
+          
+          {/* Preset Size Buttons */}
+          <div className="flex gap-2 flex-wrap">
+            {[80, 90, 100, 110, 120, 140, 160, 180, 200].map((size) => (
+              <Button
+                key={size}
+                variant={fontSize === size ? "default" : "outline"}
+                size="sm"
+                onClick={() => setFontSize(size)}
+                className="h-8 px-3 text-xs"
+              >
+                {size}%
+              </Button>
+            ))}
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-muted-foreground">A</span>
+            <input
+              type="range"
+              min="80"
+              max="200"
+              step="5"
+              value={fontSize}
+              onChange={(e) => setFontSize(parseInt(e.target.value))}
+              className="flex-1 h-2 bg-border rounded-lg appearance-none cursor-pointer accent-primary"
+              style={{
+                background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${((fontSize - 80) / 120) * 100}%, hsl(var(--border)) ${((fontSize - 80) / 120) * 100}%, hsl(var(--border)) 100%)`
+              }}
+            />
+            <span className="text-lg text-muted-foreground">A</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Changes apply to all text in search results, messages, and the search bar
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Component for Combined Preferences (Search + Custom Instructions)
 export function PreferencesSection({
   user,
@@ -502,6 +583,9 @@ export function PreferencesSection({
               </div>
             </div>
           </div>
+
+          {/* Font Size Section */}
+          <FontSizeControl />
 
           {/* Custom Instructions Section */}
           <div className="space-y-3">

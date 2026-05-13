@@ -46,8 +46,20 @@ function SettingsContent() {
   // Restore body pointer-events that Radix UI Sheet disables but doesn't clean up on navigation
   useEffect(() => {
     setIsSigningOut(false);
-    document.body.style.pointerEvents = '';
-    document.body.removeAttribute('data-scroll-locked');
+    
+    // Clean up body styles on mount
+    const cleanupBodyStyles = () => {
+      document.body.style.pointerEvents = '';
+      document.body.style.overflow = '';
+      document.body.removeAttribute('data-scroll-locked');
+    };
+    
+    cleanupBodyStyles();
+    
+    // Also clean up on unmount (when navigating away)
+    return () => {
+      cleanupBodyStyles();
+    };
   }, []);
 
   const handleSignOut = useCallback(async () => {

@@ -9,6 +9,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Toaster } from '@/components/ui/sonner';
 import { ClientAnalytics } from '@/components/client-analytics';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { BodyStyleCleanup } from '@/components/body-style-cleanup';
 
 import { Providers } from './providers';
 
@@ -151,6 +152,7 @@ export default async function RootLayout({
         <NuqsAdapter>
           <Providers>
             <SidebarProvider>
+              <BodyStyleCleanup />
               <Toaster position="top-center" />
               {children}
             </SidebarProvider>

@@ -95,7 +95,7 @@ export const PostMessageUpgradeDialog = React.memo(({ open, onOpenChange }: Post
                   <ProBadge className="!text-white !bg-white/20 !ring-white/30 font-light text-xl !tracking-normal" />
                 </span>
               </DialogTitle>
-              <DialogDescription className="text-white/90">
+              <div className="text-white/90">
                 <div className="flex items-center gap-2 mb-2">
                   {pricing.usd.hasDiscount ? (
                     <>
@@ -110,7 +110,7 @@ export const PostMessageUpgradeDialog = React.memo(({ open, onOpenChange }: Post
                 <p className="text-sm text-white/80 text-left">
                   Unlock unlimited searches, advanced AI models, and premium features to supercharge your research.
                 </p>
-              </DialogDescription>
+              </div>
               <Button
                 onClick={() => {
                   window.location.href = '/pricing';

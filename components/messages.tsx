@@ -384,8 +384,9 @@ const Messages: React.FC<MessagesProps> = ({
 
           console.log(`📤 About to render Message component for ${message.role} message ${index}`);
           return (
-            <div key={message.id || index} className={messageClasses}>
+            <div className={messageClasses}>
               <Message
+                key={message.id || index}
                 message={message}
                 index={index}
                 lastUserMessageIndex={lastUserMessageIndex}

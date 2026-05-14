@@ -582,31 +582,31 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = React.memo(
                           {model.vision && (
                             <div
                               className={cn(
-                                'inline-flex items-center justify-center rounded bg-secondary/50 shrink-0',
+                                'inline-flex items-center justify-center rounded bg-transparent shrink-0',
                                 isMobile ? 'p-1' : 'p-0.5',
                               )}
                             >
-                              <Eye className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                              <Eye className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                             </div>
                           )}
                           {model.reasoning && (
                             <div
                               className={cn(
-                                'inline-flex items-center justify-center rounded bg-secondary/50 shrink-0',
+                                'inline-flex items-center justify-center rounded bg-transparent shrink-0',
                                 isMobile ? 'p-1' : 'p-0.5',
                               )}
                             >
-                              <Brain className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                              <Brain className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                             </div>
                           )}
                           {model.pdf && (
                             <div
                               className={cn(
-                                'inline-flex items-center justify-center rounded bg-secondary/50 shrink-0',
+                                'inline-flex items-center justify-center rounded bg-transparent shrink-0',
                                 isMobile ? 'p-1' : 'p-0.5',
                               )}
                             >
-                              <FilePdf className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                              <FilePdf className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                             </div>
                           )}
                         </div>
@@ -650,21 +650,21 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = React.memo(
                           {model.isNew && (
                             <div
                               className={cn(
-                                'inline-flex items-center justify-center rounded bg-secondary/50',
+                                'inline-flex items-center justify-center rounded bg-transparent',
                                 isMobile ? 'p-1' : 'p-0.5',
                               )}
                             >
-                              <Sparkles className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                              <Sparkles className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                             </div>
                           )}
                           {model.fast && (
                             <div
                               className={cn(
-                                'inline-flex items-center justify-center rounded bg-secondary/50',
+                                'inline-flex items-center justify-center rounded bg-transparent',
                                 isMobile ? 'p-1' : 'p-0.5',
                               )}
                             >
-                              <Zap className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                              <Zap className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                             </div>
                           )}
                           {(() => {
@@ -691,31 +691,31 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = React.memo(
                           {model.vision && (
                             <div
                               className={cn(
-                                'inline-flex items-center justify-center rounded bg-secondary/50',
+                                'inline-flex items-center justify-center rounded bg-transparent',
                                 isMobile ? 'p-1' : 'p-0.5',
                               )}
                             >
-                              <Eye className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                              <Eye className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                             </div>
                           )}
                           {model.reasoning && (
                             <div
                               className={cn(
-                                'inline-flex items-center justify-center rounded bg-secondary/50',
+                                'inline-flex items-center justify-center rounded bg-transparent',
                                 isMobile ? 'p-1' : 'p-0.5',
                               )}
                             >
-                              <Brain className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                              <Brain className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                             </div>
                           )}
                           {model.pdf && (
                             <div
                               className={cn(
-                                'inline-flex items-center justify-center rounded bg-secondary/50',
+                                'inline-flex items-center justify-center rounded bg-transparent',
                                 isMobile ? 'p-1' : 'p-0.5',
                               )}
                             >
-                              <FilePdf className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                              <FilePdf className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                             </div>
                           )}
                         </div>
@@ -797,31 +797,31 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = React.memo(
                             {model.vision && (
                               <div
                                 className={cn(
-                                  'inline-flex items-center justify-center rounded bg-secondary/50 shrink-0',
+                                  'inline-flex items-center justify-center rounded bg-transparent shrink-0',
                                   isMobile ? 'p-1' : 'p-0.5',
                                 )}
                               >
-                                <Eye className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                                <Eye className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                               </div>
                             )}
                             {model.reasoning && (
                               <div
                                 className={cn(
-                                  'inline-flex items-center justify-center rounded bg-secondary/50 shrink-0',
+                                  'inline-flex items-center justify-center rounded bg-transparent shrink-0',
                                   isMobile ? 'p-1' : 'p-0.5',
                                 )}
                               >
-                                <Brain className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                                <Brain className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                               </div>
                             )}
                             {model.pdf && (
                               <div
                                 className={cn(
-                                  'inline-flex items-center justify-center rounded bg-secondary/50 shrink-0',
+                                  'inline-flex items-center justify-center rounded bg-transparent shrink-0',
                                   isMobile ? 'p-1' : 'p-0.5',
                                 )}
                               >
-                                <FilePdf className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                                <FilePdf className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                               </div>
                             )}
                           </div>
@@ -865,21 +865,21 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = React.memo(
                             {model.isNew && (
                               <div
                                 className={cn(
-                                  'inline-flex items-center justify-center rounded bg-secondary/50',
+                                  'inline-flex items-center justify-center rounded bg-transparent',
                                   isMobile ? 'p-1' : 'p-0.5',
                                 )}
                               >
-                                <Sparkles className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                                <Sparkles className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                               </div>
                             )}
                             {model.fast && (
                               <div
                                 className={cn(
-                                  'inline-flex items-center justify-center rounded bg-secondary/50',
+                                  'inline-flex items-center justify-center rounded bg-transparent',
                                   isMobile ? 'p-1' : 'p-0.5',
                                 )}
                               >
-                                <Zap className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                                <Zap className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                               </div>
                             )}
                             {(() => {
@@ -906,31 +906,31 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = React.memo(
                             {model.vision && (
                               <div
                                 className={cn(
-                                  'inline-flex items-center justify-center rounded bg-secondary/50',
+                                  'inline-flex items-center justify-center rounded bg-transparent',
                                   isMobile ? 'p-1' : 'p-0.5',
                                 )}
                               >
-                                <Eye className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                                <Eye className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                               </div>
                             )}
                             {model.reasoning && (
                               <div
                                 className={cn(
-                                  'inline-flex items-center justify-center rounded bg-secondary/50',
+                                  'inline-flex items-center justify-center rounded bg-transparent',
                                   isMobile ? 'p-1' : 'p-0.5',
                                 )}
                               >
-                                <Brain className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                                <Brain className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                               </div>
                             )}
                             {model.pdf && (
                               <div
                                 className={cn(
-                                  'inline-flex items-center justify-center rounded bg-secondary/50',
+                                  'inline-flex items-center justify-center rounded bg-transparent',
                                   isMobile ? 'p-1' : 'p-0.5',
                                 )}
                               >
-                                <FilePdf className={cn('text-muted-foreground', isMobile ? 'size-3' : 'size-2.5')} />
+                                <FilePdf className={cn('text-foreground/70', isMobile ? 'size-3' : 'size-2.5')} />
                               </div>
                             )}
                           </div>

@@ -23,7 +23,9 @@ import {
   MessageSquare,
   Sparkles,
   Settings,
-  HelpCircle
+  HelpCircle,
+  Brain,
+  FileText
 } from 'lucide-react';
 
 export default function FAQPage() {
@@ -508,6 +510,40 @@ export default function FAQPage() {
             </div>
             
             <ProAccordion type="single" collapsible value={openItem} onValueChange={setOpenItem}>
+              <ProAccordionItem value="model-icons">
+                <ProAccordionTrigger>What do the icons next to model names mean?</ProAccordionTrigger>
+                <ProAccordionContent>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    Each model displays icons indicating its special capabilities:
+                  </p>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <Eye className="h-4 w-4 mt-0.5 shrink-0" />
+                      <span><strong className="text-foreground">Vision:</strong> Can analyze images and screenshots</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Brain className="h-4 w-4 mt-0.5 shrink-0" />
+                      <span><strong className="text-foreground">Reasoning:</strong> Advanced thinking and problem-solving capabilities</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <FileText className="h-4 w-4 mt-0.5 shrink-0" />
+                      <span><strong className="text-foreground">PDF:</strong> Can read and analyze PDF documents</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Sparkles className="h-4 w-4 mt-0.5 shrink-0" />
+                      <span><strong className="text-foreground">New:</strong> Recently added model</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Zap className="h-4 w-4 mt-0.5 shrink-0" />
+                      <span><strong className="text-foreground">Fast:</strong> Optimized for speed</span>
+                    </li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground mt-3">
+                    Hover over each icon in the model dropdown to see a tooltip with more information.
+                  </p>
+                </ProAccordionContent>
+              </ProAccordionItem>
+
               <ProAccordionItem value="grok">
                 <ProAccordionTrigger>Grok 2 & Grok 2 Mini</ProAccordionTrigger>
                 <ProAccordionContent>

@@ -20,6 +20,7 @@ import {
   SunIcon,
   MoonIcon,
   UsersIcon,
+  ChartBarIcon,
 } from '@phosphor-icons/react';
 import { Crown02Icon, BinocularsIcon, SearchList02Icon, FolderLibraryIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@/components/ui/hugeicons';
@@ -906,6 +907,16 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                       </Link>
                     </DropdownMenuItem>
 
+                    {/* Admin - Only visible to admin users */}
+                    {user.email && ['ziqsearch@gmail.com', 'esawalk@gmail.com'].includes(user.email) && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin" onClick={closeMobileSidebar}>
+                          <ChartBarIcon size={16} weight="regular" className="mr-2" />
+                          <span>Admin</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+
                     <DropdownMenuSeparator />
 
                     {/* Theme Switcher in dropdown */}
@@ -1052,6 +1063,16 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                         <span>Settings</span>
                       </Link>
                     </DropdownMenuItem>
+
+                    {/* Admin - Only visible to admin users */}
+                    {user.email && ['ziqsearch@gmail.com', 'esawalk@gmail.com'].includes(user.email) && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin" onClick={closeMobileSidebar}>
+                          <ChartBarIcon size={16} weight="regular" className="mr-2" />
+                          <span>Admin</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
 
                     {/* Theme toggle */}
                     <DropdownMenuItem onClick={toggleTheme}>

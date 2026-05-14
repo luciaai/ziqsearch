@@ -422,28 +422,28 @@ export default function FAQPage() {
             
             <div className="bg-blue-50/30 dark:bg-blue-950/10 border border-blue-200 dark:border-blue-900 p-6 rounded-lg">
               <p className="text-sm text-muted-foreground mb-4">
-                We're constantly improving Ziq. Here's what's coming next:
+                We're building features that make Ziq the best AI research platform for students and academics:
               </p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <span className="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
-                  <span><strong className="text-foreground">Tags & Organization:</strong> Tag and organize your searches by project or class</span>
+                  <span><strong className="text-foreground">PDF Library:</strong> Upload and search your own research papers (Free: 3 PDFs, Pro: unlimited)</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
-                  <span><strong className="text-foreground">Bookmarks:</strong> Save important search results and sources for later</span>
+                  <span><strong className="text-foreground">Cross-Document Search:</strong> Ask questions across multiple papers simultaneously (Pro feature)</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
-                  <span><strong className="text-foreground">Notes:</strong> Add personal notes to your searches and sources</span>
+                  <span><strong className="text-foreground">BibTeX Export:</strong> One-click export to Zotero, Mendeley, and LaTeX</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
-                  <span><strong className="text-foreground">Export:</strong> Export your research and citations to PDF</span>
+                  <span><strong className="text-foreground">Citation Tracking:</strong> See what papers cite your sources and discover related research</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
-                  <span><strong className="text-foreground">Collaboration:</strong> Share searches and research with classmates</span>
+                  <span><strong className="text-foreground">Smart Tags:</strong> AI-suggested organization based on paper topics and research areas</span>
                 </li>
               </ul>
             </div>

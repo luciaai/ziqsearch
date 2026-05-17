@@ -197,20 +197,34 @@ export const MessagePartRenderer = memo<MessagePartRendererProps>(
     const [isRegenerating, setIsRegenerating] = useState(false);
     const [isBranchingOut, setIsBranchingOut] = useState(false);
     const [isBookmarked, setIsBookmarked] = useState(false);
-    const [isCheckingBookmark, setIsCheckingBookmark] = useState(true);
+    const [isCheckingBookmark, setIsCheckingBookmark] = useState(false);
     const router = useRouter();
     const queryClient = useQueryClient();
 
-    // Check if message is bookmarked on mount
+    // Check if message is bookmarked on mount - only for assistant messages with valid IDs
     useEffect(() => {
-      if (user && message.id && message.role === 'assistant') {
-        checkBookmarkExists(message.id).then((result) => {
-          setIsBookmarked(result.exists);
-          setIsCheckingBookmark(false);
-        });
-      } else {
-        setIsCheckingBookmark(false);
+      let isMounted = true;
+      
+      if (user && message.id && message.role === 'assistant' && typeof message.id === 'string') {
+        setIsCheckingBookmark(true);
+        checkBookmarkExists(message.id)
+          .then((result) => {
+            if (isMounted) {
+              setIsBookmarked(result?.exists || false);
+              setIsCheckingBookmark(false);
+            }
+          })
+          .catch((error) => {
+            console.error('Error checking bookmark:', error);
+            if (isMounted) {
+              setIsCheckingBookmark(false);
+            }
+          });
       }
+      
+      return () => {
+        isMounted = false;
+      };
     }, [message.id, message.role, user]);
 
     // Handle text parts

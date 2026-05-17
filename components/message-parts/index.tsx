@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { deleteTrailingMessages, generateSpeech, branchOutChat } from '@/app/actions';
+import { deleteTrailingMessages, generateSpeech, branchOutChat, addBookmark, removeBookmark, checkBookmarkExists } from '@/app/actions';
 import { toast } from 'sonner';
 import { Wave } from '@foobar404/wave';
 import { cn } from '@/lib/utils';
@@ -16,7 +16,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/comp
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { ShareButton } from '@/components/share';
 import { HugeiconsIcon } from '@/components/ui/hugeicons';
-import { RepeatIcon, Copy01Icon, CpuIcon, SplitIcon } from '@hugeicons/core-free-icons';
+import { RepeatIcon, Copy01Icon, CpuIcon, SplitIcon, BookmarkIcon } from '@hugeicons/core-free-icons';
 import { ChatMessage, CustomUIDataTypes, DataQueryCompletionPart, DataExtremeSearchPart } from '@/lib/types';
 import { UseChatHelpers } from '@ai-sdk/react';
 import Image from 'next/image';
@@ -196,8 +196,22 @@ export const MessagePartRenderer = memo<MessagePartRendererProps>(
     useDataStream();
     const [isRegenerating, setIsRegenerating] = useState(false);
     const [isBranchingOut, setIsBranchingOut] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isCheckingBookmark, setIsCheckingBookmark] = useState(true);
     const router = useRouter();
     const queryClient = useQueryClient();
+
+    // Check if message is bookmarked on mount
+    useEffect(() => {
+      if (user && message.id && message.role === 'assistant') {
+        checkBookmarkExists(message.id).then((result) => {
+          setIsBookmarked(result.exists);
+          setIsCheckingBookmark(false);
+        });
+      } else {
+        setIsCheckingBookmark(false);
+      }
+    }, [message.id, message.role, user]);
 
     // Handle text parts
     if (part.type === 'text') {
@@ -382,6 +396,48 @@ export const MessagePartRenderer = memo<MessagePartRendererProps>(
                     <TooltipContent side="bottom" sideOffset={4}>Copy</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
+
+                {/* Bookmark button - only for authenticated users on assistant messages */}
+                {user && message.role === 'assistant' && !isCheckingBookmark && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={async () => {
+                            try {
+                              if (isBookmarked) {
+                                await removeBookmark(message.id!);
+                                setIsBookmarked(false);
+                                toast.success('Bookmark removed');
+                              } else {
+                                if (chatId) {
+                                  await addBookmark(message.id!, chatId);
+                                  setIsBookmarked(true);
+                                  toast.success('Bookmarked!');
+                                }
+                              }
+                            } catch (error) {
+                              toast.error('Failed to update bookmark');
+                            }
+                          }}
+                          className={cn(
+                            "h-7 w-7 transition-colors",
+                            isBookmarked 
+                              ? "text-yellow-600 dark:text-yellow-500 hover:text-yellow-700 dark:hover:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-950/20"
+                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                          )}
+                        >
+                          <HugeiconsIcon icon={BookmarkIcon} size={16} color="currentColor" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" sideOffset={4}>
+                        {isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
 
                 {/* Branch Out button - only for owners or unauthenticated users on private chats, and only on assistant messages */}
                 {((user && isOwner) || (!user && selectedVisibilityType === 'private')) &&

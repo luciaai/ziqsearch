@@ -380,6 +380,24 @@ export const lookout = pgTable('lookout', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
+// Bookmarks table for saving important messages
+export const bookmark = pgTable('bookmark', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => generateId()),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  messageId: text('message_id')
+    .notNull()
+    .references(() => message.id, { onDelete: 'cascade' }),
+  chatId: text('chat_id')
+    .notNull()
+    .references(() => chat.id, { onDelete: 'cascade' }),
+  note: text('note'), // Optional user note about the bookmark
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
 export const userRelations = relations(user, ({ many, one }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -394,6 +412,7 @@ export const userRelations = relations(user, ({ many, one }) => ({
   lookouts: many(lookout),
   billingCustomer: one(billingCustomer),
   billingSubscriptions: many(billingSubscription),
+  bookmarks: many(bookmark),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -465,6 +484,21 @@ export const apiCostTrackingRelations = relations(apiCostTracking, ({ one }) => 
   }),
 }));
 
+export const bookmarkRelations = relations(bookmark, ({ one }) => ({
+  user: one(user, {
+    fields: [bookmark.userId],
+    references: [user.id],
+  }),
+  message: one(message, {
+    fields: [bookmark.messageId],
+    references: [message.id],
+  }),
+  chat: one(chat, {
+    fields: [bookmark.chatId],
+    references: [chat.id],
+  }),
+}));
+
 export type User = InferSelectModel<typeof user>;
 export type Session = InferSelectModel<typeof session>;
 export type Account = InferSelectModel<typeof account>;
@@ -483,6 +517,7 @@ export type UserPreferences = InferSelectModel<typeof userPreferences>;
 export type Lookout = InferSelectModel<typeof lookout>;
 export type BillingCustomer = InferSelectModel<typeof billingCustomer>;
 export type BillingSubscription = InferSelectModel<typeof billingSubscription>;
+export type Bookmark = InferSelectModel<typeof bookmark>;
 
 // Feedback table
 export const feedback = pgTable('feedback', {

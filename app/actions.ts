@@ -37,7 +37,7 @@ import {
 } from '@/lib/db/queries';
 import { extractChatPreview } from '@/lib/search-utils';
 import { db } from '@/lib/db';
-import { chat } from '@/lib/db/schema';
+import { chat, bookmark } from '@/lib/db/schema';
 import { eq, desc, ilike, and } from 'drizzle-orm';
 import { getDiscountConfig } from '@/lib/discount';
 import { get } from '@vercel/edge-config';
@@ -3743,5 +3743,117 @@ export async function submitEducationDiscountRequest(data: {
   } catch (error) {
     console.error('Error submitting education discount request:', error);
     return { success: false, error: 'Failed to submit request. Please try again.' };
+  }
+}
+
+// Bookmark actions
+export async function addBookmark(messageId: string, chatId: string, note?: string) {
+  'use server';
+  
+  try {
+    const user = await getUser();
+    
+    if (!user) {
+      return { error: 'Unauthorized', status: 401 };
+    }
+
+    // Check if bookmark already exists
+    const existingBookmark = await db.query.bookmark.findFirst({
+      where: and(
+        eq(bookmark.userId, user.id),
+        eq(bookmark.messageId, messageId)
+      ),
+    });
+
+    if (existingBookmark) {
+      return { error: 'Bookmark already exists', status: 400 };
+    }
+
+    // Create bookmark
+    const [newBookmark] = await db.insert(bookmark).values({
+      userId: user.id,
+      messageId,
+      chatId,
+      note: note || null,
+    }).returning();
+
+    return { bookmark: newBookmark };
+  } catch (error) {
+    console.error('Error adding bookmark:', error);
+    return { error: 'Failed to add bookmark', status: 500 };
+  }
+}
+
+export async function removeBookmark(messageId: string) {
+  'use server';
+  
+  try {
+    const user = await getUser();
+    
+    if (!user) {
+      return { error: 'Unauthorized', status: 401 };
+    }
+
+    await db.delete(bookmark).where(
+      and(
+        eq(bookmark.userId, user.id),
+        eq(bookmark.messageId, messageId)
+      )
+    );
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error removing bookmark:', error);
+    return { error: 'Failed to remove bookmark', status: 500 };
+  }
+}
+
+export async function getUserBookmarks() {
+  'use server';
+  
+  try {
+    const user = await getUser();
+    
+    if (!user) {
+      return { error: 'Unauthorized', status: 401 };
+    }
+
+    const bookmarks = await db.query.bookmark.findMany({
+      where: eq(bookmark.userId, user.id),
+      orderBy: [desc(bookmark.createdAt)],
+      with: {
+        message: true,
+        chat: true,
+      },
+    });
+
+    return { bookmarks };
+  } catch (error) {
+    console.error('Error fetching bookmarks:', error);
+    return { error: 'Failed to fetch bookmarks', status: 500 };
+  }
+}
+
+export async function checkBookmarkExists(messageId: string) {
+  'use server';
+  
+  try {
+    const user = await getUser();
+    
+    if (!user) {
+      return { exists: false };
+    }
+
+    const existingBookmark = await db.query.bookmark.findFirst({
+      where: and(
+        eq(bookmark.userId, user.id),
+        eq(bookmark.messageId, messageId)
+      ),
+    });
+
+    return { exists: !!existingBookmark };
+  } catch (error) {
+    console.error('Error checking bookmark:', error);
+    return { exists: false };
   }
 }

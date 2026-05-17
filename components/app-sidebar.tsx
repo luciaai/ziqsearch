@@ -14,6 +14,7 @@ import {
   InstagramLogoIcon,
   InfoIcon,
   BookIcon,
+  BookmarkIcon,
   FileTextIcon,
   ShieldIcon,
   BugIcon,
@@ -483,6 +484,30 @@ export const AppSidebar = memo(({ user, onHistoryClick, isProUser }: AppSidebarP
                 >
                   <BookIcon size={18} weight="regular" />
                   <span>Citations</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
+
+          {/* Bookmarks */}
+          {mounted && user && (
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip="Bookmarks - Your saved AI responses"
+                className={cn(
+                  'hover:bg-primary/10 transition-all duration-200',
+                  pathname === '/bookmarks' ? 'bg-primary/15 text-foreground font-medium' : '',
+                )}
+              >
+                <Link
+                  prefetch={true}
+                  href="/bookmarks"
+                  onClick={closeMobileSidebar}
+                  className="flex items-center gap-2"
+                >
+                  <BookmarkIcon size={18} weight="regular" />
+                  <span>Bookmarks</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

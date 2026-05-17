@@ -38,7 +38,8 @@ import {
 import { extractChatPreview } from '@/lib/search-utils';
 import { db } from '@/lib/db';
 import { chat, bookmark } from '@/lib/db/schema';
-import { eq, desc, ilike, and } from 'drizzle-orm';
+import { eq, desc, ilike, and, count } from 'drizzle-orm';
+import { BOOKMARK_LIMITS } from '@/lib/constants';
 import { getDiscountConfig } from '@/lib/discount';
 import { get } from '@vercel/edge-config';
 import { groq } from '@ai-sdk/groq';
@@ -3749,10 +3750,10 @@ export async function submitEducationDiscountRequest(data: {
 // Bookmark actions
 export async function addBookmark(messageId: string, chatId: string, note?: string) {
   'use server';
-  
+
   try {
     const user = await getUser();
-    
+
     if (!user) {
       return { error: 'Unauthorized', status: 401 };
     }
@@ -3767,6 +3768,34 @@ export async function addBookmark(messageId: string, chatId: string, note?: stri
 
     if (existingBookmark) {
       return { error: 'Bookmark already exists', status: 400 };
+    }
+
+    // Check bookmark limit
+    const [bookmarkCountResult] = await db
+      .select({ count: count() })
+      .from(bookmark)
+      .where(eq(bookmark.userId, user.id));
+
+    const currentCount = bookmarkCountResult?.count || 0;
+
+    // Get user subscription data to determine limit
+    const userData = await getComprehensiveUserData();
+    const hasProSubscription = userData?.subscription?.status === 'active';
+
+    // Check if student plan by looking at the price ID or other indicators
+    const isStudentPlan = userData?.subscription?.stripePriceId?.includes('student');
+
+    const userLimit = hasProSubscription
+      ? isStudentPlan
+        ? BOOKMARK_LIMITS.STUDENT_LIMIT
+        : BOOKMARK_LIMITS.PRO_LIMIT
+      : BOOKMARK_LIMITS.FREE_LIMIT;
+
+    if (currentCount >= userLimit) {
+      return {
+        error: `Bookmark limit reached. You've used ${currentCount} of ${userLimit} bookmarks. Upgrade to Pro for ${BOOKMARK_LIMITS.PRO_LIMIT} bookmarks.`,
+        status: 429,
+      };
     }
 
     // Create bookmark

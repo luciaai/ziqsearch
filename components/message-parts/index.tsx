@@ -427,9 +427,13 @@ export const MessagePartRenderer = memo<MessagePartRendererProps>(
                                 toast.success('Bookmark removed');
                               } else {
                                 if (chatId) {
-                                  await addBookmark(message.id!, chatId);
-                                  setIsBookmarked(true);
-                                  toast.success('Bookmarked!');
+                                  const result = await addBookmark(message.id!, chatId);
+                                  if ('error' in result) {
+                                    toast.error(result.error);
+                                  } else {
+                                    setIsBookmarked(true);
+                                    toast.success('Bookmarked!');
+                                  }
                                 }
                               }
                             } catch (error) {

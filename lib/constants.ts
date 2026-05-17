@@ -6,6 +6,13 @@ export const SEARCH_LIMITS = {
   MONTHLY_STUDENT_LIMIT: 500, // Monthly search cap for Student users
 } as const;
 
+// Bookmark limits
+export const BOOKMARK_LIMITS = {
+  FREE_LIMIT: 20, // Max bookmarks for free users
+  PRO_LIMIT: 1000, // Max bookmarks for Pro users
+  STUDENT_LIMIT: 1000, // Max bookmarks for Student users (same as Pro since bookmarks have no API costs)
+} as const;
+
 export const PRICING = {
   PRO_MONTHLY: 14, // USD
   PRO_MONTHLY_USD: 14, // USD pricing for Stripe

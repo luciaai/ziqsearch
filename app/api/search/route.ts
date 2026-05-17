@@ -225,7 +225,11 @@ function initializeChatAndChecks({
 
         const shouldBypassLimits = shouldBypassRateLimits(model, user);
         if (!shouldBypassLimits && messageCountResult.count !== undefined && messageCountResult.count >= SEARCH_LIMITS.DAILY_SEARCH_LIMIT) {
-          throw new ChatSDKError('rate_limit:chat', 'Daily search limit reached. Upgrade to Pro for unlimited searches.');
+          const remaining = SEARCH_LIMITS.DAILY_SEARCH_LIMIT - messageCountResult.count;
+          throw new ChatSDKError(
+            'rate_limit:chat',
+            `The daily limit has been reached. You've used ${messageCountResult.count} of ${SEARCH_LIMITS.DAILY_SEARCH_LIMIT} free searches today. Your limit resets at midnight. Upgrade to Pro for unlimited searches.`
+          );
         }
 
         const hasSubscription = !!user.subscription;

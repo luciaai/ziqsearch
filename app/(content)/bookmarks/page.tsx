@@ -11,6 +11,7 @@ import { removeBookmark } from '@/app/actions';
 import { MarkdownRenderer } from '@/components/markdown';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { BOOKMARK_LIMITS } from '@/lib/constants';
 
 interface BookmarkWithDetails {
   id: string;
@@ -81,6 +82,11 @@ export default function BookmarksPage() {
             <SidebarTrigger className="md:hidden" />
             <Bookmark className="h-6 w-6 text-primary" />
             <h1 className="text-2xl font-semibold">Bookmarks</h1>
+            {!isLoading && (
+              <span className="text-sm text-muted-foreground">
+                ({bookmarks.length} of {BOOKMARK_LIMITS.FREE_LIMIT})
+              </span>
+            )}
           </div>
           <p className="text-sm text-muted-foreground mt-1 ml-9 md:ml-0">
             Your saved AI responses

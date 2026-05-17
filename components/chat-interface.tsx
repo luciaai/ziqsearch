@@ -29,6 +29,7 @@ import FormComponent from '@/components/ui/form-component';
 import { useFontSizeContext } from '@/contexts/font-size-context';
 import { ShareDialog } from '@/components/share/share-dialog';
 import { ExampleCategories } from '@/components/example-categories';
+import { SearchQuota } from '@/components/search-quota';
 import { SciraLogo } from '@/components/logos/scira-logo';
 import { Pencil, Trash2, Share as ShareIcon, ChevronDown } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -881,28 +882,30 @@ const ChatInterface = memo(
                     </div>
 
                     {user ? (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button
-                            className={cn(
-                              'inline-flex items-center justify-center gap-0.5 h-8 w-8 rounded-md',
-                              'hover:bg-accent data-[state=open]:bg-accent',
-                              'focus:outline-none! focus:ring-0! focus:ring-offset-0!',
-                              'transition-colors',
-                            )}
-                          >
-                            <Avatar className="size-7 rounded-md p-0! m-0!">
-                              <AvatarImage
-                                src={chatMeta?.user?.image ?? user.image ?? ''}
-                                alt={chatMeta?.user?.name ?? user.name ?? ''}
-                                className="rounded-md p-0! m-0! size-7"
-                              />
-                              <AvatarFallback className="rounded-md text-xs p-0 m-0 size-7">
-                                {(chatMeta?.user?.name || chatMeta?.user?.email || user.name || user.email || '?').charAt(0)}
-                              </AvatarFallback>
-                            </Avatar>
-                          </button>
-                        </DropdownMenuTrigger>
+                      <>
+                        <SearchQuota className="hidden md:inline-flex text-xs" />
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button
+                              className={cn(
+                                'inline-flex items-center justify-center gap-0.5 h-8 w-8 rounded-md',
+                                'hover:bg-accent data-[state=open]:bg-accent',
+                                'focus:outline-none! focus:ring-0! focus:ring-offset-0!',
+                                'transition-colors',
+                              )}
+                            >
+                              <Avatar className="size-7 rounded-md p-0! m-0!">
+                                <AvatarImage
+                                  src={chatMeta?.user?.image ?? user.image ?? ''}
+                                  alt={chatMeta?.user?.name ?? user.name ?? ''}
+                                  className="rounded-md p-0! m-0! size-7"
+                                />
+                                <AvatarFallback className="rounded-md text-xs p-0 m-0 size-7">
+                                  {(chatMeta?.user?.name || chatMeta?.user?.email || user.name || user.email || '?').charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                            </button>
+                          </DropdownMenuTrigger>
                         <DropdownMenuContent align="start" sideOffset={6} className="rounded-md w-[260px]">
                           <div className="px-3 py-2">
                             <div className="space-y-2">
@@ -928,6 +931,7 @@ const ChatInterface = memo(
                           </div>
                         </DropdownMenuContent>
                       </DropdownMenu>
+                      </>
                     ) : (
                       <HugeiconsIcon icon={UserCircleIcon} size={24} className="size-7 shrink-0 self-start" />
                     )}

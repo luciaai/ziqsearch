@@ -273,8 +273,8 @@ class ExaSearchStrategy implements SearchProviderStrategy {
       const exaCategory = category && validExaCategories.includes(category) ? category : undefined;
       
       const { results } = await this.exa.search(query, {
-        numResults: 8,
-        type: 'fast',
+        numResults: 15,
+        type: 'deep',
         ...(exaCategory ? { category: exaCategory as any } : {}),
         ...(include_domains ? { include_domains } : {}),
       });

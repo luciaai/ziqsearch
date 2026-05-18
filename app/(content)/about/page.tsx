@@ -216,6 +216,64 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="border-t border-border">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <div className="mb-12">
+            <p className="text-xs text-muted-foreground tracking-wide mb-3">Process</p>
+            <h2 className="text-2xl font-light tracking-tight font-be-vietnam-pro">How it works</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Step 1 */}
+            <div className="flex flex-col items-start gap-4">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-muted text-foreground font-be-vietnam-pro text-xl">
+                1
+              </div>
+              <div>
+                <h3 className="text-lg font-medium mb-2 text-foreground">Ask your question</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Type any research question - from academic topics to general knowledge. Choose a search mode (web, academic, YouTube, etc.) for specialized results.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="flex flex-col items-start gap-4">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-muted text-foreground font-be-vietnam-pro text-xl">
+                2
+              </div>
+              <div>
+                <h3 className="text-lg font-medium mb-2 text-foreground">AI researches for you</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Ziq searches multiple sources, analyzes the information, and synthesizes a comprehensive answer with citations to real sources.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex flex-col items-start gap-4">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-muted text-foreground font-be-vietnam-pro text-xl">
+                3
+              </div>
+              <div>
+                <h3 className="text-lg font-medium mb-2 text-foreground">Verify and save</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Click through citations to verify sources, bookmark important responses, and continue the conversation to dive deeper.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-12 text-center">
+            <Button size="lg" className="rounded-none" onClick={() => router.push('/')}>
+              Try it now
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Built With Section */}
       <section className="border-t border-border">
         <div className="max-w-6xl mx-auto px-6 py-16">

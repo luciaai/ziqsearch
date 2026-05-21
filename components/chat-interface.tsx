@@ -113,6 +113,7 @@ const ChatInterface = memo(
     const chevronBtnRef = useRef<HTMLButtonElement>(null);
     const [groupWidth, setGroupWidth] = useState<number>(0);
     const [alignOffset, setAlignOffset] = useState<number>(0);
+    const [quotaRefreshKey, setQuotaRefreshKey] = useState(0);
 
     const measureHeaderMenuAlignment = React.useCallback(() => {
       const groupEl = headerGroupRef.current;
@@ -689,7 +690,11 @@ const ChatInterface = memo(
         // Clear suggested questions when a new message is being streamed
         dispatch({ type: 'RESET_SUGGESTED_QUESTIONS' });
       }
-    }, [status]);
+      // Refresh quota when search completes
+      if (status === 'ready' && messages.length > 0) {
+        setQuotaRefreshKey(prev => prev + 1);
+      }
+    }, [status, messages.length]);
 
     const lastUserMessageIndex = useMemo(() => {
       for (let i = messages.length - 1; i >= 0; i--) {
@@ -883,7 +888,7 @@ const ChatInterface = memo(
 
                     {user ? (
                       <>
-                        <SearchQuota className="hidden md:inline-flex text-xs" />
+                        <SearchQuota className="hidden md:inline-flex text-xs" refreshKey={quotaRefreshKey} />
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button

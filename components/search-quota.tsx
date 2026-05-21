@@ -8,15 +8,16 @@ import { Loader2 } from 'lucide-react';
 
 interface SearchQuotaProps {
   className?: string;
+  refreshKey?: number;
 }
 
-export function SearchQuota({ className }: SearchQuotaProps) {
+export function SearchQuota({ className, refreshKey }: SearchQuotaProps) {
   const [messageCount, setMessageCount] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     loadQuota();
-  }, []);
+  }, [refreshKey]);
 
   const loadQuota = async () => {
     try {

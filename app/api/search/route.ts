@@ -322,30 +322,31 @@ export function getStreamContext() {
 }
 
 export async function POST(req: Request) {
-  const requestStartTime = Date.now();
-  const preStreamTimings: { label: string; durationMs: number }[] = [];
+  try {
+    const requestStartTime = Date.now();
+    const preStreamTimings: { label: string; durationMs: number }[] = [];
 
-  function recordTiming(label: string, startTime: number) {
-    preStreamTimings.push({
-      label,
-      durationMs: Date.now() - startTime,
-    });
-  }
+    function recordTiming(label: string, startTime: number) {
+      preStreamTimings.push({
+        label,
+        durationMs: Date.now() - startTime,
+      });
+    }
 
-  let opStart = Date.now();
-  const {
-    messages,
-    model,
-    group,
-    timezone,
-    id,
-    selectedVisibilityType,
-    isCustomInstructionsEnabled,
-    searchProvider,
-    extremeSearchProvider,
-    selectedConnectors,
-  } = await req.json();
-  recordTiming('parse_request_body', opStart);
+    let opStart = Date.now();
+    const {
+      messages,
+      model,
+      group,
+      timezone,
+      id,
+      selectedVisibilityType,
+      isCustomInstructionsEnabled,
+      searchProvider,
+      extremeSearchProvider,
+      selectedConnectors,
+    } = await req.json();
+    recordTiming('parse_request_body', opStart);
 
   opStart = Date.now();
   const { latitude, longitude } = geolocation(req);
@@ -970,4 +971,13 @@ export async function POST(req: Request) {
     );
   }
   return new Response(stream.pipeThrough(new JsonToSseTransformStream()));
+  } catch (error) {
+    // Handle ChatSDKError and convert to proper response
+    if (error instanceof ChatSDKError) {
+      return error.toResponse();
+    }
+    // Handle other errors
+    console.error('Unexpected error in POST /api/search:', error);
+    return new ChatSDKError('api_error:provider', 'An unexpected error occurred').toResponse();
+  }
 }

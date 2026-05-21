@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { UIMessagePart } from 'ai';
 import { MarkdownRenderer } from '@/components/markdown';
+import { ChatSDKError } from '@/lib/errors';
 import { deleteTrailingMessages } from '@/app/actions';
 import { getErrorActions, getErrorIcon, isSignInRequired, isProRequired, isRateLimited } from '@/lib/errors';
 import { UserIcon } from '@phosphor-icons/react';
@@ -63,26 +64,47 @@ const EnhancedErrorDisplay: React.FC<EnhancedErrorDisplayProps> = ({
   let isChatSDKError = false;
 
   if (error) {
-    try {
-      const errorData = JSON.parse(error.message);
-      if (errorData.code && errorData.message) {
-        parsedError = {
-          type: errorData.code.split(':')[0],
-          surface: errorData.code.split(':')[1],
-          message: errorData.message,
-          cause: errorData.cause,
-        };
-        isChatSDKError = true;
-      }
-    } catch (e) {
-      // Not JSON, fallback
+    // Check if error is already a ChatSDKError instance
+    if (error instanceof ChatSDKError) {
       parsedError = {
-        type: 'unknown',
-        surface: 'chat',
+        type: error.type,
+        surface: error.surface,
         message: error.message,
-        cause: (error as any).cause,
+        cause: error.cause,
       };
-      isChatSDKError = false;
+      isChatSDKError = true;
+    } else {
+      // Try to parse as JSON for API errors
+      try {
+        const errorData = JSON.parse(error.message);
+        if (errorData.code && errorData.message) {
+          parsedError = {
+            type: errorData.code.split(':')[0],
+            surface: errorData.code.split(':')[1],
+            message: errorData.message,
+            cause: errorData.cause,
+          };
+          isChatSDKError = true;
+        } else {
+          // Not a structured error, use message directly
+          parsedError = {
+            type: 'unknown',
+            surface: 'chat',
+            message: error.message,
+            cause: (error as any).cause,
+          };
+          isChatSDKError = false;
+        }
+      } catch (e) {
+        // Not JSON, use message directly
+        parsedError = {
+          type: 'unknown',
+          surface: 'chat',
+          message: error.message,
+          cause: (error as any).cause,
+        };
+        isChatSDKError = false;
+      }
     }
   }
 

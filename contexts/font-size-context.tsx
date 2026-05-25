@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface FontSizeContextType {
   fontSize: number;
@@ -10,15 +10,12 @@ interface FontSizeContextType {
 const FontSizeContext = createContext<FontSizeContextType | undefined>(undefined);
 
 export function FontSizeProvider({ children }: { children: React.ReactNode }) {
-  const [fontSize, setFontSizeState] = useState<number>(100);
-
-  // Load from localStorage on mount
-  useEffect(() => {
+  // Initialize from localStorage immediately (lazy initialization)
+  const [fontSize, setFontSizeState] = useState<number>(() => {
+    if (typeof window === 'undefined') return 100; // SSR fallback
     const saved = localStorage.getItem('scira-font-size-percent');
-    if (saved) {
-      setFontSizeState(parseInt(saved));
-    }
-  }, []);
+    return saved ? parseInt(saved) : 100;
+  });
 
   // Save to localStorage whenever it changes
   const setFontSize = (size: number) => {

@@ -13,11 +13,19 @@ const FileSchema = z.object({
     })
     .refine(
       (file) => {
-        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
+        const validTypes = [
+          'image/jpeg',
+          'image/png',
+          'image/gif',
+          'image/webp',
+          'image/heic',
+          'image/heif',
+          'application/pdf',
+        ];
         return validTypes.includes(file.type);
       },
       {
-        message: 'File type should be JPEG, PNG, GIF or PDF',
+        message: 'File type should be JPEG, PNG, GIF, WebP, HEIC or PDF',
       },
     ),
 });

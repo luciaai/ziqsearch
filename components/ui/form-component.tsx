@@ -2839,15 +2839,21 @@ const FormComponent: React.FC<FormComponentProps> = ({
           return;
         }
 
-        if (file.type.startsWith('image/')) {
+        // Check file extension for cases where mime type is missing (common with HEIC on some devices)
+        const fileName = file.name.toLowerCase();
+        const isImageByExtension = /\.(jpg|jpeg|png|gif|webp|heic|heif)$/i.test(fileName);
+        const isPdfByExtension = fileName.endsWith('.pdf');
+        const isAudioByExtension = /\.(mp3|wav|m4a|ogg|webm|aac|flac)$/i.test(fileName);
+
+        if (file.type.startsWith('image/') || (isImageByExtension && !file.type)) {
           imageFiles.push(file);
-        } else if (file.type === 'application/pdf') {
+        } else if (file.type === 'application/pdf' || isPdfByExtension) {
           if (!isProUser) {
             blockedPdfFiles.push(file);
           } else {
             pdfFiles.push(file);
           }
-        } else if (file.type.startsWith('audio/')) {
+        } else if (file.type.startsWith('audio/') || (isAudioByExtension && !file.type)) {
           audioFiles.push(file);
         } else {
           unsupportedFiles.push(file);
@@ -3107,15 +3113,21 @@ const FormComponent: React.FC<FormComponentProps> = ({
           return;
         }
 
-        if (file.type.startsWith('image/')) {
+        // Check file extension for cases where mime type is missing (common with HEIC on some devices)
+        const fileName = file.name.toLowerCase();
+        const isImageByExtension = /\.(jpg|jpeg|png|gif|webp|heic|heif)$/i.test(fileName);
+        const isPdfByExtension = fileName.endsWith('.pdf');
+        const isAudioByExtension = /\.(mp3|wav|m4a|ogg|webm|aac|flac)$/i.test(fileName);
+
+        if (file.type.startsWith('image/') || (isImageByExtension && !file.type)) {
           imageFiles.push(file);
-        } else if (file.type === 'application/pdf') {
+        } else if (file.type === 'application/pdf' || isPdfByExtension) {
           if (!isProUser) {
             blockedPdfFiles.push(file);
           } else {
             pdfFiles.push(file);
           }
-        } else if (file.type.startsWith('audio/')) {
+        } else if (file.type.startsWith('audio/') || (isAudioByExtension && !file.type)) {
           audioFiles.push(file);
         } else {
           unsupportedFiles.push(file);
@@ -3156,7 +3168,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
       }
 
       if (imageFiles.length === 0 && pdfFiles.length === 0 && audioFiles.length === 0) {
-        toast.error('Only image files (JPG, PNG, GIF, WebP) and PDF documents are supported. Please use different files.');
+        toast.error('Only image files (JPG, PNG, GIF, WebP, HEIC) and PDF documents are supported. Please use different files.');
         return;
       }
 

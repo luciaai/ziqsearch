@@ -1976,6 +1976,12 @@ export function canUseModel(modelValue: string, user: any, isProUser: boolean): 
 
 // Helper to check if user should bypass rate limits
 export function shouldBypassRateLimits(modelValue: string, user: any): boolean {
+  // Pro users and students bypass all rate limits
+  if (user?.isProUser || user?.isStudentUser) {
+    return true;
+  }
+  
+  // Some models may have freeUnlimited flag for all users
   const model = getModelConfig(modelValue);
   return Boolean(user && model?.freeUnlimited);
 }

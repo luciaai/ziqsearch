@@ -26,7 +26,6 @@ import {
   updateCustomInstructions,
   deleteCustomInstructions,
   upsertUserPreferences,
-  getDodoSubscriptionsByUserId,
   createLookout,
   getLookoutsByUserId,
   getLookoutById,
@@ -2921,53 +2920,6 @@ export async function getProUserStatusOnly(): Promise<boolean> {
   // Import here to avoid issues with SSR
   const { isUserPro } = await import('@/lib/user-data-server');
   return await isUserPro();
-}
-
-export async function getDodoSubscriptionHistory() {
-  try {
-    const user = await getUser();
-    if (!user) return null;
-
-    const subscriptions = await getDodoSubscriptionsByUserId({ userId: user.id });
-    return subscriptions;
-  } catch (error) {
-    console.error('Error getting subscription history:', error);
-    return null;
-  }
-}
-
-export async function getDodoSubscriptionStatus() {
-  'use server';
-
-  const { getComprehensiveUserData } = await import('@/lib/user-data-server');
-  const userData = await getComprehensiveUserData();
-
-  if (!userData) return { isProUser: false, hasSubscriptions: false };
-
-  return {
-    isProUser: userData.isProUser,
-    hasSubscriptions: Boolean(userData.subscription),
-    expiresAt: userData.subscription?.currentPeriodEnd || null,
-    source: 'stripe',
-    daysUntilExpiration: userData.subscription?.currentPeriodEnd 
-      ? Math.ceil((new Date(userData.subscription.currentPeriodEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-      : undefined,
-    isExpired: userData.subscription?.currentPeriodEnd 
-      ? new Date(userData.subscription.currentPeriodEnd) < new Date()
-      : false,
-    isExpiringSoon: userData.subscription?.currentPeriodEnd
-      ? Math.ceil((new Date(userData.subscription.currentPeriodEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) <= 7
-      : false,
-  };
-}
-
-export async function getDodoSubscriptionExpiration() {
-  'use server';
-
-  const { getComprehensiveUserData } = await import('@/lib/user-data-server');
-  const userData = await getComprehensiveUserData();
-
-  return userData?.subscription?.currentPeriodEnd || null;
 }
 
 // Initialize QStash client with regional endpoint

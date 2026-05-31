@@ -4,7 +4,7 @@ import { Valyu } from 'valyu-js';
 import { tavily } from '@tavily/core';
 import Exa from 'exa-js';
 import { serverEnv } from '@/env/server';
-import { isUserProCached } from '@/lib/subscription';
+import { isUserPro } from '@/lib/user-data-server';
 
 const CURRENCY_SYMBOLS = {
   USD: '$',
@@ -185,7 +185,7 @@ export const stockChartTool = tool({
     });
 
     // Check if user is pro for premium features
-    const isProUser = await isUserProCached();
+    const isProUser = await isUserPro();
     console.log('Pro user:', isProUser);
 
     // Override pro-only features if user is not pro

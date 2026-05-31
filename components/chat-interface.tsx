@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 // React and React-related imports
-import React, { memo, useCallback, useEffect, useMemo, useRef, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useReducer, useState } from 'react';
 import Link from 'next/link';
 
 // Third-party library imports
@@ -83,8 +83,7 @@ interface ChatInterfaceProps {
   chatTitle?: string;
 }
 
-const ChatInterface = memo(
-  ({
+const ChatInterface = ({
     initialChatId,
     initialMessages,
     initialVisibility = 'private',
@@ -1078,8 +1077,9 @@ const ChatInterface = memo(
               <div 
                 className={`w-full md:max-w-6xl space-y-6 p-0 mx-auto transition-all duration-300`}
                 style={{ 
-                  fontSize: `${fontSize / 100}rem`,
-                }}
+                  '--font-scale': fontSize / 100,
+                  fontSize: `${fontSize}%`,
+                } as React.CSSProperties}
               >
                 {status === 'ready' && messages.length === 0 && (
                   <div className="text-center m-0 mb-2">
@@ -1410,10 +1410,6 @@ const ChatInterface = memo(
         )}
       </>
     );
-  },
-);
-
-// Add a display name for the memoized component for better debugging
-ChatInterface.displayName = 'ChatInterface';
+};
 
 export { ChatInterface };

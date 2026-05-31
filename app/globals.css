@@ -699,3 +699,24 @@ body {
 }
 
 /* Sugar-high syntax highlighting styles */
+
+/* Override prose font sizes to inherit from parent for font scaling */
+.prose {
+  font-size: inherit !important;
+}
+
+.prose p,
+.prose li,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6,
+.prose strong,
+.prose em,
+.prose a,
+.prose code,
+.prose pre {
+  font-size: inherit !important;
+}

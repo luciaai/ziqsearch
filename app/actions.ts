@@ -20,6 +20,7 @@ import {
   getExtremeSearchCount,
   incrementMessageUsage,
   getMessageCount,
+  getMonthlyMessageCount,
   getHistoricalUsageData,
   getCustomInstructionsByUserId,
   createCustomInstructions,
@@ -2575,16 +2576,17 @@ export async function getUserMessageCount(providedUser?: any) {
     const cacheKey = createMessageCountKey(user.id);
     const cached = usageCountCache.get(cacheKey);
     if (cached !== null) {
-      console.log('⏱️ [USAGE] getUserMessageCount: cache hit');
+      console.log(`⏱️ [USAGE] getUserMessageCount: cache hit - returning ${cached} for user ${user.id.substring(0, 8)}...`);
       return { count: cached, error: null };
     }
 
     const start = Date.now();
-    const count = await getMessageCount({
-      userId: user.id,
-    });
+    // Pro users get monthly count (500/month), free users get daily count (7/day)
+    const count = user.isProUser 
+      ? await getMonthlyMessageCount({ userId: user.id })
+      : await getMessageCount({ userId: user.id });
     const durationMs = Date.now() - start;
-    console.log(`⏱️ [USAGE] getUserMessageCount: DB usage lookup took ${durationMs}ms`);
+    console.log(`⏱️ [USAGE] getUserMessageCount: DB lookup took ${durationMs}ms (${user.isProUser ? 'monthly' : 'daily'}) - got ${count}, caching it`);
 
     // Cache the result
     usageCountCache.set(cacheKey, count);

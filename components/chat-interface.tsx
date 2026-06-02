@@ -499,10 +499,12 @@ const ChatInterface = ({
         console.log('onFinish<Client>', message.parts);
         // Refresh usage data after message completion for authenticated users
         if (user) {
-          // Invalidate usage data to force fresh fetch and update tooltips
-          queryClient.invalidateQueries({ queryKey: ['user-usage', user.id] });
-          // Refetch chats cache to refresh sidebar (use refetch to bypass staleTime)
+          console.log('[CACHE INVALIDATION] Invalidating and refetching usage data for user:', user.id.substring(0, 8));
+          // Force refetch (not just invalidate) to bypass staleTime and get fresh data immediately
+          queryClient.refetchQueries({ queryKey: ['user-usage', user.id] });
+          queryClient.refetchQueries({ queryKey: ['usageData'] }); // Force refetch Settings usage data
           queryClient.refetchQueries({ queryKey: ['recent-chats', user.id] });
+          console.log('[CACHE INVALIDATION] All caches refetched');
         }
 
         // Check if this is the first message completion and user is not Pro

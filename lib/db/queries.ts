@@ -504,6 +504,8 @@ export async function getMonthlyMessageCount({ userId }: { userId: string }): Pr
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     endOfMonth.setHours(0, 0, 0, 0);
 
+    console.log(`[MONTHLY COUNT] Querying for userId: ${userId}, month: ${startOfMonth.toISOString()} to ${endOfMonth.toISOString()}`);
+
     // Count all user messages in the current month from the message table
     const result = await db
       .select({ count: count() })
@@ -516,10 +518,11 @@ export async function getMonthlyMessageCount({ userId }: { userId: string }): Pr
           gte(message.createdAt, startOfMonth),
           lt(message.createdAt, endOfMonth),
         ),
-      )
-      .$withCache();
+      );
 
-    return result[0]?.count || 0;
+    const monthlyCount = Number(result[0]?.count) || 0;
+    console.log(`[MONTHLY COUNT] Result: ${monthlyCount} messages for user ${userId}`);
+    return monthlyCount;
   } catch (error) {
     console.error('Error getting monthly message count:', error);
     return 0;

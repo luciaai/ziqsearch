@@ -95,6 +95,7 @@ import { ChatMessage } from '@/lib/types';
 import { OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
 import { AnthropicProviderOptions } from '@ai-sdk/anthropic';
 import { getCachedCustomInstructionsByUserId, getCachedUserPreferencesByUserId } from '@/lib/user-data-server';
+import { invalidateUserCaches } from '@/lib/performance-cache';
 import { GoogleGenerativeAIProviderOptions } from '@ai-sdk/google';
 import { unauthenticatedRateLimit, getClientIdentifier } from '@/lib/rate-limit';
 import { CohereChatModelOptions } from '@ai-sdk/cohere';
@@ -180,6 +181,7 @@ function initializeChatAndChecks({
       }
 
       // Check Pro monthly limit (500 searches/month)
+      // Note: Count includes current search (+1) since we check before saving the message
       const monthlyCount = await getMonthlyMessageCount({ userId: user.id });
       if (monthlyCount >= SEARCH_LIMITS.MONTHLY_PRO_LIMIT) {
         throw new ChatSDKError(
@@ -187,6 +189,9 @@ function initializeChatAndChecks({
           `Monthly limit reached. You've used ${monthlyCount} of ${SEARCH_LIMITS.MONTHLY_PRO_LIMIT} searches this month. Your limit resets on the 1st of next month.`
         );
       }
+      
+      // Add 1 to count since we're about to save a new message
+      const currentMonthlyCount = monthlyCount + 1;
 
       const hasSubscription = !!user?.subscription;
 
@@ -506,6 +511,9 @@ export async function POST(req: Request) {
       ],
     });
     recordTiming('save_user_message', opStart);
+    
+    // Invalidate usage cache so Pro users see updated monthly count
+    invalidateUserCaches(user.id);
   }
 
   const setupTimeMs = Date.now() - requestStartTime;

@@ -51,6 +51,7 @@ import {
   saveMessages,
   incrementExtremeSearchUsage,
   incrementMessageUsage,
+  getMonthlyMessageCount,
 } from '@/lib/db/queries';
 import { ChatSDKError, parseAIError } from '@/lib/errors';
 import { createResumableStreamContext, type ResumableStreamContext } from 'resumable-stream';
@@ -172,14 +173,27 @@ function initializeChatAndChecks({
   let criticalChecksPromise: Promise<CriticalChecksResult>;
 
   if (isProUser) {
-    // Pro users: only validate ownership, skip usage checks
-    criticalChecksPromise = Promise.all([fullUserPromise, validatedChatPromise]).then(([user]) => {
+    // Pro users: validate ownership and check monthly limit (500/month)
+    criticalChecksPromise = Promise.all([fullUserPromise, validatedChatPromise]).then(async ([user]) => {
+      if (!user) {
+        throw new ChatSDKError('unauthorized:auth', 'User authentication failed');
+      }
+
+      // Check Pro monthly limit (500 searches/month)
+      const monthlyCount = await getMonthlyMessageCount({ userId: user.id });
+      if (monthlyCount >= SEARCH_LIMITS.MONTHLY_PRO_LIMIT) {
+        throw new ChatSDKError(
+          'rate_limit:chat',
+          `Monthly limit reached. You've used ${monthlyCount} of ${SEARCH_LIMITS.MONTHLY_PRO_LIMIT} searches this month. Your limit resets on the 1st of next month.`
+        );
+      }
+
       const hasSubscription = !!user?.subscription;
 
       return {
         canProceed: true,
         isProUser: true,
-        messageCount: 0,
+        messageCount: monthlyCount,
         extremeSearchUsage: 0,
         subscriptionData: hasSubscription
           ? {

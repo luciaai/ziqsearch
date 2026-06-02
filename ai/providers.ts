@@ -1974,9 +1974,10 @@ export function canUseModel(modelValue: string, user: any, isProUser: boolean): 
   return { canUse: true };
 }
 
-// Helper to check if user should bypass rate limits
+// Helper to check if user should bypass DAILY rate limits (free user limits)
+// Pro users bypass daily limits but still have monthly limits (500/month)
 export function shouldBypassRateLimits(modelValue: string, user: any): boolean {
-  // Pro users and students bypass all rate limits
+  // Pro users and students bypass DAILY limits (but have monthly limits checked separately)
   if (user?.isProUser || user?.isStudentUser) {
     return true;
   }

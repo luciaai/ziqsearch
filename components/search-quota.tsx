@@ -9,9 +9,10 @@ import { Loader2 } from 'lucide-react';
 interface SearchQuotaProps {
   className?: string;
   refreshKey?: number;
+  isProUser?: boolean;
 }
 
-export function SearchQuota({ className, refreshKey }: SearchQuotaProps) {
+export function SearchQuota({ className, refreshKey, isProUser }: SearchQuotaProps) {
   const [messageCount, setMessageCount] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -31,6 +32,11 @@ export function SearchQuota({ className, refreshKey }: SearchQuotaProps) {
       setIsLoading(false);
     }
   };
+
+  // Hide for Pro users - they have 500/month shown in Settings
+  if (isProUser) {
+    return null;
+  }
 
   if (isLoading) {
     return (

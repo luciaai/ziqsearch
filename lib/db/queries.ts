@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { and, asc, desc, eq, gt, gte, inArray, lt, type SQL } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gt, gte, inArray, lt, type SQL } from 'drizzle-orm';
 import {
   user,
   chat,
@@ -491,6 +491,37 @@ export async function getMessageCount({ userId }: { userId: string }): Promise<n
     return usage?.messageCount || 0;
   } catch (error) {
     console.error('Error getting message count:', error);
+    return 0;
+  }
+}
+
+// Get monthly message count for Pro users (500/month limit)
+export async function getMonthlyMessageCount({ userId }: { userId: string }): Promise<number> {
+  try {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    startOfMonth.setHours(0, 0, 0, 0);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    endOfMonth.setHours(0, 0, 0, 0);
+
+    // Count all user messages in the current month from the message table
+    const result = await db
+      .select({ count: count() })
+      .from(message)
+      .innerJoin(chat, eq(message.chatId, chat.id))
+      .where(
+        and(
+          eq(chat.userId, userId),
+          eq(message.role, 'user'),
+          gte(message.createdAt, startOfMonth),
+          lt(message.createdAt, endOfMonth),
+        ),
+      )
+      .$withCache();
+
+    return result[0]?.count || 0;
+  } catch (error) {
+    console.error('Error getting monthly message count:', error);
     return 0;
   }
 }

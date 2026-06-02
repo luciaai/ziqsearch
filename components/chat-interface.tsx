@@ -887,7 +887,7 @@ const ChatInterface = ({
 
                     {user ? (
                       <>
-                        <SearchQuota className="hidden md:inline-flex text-xs" refreshKey={quotaRefreshKey} />
+                        <SearchQuota className="hidden md:inline-flex text-xs" refreshKey={quotaRefreshKey} isProUser={user.isProUser} />
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button

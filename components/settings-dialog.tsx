@@ -1051,13 +1051,13 @@ export function UsageSection({ user }: any) {
   };
 
   const usagePercentage = isProUser
-    ? 0
+    ? Math.min(((searchCount?.count || 0) / SEARCH_LIMITS.MONTHLY_PRO_LIMIT) * 100, 100)
     : Math.min(((searchCount?.count || 0) / SEARCH_LIMITS.DAILY_SEARCH_LIMIT) * 100, 100);
 
   return (
     <div className={cn('flex flex-col gap-4',isMobile ? 'space-y-4' : 'space-y-5', isMobile && !isProUser ? 'pb-4' : '')}>
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-semibold">Daily Search Usage</h3>
+        <h3 className="text-sm font-semibold">{isProUser ? 'Monthly Search Usage' : 'Daily Search Usage'}</h3>
         <Button
           variant="ghost"
           size="sm"
@@ -1076,7 +1076,7 @@ export function UsageSection({ user }: any) {
       <div className={cn('grid', isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-2 gap-3')}>
         <div className={cn('bg-muted/50 rounded-lg space-y-1', isMobile ? 'p-3' : 'p-3')}>
           <div className="flex items-center justify-between">
-            <span className={cn('text-muted-foreground', isMobile ? 'text-[11px]' : 'text-xs')}>Today</span>
+            <span className={cn('text-muted-foreground', isMobile ? 'text-[11px]' : 'text-xs')}>{isProUser ? 'This Month' : 'Today'}</span>
             <MagnifyingGlassIcon className={isMobile ? 'h-3 w-3' : 'h-3.5 w-3.5'} />
           </div>
           {usageLoading ? (
@@ -1084,7 +1084,7 @@ export function UsageSection({ user }: any) {
           ) : (
             <div className={cn('font-semibold', isMobile ? 'text-base' : 'text-lg')}>{searchCount?.count || 0}</div>
           )}
-          <p className="text-[10px] text-muted-foreground">Regular searches</p>
+          <p className="text-[10px] text-muted-foreground">{isProUser ? 'of 500 searches' : 'Regular searches'}</p>
         </div>
 
         <div className={cn('bg-muted/50 rounded-lg space-y-1', isMobile ? 'p-3' : 'p-3')}>
@@ -1103,79 +1103,81 @@ export function UsageSection({ user }: any) {
         </div>
       </div>
 
-      {!isProUser && (
-        <div className={isMobile ? 'space-y-3' : 'space-y-4'}>
-          <div className={cn('bg-muted/30 rounded-lg space-y-2 p-3')}>
-            {usageLoading ? (
-              <>
-                <div className="flex justify-between text-xs">
-                  <Skeleton className="h-3 w-16" />
-                  <Skeleton className="h-3 w-12" />
-                </div>
-                <Skeleton className="h-1.5 w-full" />
-              </>
-            ) : (
-              <>
-                <div className="flex justify-between text-xs">
-                  <span className="font-medium">Daily Search Limit</span>
-                  <span className="text-muted-foreground">{usagePercentage.toFixed(0)}%</span>
-                </div>
-                <Progress value={usagePercentage} className="h-1.5 [&>div]:transition-none" />
-                <div className="flex justify-between text-[10px] text-muted-foreground">
-                  <span>
-                    {searchCount?.count || 0} / {SEARCH_LIMITS.DAILY_SEARCH_LIMIT}
-                  </span>
-                  <span>{Math.max(0, SEARCH_LIMITS.DAILY_SEARCH_LIMIT - (searchCount?.count || 0))} left</span>
-                </div>
-              </>
-            )}
-          </div>
-          
-          <div className={cn('bg-muted/30 rounded-lg space-y-2 p-3')}>
-            {usageLoading ? (
-              <>
-                <div className="flex justify-between text-xs">
-                  <Skeleton className="h-3 w-16" />
-                  <Skeleton className="h-3 w-12" />
-                </div>
-                <Skeleton className="h-1.5 w-full" />
-              </>
-            ) : (
-              <>
-                <div className="flex justify-between text-xs">
-                  <span className="font-medium">Monthly Extreme Search Limit</span>
-                  <span className="text-muted-foreground">
-                    {Math.min(((extremeSearchCount?.count || 0) / SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) * 100, 100).toFixed(0)}%
-                  </span>
-                </div>
-                <Progress 
-                  value={Math.min(((extremeSearchCount?.count || 0) / SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) * 100, 100)} 
-                  className="h-1.5 [&>div]:transition-none" 
-                />
-                <div className="flex justify-between text-[10px] text-muted-foreground">
-                  <span>
-                    {extremeSearchCount?.count || 0} / {SEARCH_LIMITS.EXTREME_SEARCH_LIMIT}
-                  </span>
-                  <span>{Math.max(0, SEARCH_LIMITS.EXTREME_SEARCH_LIMIT - (extremeSearchCount?.count || 0))} left</span>
-                </div>
-              </>
-            )}
-          </div>
-
-          <div className={cn('bg-card rounded-lg border border-border', isMobile ? 'p-3' : 'p-4')}>
-            <div className={cn('flex items-center gap-2', isMobile ? 'mb-1.5' : 'mb-2')}>
-              <HugeiconsIcon icon={Crown02Icon} size={isMobile ? 14 : 16} color="currentColor" strokeWidth={1.5} />
-              <span className={cn('font-semibold', isMobile ? 'text-xs' : 'text-sm')}>Upgrade to Pro</span>
-            </div>
-            <p className={cn('text-muted-foreground mb-3', isMobile ? 'text-[11px]' : 'text-xs')}>
-              Get unlimited searches and premium features
-            </p>
-            <Button asChild size="sm" className={cn('w-full', isMobile ? 'h-7 text-xs' : 'h-8')}>
-              <Link href="/pricing">Upgrade Now</Link>
-            </Button>
-          </div>
+      <div className={isMobile ? 'space-y-3' : 'space-y-4'}>
+        <div className={cn('bg-muted/30 rounded-lg space-y-2 p-3')}>
+          {usageLoading ? (
+            <>
+              <div className="flex justify-between text-xs">
+                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-3 w-12" />
+              </div>
+              <Skeleton className="h-1.5 w-full" />
+            </>
+          ) : (
+            <>
+              <div className="flex justify-between text-xs">
+                <span className="font-medium">{isProUser ? 'Monthly Search Limit' : 'Daily Search Limit'}</span>
+                <span className="text-muted-foreground">{usagePercentage.toFixed(0)}%</span>
+              </div>
+              <Progress value={usagePercentage} className="h-1.5 [&>div]:transition-none" />
+              <div className="flex justify-between text-[10px] text-muted-foreground">
+                <span>
+                  {searchCount?.count || 0} / {isProUser ? SEARCH_LIMITS.MONTHLY_PRO_LIMIT : SEARCH_LIMITS.DAILY_SEARCH_LIMIT}
+                </span>
+                <span>{Math.max(0, (isProUser ? SEARCH_LIMITS.MONTHLY_PRO_LIMIT : SEARCH_LIMITS.DAILY_SEARCH_LIMIT) - (searchCount?.count || 0))} left</span>
+              </div>
+            </>
+          )}
         </div>
-      )}
+
+        {!isProUser && (
+          <>
+            <div className={cn('bg-muted/30 rounded-lg space-y-2 p-3')}>
+              {usageLoading ? (
+                <>
+                  <div className="flex justify-between text-xs">
+                    <Skeleton className="h-3 w-16" />
+                    <Skeleton className="h-3 w-12" />
+                  </div>
+                  <Skeleton className="h-1.5 w-full" />
+                </>
+              ) : (
+                <>
+                  <div className="flex justify-between text-xs">
+                    <span className="font-medium">Monthly Extreme Search Limit</span>
+                    <span className="text-muted-foreground">
+                      {Math.min(((extremeSearchCount?.count || 0) / SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) * 100, 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <Progress 
+                    value={Math.min(((extremeSearchCount?.count || 0) / SEARCH_LIMITS.EXTREME_SEARCH_LIMIT) * 100, 100)} 
+                    className="h-1.5 [&>div]:transition-none" 
+                  />
+                  <div className="flex justify-between text-[10px] text-muted-foreground">
+                    <span>
+                      {extremeSearchCount?.count || 0} / {SEARCH_LIMITS.EXTREME_SEARCH_LIMIT}
+                    </span>
+                    <span>{Math.max(0, SEARCH_LIMITS.EXTREME_SEARCH_LIMIT - (extremeSearchCount?.count || 0))} left</span>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className={cn('bg-card rounded-lg border border-border', isMobile ? 'p-3' : 'p-4')}>
+              <div className={cn('flex items-center gap-2', isMobile ? 'mb-1.5' : 'mb-2')}>
+                <HugeiconsIcon icon={Crown02Icon} size={isMobile ? 14 : 16} color="currentColor" strokeWidth={1.5} />
+                <span className={cn('font-semibold', isMobile ? 'text-xs' : 'text-sm')}>Upgrade to Pro</span>
+              </div>
+              <p className={cn('text-muted-foreground mb-3', isMobile ? 'text-[11px]' : 'text-xs')}>
+                Get 500 searches/month and premium features
+              </p>
+              <Button asChild size="sm" className={cn('w-full', isMobile ? 'h-7 text-xs' : 'h-8')}>
+                <Link href="/pricing">Upgrade Now</Link>
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
 
       {!usageLoading && (
         <div className={cn('space-y-2 w-full', isMobile && !isProUser ? 'pb-4' : '')}>

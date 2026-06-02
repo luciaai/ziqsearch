@@ -434,8 +434,7 @@ export async function getMessageUsageByUserId({ userId }: { userId: string }) {
       .from(messageUsage)
       .where(
         and(eq(messageUsage.userId, userId), gte(messageUsage.date, startOfDay), lt(messageUsage.date, startOfNextDay)),
-      ).
-      $withCache()
+      )
       .limit(1);
 
     return usage;

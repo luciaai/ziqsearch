@@ -7,6 +7,7 @@ import { ChatMessage } from '../types';
 import Parallel from 'parallel-web';
 import FirecrawlApp, { SearchResultWeb, SearchResultNews, SearchResultImages, Document } from '@mendable/firecrawl-js';
 import { tavily, type TavilyClient } from '@tavily/core';
+import { trackExternalApiCost } from '../api-cost-tracker';
 
 const extractDomain = (url: string | null | undefined): string => {
   if (!url || typeof url !== 'string') return '';

@@ -30,6 +30,30 @@ const MODEL_PRICING = {
   'deepseek-reasoner': { input: 0.55, output: 2.19 },
 } as const;
 
+// External API pricing (per request/search)
+const EXTERNAL_API_PRICING = {
+  // Search APIs
+  'exa-search': 0.005, // $5 per 1000 searches = $0.005 per search
+  'tavily-search': 0.01, // $10 per 1000 searches = $0.01 per search
+  'firecrawl-scrape': 0.003, // $3 per 1000 scrapes = $0.003 per scrape
+  'firecrawl-search': 0.005, // $5 per 1000 searches
+  'parallel-search': 0.01, // $10 per 1000 requests
+  
+  // Data APIs
+  'supadata-youtube': 0.002, // $2 per 1000 requests
+  'valyu-stock': 0.001, // $1 per 1000 requests
+  'coingecko-pro': 0.0005, // $0.50 per 1000 requests (Pro tier)
+  'tmdb-api': 0, // Free
+  'openweather-api': 0.0001, // Very cheap
+  
+  // Compute APIs
+  'daytona-sandbox': 0.05, // $50 per 1000 executions = $0.05 per execution
+  
+  // Other
+  'amadeus-flight': 0.002, // $2 per 1000 requests
+  'google-maps': 0.005, // $5 per 1000 requests
+} as const;
+
 type ModelName = keyof typeof MODEL_PRICING;
 
 interface CostTrackingParams {
@@ -81,6 +105,39 @@ export async function trackApiCost(params: CostTrackingParams): Promise<void> {
     });
   } catch (error) {
     console.error('Failed to track API cost:', error);
+    // Don't throw - cost tracking shouldn't break the main flow
+  }
+}
+
+/**
+ * Track external API cost (for non-LLM APIs like Exa, Firecrawl, etc.)
+ */
+export async function trackExternalApiCost(params: {
+  userId: string;
+  apiName: keyof typeof EXTERNAL_API_PRICING;
+  requestCount?: number;
+  messageId?: string;
+  searchType?: 'normal' | 'extreme' | null;
+}): Promise<void> {
+  const { userId, apiName, requestCount = 1, messageId, searchType } = params;
+  
+  const costPerRequest = EXTERNAL_API_PRICING[apiName];
+  const estimatedCost = costPerRequest * requestCount;
+  
+  try {
+    await db.insert(apiCostTracking).values({
+      id: generateId(),
+      userId,
+      model: apiName, // Use API name as "model"
+      provider: apiName.split('-')[0], // e.g., "exa", "firecrawl", "tavily"
+      inputTokens: requestCount, // Store request count as inputTokens
+      outputTokens: 0,
+      estimatedCost,
+      searchType: searchType || null,
+      messageId: messageId || null,
+    });
+  } catch (error) {
+    console.error('Failed to track external API cost:', error);
     // Don't throw - cost tracking shouldn't break the main flow
   }
 }

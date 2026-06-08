@@ -918,16 +918,43 @@ export function extremeSearchTool(
     execute: async ({ prompt }) => {
       console.log({ prompt, contentProvider });
 
-      const research = await extremeSearch(prompt, dataStream, contentProvider);
+      try {
+        const research = await extremeSearch(prompt, dataStream, contentProvider);
 
-      return {
-        research: {
-          // text: research.text,
-          toolResults: research.toolResults,
-          sources: research.sources,
-          charts: research.charts,
-        },
-      };
+        return {
+          research: {
+            // text: research.text,
+            toolResults: research.toolResults,
+            sources: research.sources,
+            charts: research.charts,
+          },
+        };
+      } catch (error) {
+        console.error('[Extreme Search] Fatal error:', error);
+        
+        // Send error notification to UI
+        if (dataStream) {
+          dataStream.write({
+            type: 'data-extreme_search',
+            data: {
+              kind: 'plan',
+              status: { 
+                title: `Research failed: ${error instanceof Error ? error.message : 'Unknown error occurred'}`
+              },
+            },
+          });
+        }
+        
+        // Return partial results instead of crashing
+        return {
+          research: {
+            toolResults: [],
+            sources: [],
+            charts: [],
+            error: error instanceof Error ? error.message : 'Research failed due to an unexpected error',
+          },
+        };
+      }
     },
   });
 }

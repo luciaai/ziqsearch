@@ -454,6 +454,9 @@ const ChatInterface = ({
     extremeSearchProviderRef.current = extremeSearchProvider;
     selectedConnectorsRef.current = selectedConnectors;
 
+    // Track request timeout for deep search
+    const requestTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
     const { messages, sendMessage, setMessages, regenerate, stop, status, error, resumeStream } = useChat<ChatMessage>({
       id: chatId,
       // resume: true,
@@ -497,6 +500,12 @@ const ChatInterface = ({
       },
       onFinish: async ({ message }) => {
         console.log('onFinish<Client>', message.parts);
+        
+        // Clear timeout when request finishes
+        if (requestTimeoutRef.current) {
+          clearTimeout(requestTimeoutRef.current);
+          requestTimeoutRef.current = null;
+        }
         // Refresh usage data after message completion for authenticated users
         if (user) {
           console.log('[CACHE INVALIDATION] Invalidating and refetching usage data for user:', user.id.substring(0, 8));
@@ -542,6 +551,14 @@ const ChatInterface = ({
         }
       },
       onError: (error) => {
+        console.error('[useChat] Request error:', error);
+        
+        // Clear timeout on error
+        if (requestTimeoutRef.current) {
+          clearTimeout(requestTimeoutRef.current);
+          requestTimeoutRef.current = null;
+        }
+        
         // Don't show toast for ChatSDK errors as they will be handled by the enhanced error display
         if (error instanceof ChatSDKError) {
           console.log('ChatSDK Error:', error.type, error.surface, error.message);
@@ -573,6 +590,34 @@ const ChatInterface = ({
       staleTime: 1000 * 60,
       refetchOnWindowFocus: true,
     });
+
+    // Monitor for hung requests and show warning
+    useEffect(() => {
+      if (status === 'streaming' || status === 'submitted') {
+        // Set 90 second timeout for deep search
+        if (effectiveSelectedGroup === 'extreme' && !requestTimeoutRef.current) {
+          requestTimeoutRef.current = setTimeout(() => {
+            toast.warning('Deep search is taking longer than expected', {
+              description: 'The AI model may be slow or unavailable. You can click Stop to cancel.',
+              duration: 10000,
+            });
+          }, 90000); // 90 seconds
+        }
+      } else {
+        // Clear timeout when not streaming
+        if (requestTimeoutRef.current) {
+          clearTimeout(requestTimeoutRef.current);
+          requestTimeoutRef.current = null;
+        }
+      }
+      
+      return () => {
+        if (requestTimeoutRef.current) {
+          clearTimeout(requestTimeoutRef.current);
+          requestTimeoutRef.current = null;
+        }
+      };
+    }, [status, effectiveSelectedGroup]);
 
     // Keep local title in sync with server via React Query
     useEffect(() => {

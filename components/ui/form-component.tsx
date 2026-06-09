@@ -495,11 +495,21 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = React.memo(
         console.log('Selected model:', model.value);
         setSelectedModel(model.value.trim());
 
+        // Notify user if they selected an expensive model in deep search mode
+        if (selectedGroup === 'extreme') {
+          const allowedModels = ['scira-google', 'scira-deepseek-chat', 'scira-nano'];
+          if (!allowedModels.includes(model.value)) {
+            toast.info('Deep Search uses cost-effective models (Gemini, DeepSeek, Llama) to stay free', {
+              description: 'Your selected model will be used for other search modes.',
+            });
+          }
+        }
+
         if (onModelSelect) {
           onModelSelect(model);
         }
       },
-      [availableModels, user, isProUser, isSubscriptionLoading, setSelectedModel, onModelSelect, fetchDiscountConfig],
+      [availableModels, user, isProUser, isSubscriptionLoading, setSelectedModel, onModelSelect, fetchDiscountConfig, selectedGroup],
     );
 
     // Shared command content renderer (not a component) to preserve focus
@@ -1854,6 +1864,9 @@ const GroupModeToggle: React.FC<GroupSelectorProps> = React.memo(
           </div>
           <p className="text-xs leading-snug text-muted-foreground">
             Deep research with multiple sources and in-depth analysis with 3x sources.
+          </p>
+          <p className="text-[11px] text-muted-foreground/70 border-l-2 border-primary/30 pl-2">
+            💡 Deep Search uses cost-effective models (Gemini, DeepSeek, Llama) to keep it free and sustainable.
           </p>
           {!isProUser && usageData && (
             <p className="text-[11px] text-muted-foreground/80">

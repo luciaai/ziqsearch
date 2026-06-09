@@ -335,11 +335,28 @@ class ParallelSearchStrategyForExtreme implements SearchProviderStrategy {
   }
 }
 
+// Whitelist of cheap/free models allowed for deep search
+const ALLOWED_DEEP_SEARCH_MODELS = [
+  'scira-google', // Gemini 2.0 Flash - FREE
+  'scira-deepseek-chat', // DeepSeek - $0.14/$0.28 per 1M tokens
+  'scira-nano', // Llama 3.3 70B - $0.05/$0.08 per 1M tokens (via Groq)
+];
+
 async function extremeSearch(
   prompt: string,
   dataStream: UIMessageStreamWriter<ChatMessage> | undefined,
   contentProvider: 'exa' | 'parallel' = 'exa',
+  userSelectedModel?: any, // User's selected model (will be validated)
 ): Promise<Research> {
+  // Only allow cheap/free models for deep search
+  // If user selected an expensive model, fall back to free Gemini
+  const model = userSelectedModel && ALLOWED_DEEP_SEARCH_MODELS.some(allowed => 
+    userSelectedModel.modelId?.includes(allowed.replace('scira-', ''))
+  ) 
+    ? userSelectedModel 
+    : scira.languageModel('scira-google'); // Default to FREE Gemini 2.0 Flash
+  
+  console.log('[Deep Search] Using model:', model.modelId || 'scira-google');
   const allSources: SearchResult[] = [];
 
   // Initialize clients
@@ -370,7 +387,7 @@ async function extremeSearch(
 
   // plan out the research
   const { object: result } = await generateObject({
-    model: scira.languageModel('scira-grok-4'),
+    model: model,
     schema: z.object({
       plan: z
         .array(
@@ -426,7 +443,7 @@ Plan Guidelines:
 
   // Create the autonomous research agent with tools
   const { text } = await generateText({
-    model: xai('grok-4-1-fast'),
+    model: model,
     stopWhen: stepCountIs(totalTodos),
     activeTools: ['codeRunner', 'webSearch', 'xSearch'],
     system: `
@@ -905,6 +922,7 @@ ${JSON.stringify(plan)}
 export function extremeSearchTool(
   dataStream: UIMessageStreamWriter<ChatMessage> | undefined,
   contentProvider: 'exa' | 'parallel' = 'exa',
+  userSelectedModel?: any, // User's selected model (will be validated against whitelist)
 ) {
   return tool({
     description: `Use this tool to conduct an extreme search on a given topic. Using ${contentProvider} for content extraction.`,
@@ -919,7 +937,7 @@ export function extremeSearchTool(
       console.log({ prompt, contentProvider });
 
       try {
-        const research = await extremeSearch(prompt, dataStream, contentProvider);
+        const research = await extremeSearch(prompt, dataStream, contentProvider, userSelectedModel);
 
         return {
           research: {

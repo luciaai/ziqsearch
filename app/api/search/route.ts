@@ -801,7 +801,7 @@ export async function POST(req: Request) {
             ...(model !== 'scira-qwen-coder-plus' ? { code_interpreter: codeInterpreterTool } : {}),
             ...(serverEnv.AMADEUS_API_KEY ? { track_flight: flightTrackerTool } : {}),
             datetime: datetimeTool,
-            extreme_search: extremeSearchTool(dataStream, extremeSearchProvider || 'exa'),
+            extreme_search: extremeSearchTool(dataStream, extremeSearchProvider || 'exa', scira.languageModel(model)),
             greeting: greetingTool(timezone),
             code_context: codeContextTool,
           };

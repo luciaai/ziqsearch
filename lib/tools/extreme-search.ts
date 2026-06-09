@@ -388,20 +388,38 @@ async function extremeSearch(
   }
 
   // plan out the research
-  const { object: result } = await generateObject({
-    model: model,
-    schema: z.object({
-      plan: z
-        .array(
-          z.object({
-            title: z.string().min(10).max(70).describe('A title for the research topic'),
-            todos: z.array(z.string()).min(3).max(5).describe('A list of what to research for the given title'),
-          }),
-        )
-        .min(1)
-        .max(5),
-    }),
-    prompt: `
+  console.log('[Deep Search] Starting research planning with model:', model.modelId || 'scira-google');
+  
+  // Show progress message if planning takes longer than 10 seconds
+  const progressTimer = setTimeout(() => {
+    if (dataStream) {
+      dataStream.write({
+        type: 'data-extreme_search',
+        data: {
+          kind: 'plan',
+          status: { title: 'Still planning... (AI is thinking deeply)' },
+        },
+      });
+    }
+  }, 10000);
+  
+  let result;
+  let usedFallback = false;
+  let lastError: Error | unknown = null;
+  
+  const planningSchema = z.object({
+    plan: z
+      .array(
+        z.object({
+          title: z.string().min(10).max(70).describe('A title for the research topic'),
+          todos: z.array(z.string()).min(3).max(5).describe('A list of what to research for the given title'),
+        }),
+      )
+      .min(1)
+      .max(5),
+  });
+  
+  const planningPrompt = `
 Plan out the research for the following topic: ${prompt}.
 
 Today's Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' })}
@@ -419,12 +437,79 @@ Plan Guidelines:
 - Keep the titles concise and to the point, no more than 70 characters
 - Mention if the topic needs to use the xSearch tool
 - Mention any need for visualizations in the plan
-- Make the plan technical and specific to the topic`,
-  });
+- Make the plan technical and specific to the topic`;
+  
+  try {
+    result = await generateObject({
+      model: model,
+      schema: planningSchema,
+      prompt: planningPrompt,
+    });
+    clearTimeout(progressTimer);
+    console.log('[Deep Search] Planning completed successfully');
+  } catch (error) {
+    clearTimeout(progressTimer);
+    lastError = error;
+    console.error('[Deep Search] Planning failed with selected model:', error);
+    
+    // Try fallback to Gemini (free and reliable)
+    if (model.modelId !== 'scira-google') {
+      console.log('[Deep Search] Attempting fallback to Gemini...');
+      if (dataStream) {
+        dataStream.write({
+          type: 'data-extreme_search',
+          data: {
+            kind: 'plan',
+            status: { title: 'Retrying with fallback model...' },
+          },
+        });
+      }
+      
+      try {
+        const fallbackModel = scira.languageModel('scira-google');
+        result = await generateObject({
+          model: fallbackModel,
+          schema: planningSchema,
+          prompt: planningPrompt,
+        });
+        usedFallback = true;
+        console.log('[Deep Search] Fallback to Gemini succeeded');
+      } catch (fallbackError) {
+        lastError = fallbackError;
+        console.error('[Deep Search] Fallback also failed:', fallbackError);
+        throw fallbackError;
+      }
+    } else {
+      throw error;
+    }
+  }
+  
+  if (!result) {
+    if (dataStream) {
+      dataStream.write({
+        type: 'data-extreme_search',
+        data: {
+          kind: 'plan',
+          status: { title: `Planning failed: ${lastError instanceof Error ? lastError.message : 'Unknown error'}` },
+        },
+      });
+    }
+    throw new Error(`Failed to create research plan: ${lastError instanceof Error ? lastError.message : 'Unknown error'}. The API may be unavailable.`);
+  }
+  
+  if (usedFallback && dataStream) {
+    dataStream.write({
+      type: 'data-extreme_search',
+      data: {
+        kind: 'plan',
+        status: { title: 'Using fallback model (Gemini) - original model unavailable' },
+      },
+    });
+  }
 
-  console.log(result.plan);
+  console.log('[Deep Search] Plan:', result.object.plan);
 
-  const plan = result.plan;
+  const plan = result.object.plan;
 
   // calculate the total number of todos
   const totalTodos = plan.reduce((acc, curr) => acc + curr.todos.length, 0);

@@ -1733,7 +1733,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = React.memo(
             components.push(<span key={key}>{textContent}</span>);
           }
 
-          return components.length === 1 ? components[0] : <Fragment key={getElementKey('text', 'fragment')}>{components}</Fragment>;
+          return components.length === 1 ? components[0] : <>{components}</>;
         },
         hr() {
           const key = getElementKey('hr', Math.random().toString());

@@ -4108,41 +4108,65 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
               {/* Deep Research Toggle - Below toolbar */}
               {user && (
-                <div className="flex items-center justify-between px-4 py-3 bg-muted/50 border-t border-border/30">
-                  <div className="flex items-center gap-2">
-                    <HugeiconsIcon icon={AtomicPowerIcon} size={16} strokeWidth={2} className="text-muted-foreground" />
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium">Deep Research</span>
-                      <span className="text-xs text-muted-foreground">
-                        {selectedGroup === 'extreme' ? 'Enhanced search with 3x sources' : 'Standard search mode'}
-                      </span>
+                <div className="flex flex-col px-4 py-3 bg-muted/50 border-t border-border/30">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <HugeiconsIcon icon={AtomicPowerIcon} size={16} strokeWidth={2} className="text-muted-foreground" />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium">Deep Research</span>
+                        <span className="text-xs text-muted-foreground">
+                          {selectedGroup === 'extreme' ? 'Enhanced search with 3x sources' : 'Standard search mode'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {!isProUser && usageData && (
+                        <span className={cn(
+                          "text-xs",
+                          usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT
+                            ? "text-destructive font-medium"
+                            : "text-muted-foreground"
+                        )}>
+                          {usageData.extremeSearchCount}/{SEARCH_LIMITS.EXTREME_SEARCH_LIMIT}
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={selectedGroup === 'extreme'}
+                        onClick={handleToggleExtreme}
+                        disabled={!isProUser && !!usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT && selectedGroup !== 'extreme'}
+                        className={cn(
+                          'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+                          selectedGroup === 'extreme' ? 'bg-primary' : 'bg-input',
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            'pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform',
+                            selectedGroup === 'extreme' ? 'translate-x-6' : 'translate-x-0.5',
+                          )}
+                        />
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    {!isProUser && usageData && (
-                      <span className="text-xs text-muted-foreground">
-                        {usageData.extremeSearchCount}/{SEARCH_LIMITS.EXTREME_SEARCH_LIMIT}
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={selectedGroup === 'extreme'}
-                      onClick={handleToggleExtreme}
-                      disabled={!isProUser && !!usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT && selectedGroup !== 'extreme'}
-                      className={cn(
-                        'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-                        selectedGroup === 'extreme' ? 'bg-primary' : 'bg-input',
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          'pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform',
-                          selectedGroup === 'extreme' ? 'translate-x-6' : 'translate-x-0.5',
-                        )}
-                      />
-                    </button>
-                  </div>
+                  {!isProUser && usageData && usageData.extremeSearchCount >= SEARCH_LIMITS.EXTREME_SEARCH_LIMIT && selectedGroup !== 'extreme' && (
+                    <div className="mt-2 pt-2 border-t border-border/30">
+                      <div className="flex items-start gap-2">
+                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-destructive/10 text-destructive mt-0.5">
+                          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-xs font-medium text-destructive">Monthly limit reached</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            You've used all {SEARCH_LIMITS.EXTREME_SEARCH_LIMIT} deep searches this month. <a href="/pricing" className="text-primary hover:underline">Upgrade to Pro</a> for unlimited access.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

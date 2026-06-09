@@ -1,0 +1,33 @@
+Service Name,Category,Priority Tier,Status,Monthly Cost (Est),Website,Purpose,API Key Status,Notes
+Neon Database,Infrastructure,Tier 1 - MUST HAVE,Active,$20-50,https://neon.tech,PostgreSQL database - stores all user data and chats,Active,Critical - app won't work without this
+Upstash Redis,Infrastructure,Tier 1 - MUST HAVE,Active,$10-30,https://upstash.com,Caching layer - speeds up queries and sessions,Active,Critical for performance
+Vercel,Hosting,Tier 1 - MUST HAVE,Active,$20,https://vercel.com,Hosts website and API,Active,Required for deployment
+XAI (Grok),AI Models,Tier 1 - MUST HAVE,Active,Pay per token,https://x.ai,Main AI model for search responses,Active,One of primary AI providers
+OpenAI (GPT),AI Models,Tier 1 - MUST HAVE,Active,Pay per token,https://platform.openai.com,Backup AI model and some features,Active,One of primary AI providers
+Anthropic (Claude),AI Models,Tier 1 - MUST HAVE,Active,Pay per token,https://anthropic.com,Alternative AI model,Active,One of primary AI providers
+Groq,AI Models,Tier 1 - MUST HAVE,Active,Free tier + pay per token,https://groq.com,Fast inference for queries,Active,Good free tier
+Google Gemini,AI Models,Tier 1 - MUST HAVE,Needs Setup,Free tier available,https://ai.google.dev,Alternative AI model,Placeholder - needs real key,Currently set to "api_key"
+Stripe,Payment,Tier 1 - MUST HAVE,Active,2.9% + $0.30 per transaction,https://stripe.com,Processes Pro subscriptions,Active - LIVE keys,Critical for revenue
+Google OAuth,Authentication,Tier 1 - MUST HAVE,Active,Free,https://console.cloud.google.com,User sign-in with Google,Active,Primary login method
+GitHub OAuth,Authentication,Tier 1 - MUST HAVE,Needs Setup,Free,https://github.com/settings/developers,User sign-in with GitHub,Placeholder,Optional login method
+Twitter OAuth,Authentication,Tier 1 - MUST HAVE,Needs Setup,Free,https://developer.twitter.com,User sign-in with Twitter,Placeholder,Optional login method
+Tavily,Search APIs,Tier 2 - CORE,Active,$50-200,https://tavily.com,Primary web search results,Active,Core search functionality
+Exa,Search APIs,Tier 2 - CORE,Active,Pay per search,https://exa.ai,Deep web search,Active,Enhanced search quality
+Firecrawl,Search APIs,Tier 2 - CORE,Active,Pay per crawl,https://firecrawl.dev,Web scraping and content extraction,Active,Important for content retrieval
+Google Maps,Maps & Location,Tier 2 - CORE,Active,Free tier ($200 credit) + pay per use,https://console.cloud.google.com/google/maps-apis,Map searches and location features,Active,Core location features
+Parallel (Perplexity),Search APIs,Tier 3 - ENHANCED,Active,Pay per query,https://www.perplexity.ai,AI-powered search,Active,Improves search quality
+Valyu,Data APIs,Tier 3 - ENHANCED,Active,Unknown,https://valyu.com,Data enrichment,Active,Additional data source
+Supadata,Data APIs,Tier 3 - ENHANCED,Active,Unknown,https://supadata.ai,Data queries,Active,Additional data source
+TMDB,Media,Tier 3 - ENHANCED,Active,Free,https://www.themoviedb.org,Movie and TV show information,Active,Entertainment features
+OpenWeather,Weather,Tier 3 - ENHANCED,Active,$40+,https://openweathermap.org,Weather data,Active,Weather queries
+QStash (Upstash),Cron Jobs,Tier 3 - ENHANCED,Active,Free tier + pay per job,https://upstash.com/qstash,Scheduled tasks for Lookout feature,Active,Powers scheduled searches
+Resend,Email,Tier 3 - ENHANCED,Active,Free (100/day) then $20/month,https://resend.com,Transactional emails,Active,User notifications
+Mapbox,Maps & Location,Tier 3 - ENHANCED,Active,Free tier + pay per use,https://www.mapbox.com,Alternative maps,Active,Backup for Google Maps
+ElevenLabs,Voice & Audio,Tier 4 - OPTIONAL,Active,$5-99,https://elevenlabs.io,Text-to-speech and voice features,Active,Voice interface (optional)
+CoinGecko,Crypto Data,Tier 4 - OPTIONAL,Active,Free tier or $129/month,https://www.coingecko.com,Cryptocurrency prices,Active,Crypto queries (optional)
+Daytona,Code Execution,Tier 4 - OPTIONAL,Active,Unknown,https://daytona.io,Code interpreter and sandbox,Active,Code execution feature (optional)
+Aviation Stack,Travel,Tier 4 - OPTIONAL,Active,Free tier + paid,https://aviationstack.com,Flight tracking,Active,Flight queries (optional)
+Amadeus,Travel,Tier 4 - OPTIONAL,Needs Setup,Free tier available,https://developers.amadeus.com,Flight and travel data,Placeholder - set to "whatever",Optional travel features
+Smithery,Tools,Tier 4 - OPTIONAL,Active,Unknown,https://smithery.ai,MCP tools,Active,Extended functionality
+Supermemory,Memory,Tier 4 - OPTIONAL,Needs Setup,Unknown,https://supermemory.ai,Long-term memory for AI,Placeholder,Optional memory feature
+Vercel Blob,Storage,Tier 4 - OPTIONAL,Needs Setup,Free tier + pay per GB,https://vercel.com/docs/storage/vercel-blob,File storage,Placeholder token,File uploads (if needed)

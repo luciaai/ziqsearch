@@ -452,37 +452,56 @@ Plan Guidelines:
     lastError = error;
     console.error('[Deep Search] Planning failed with selected model:', error);
     
-    // Try fallback to Gemini (free and reliable) only if Google API key is available
-    if (model.modelId !== 'scira-google' && serverEnv.GOOGLE_GENERATIVE_AI_API_KEY) {
-      console.log('[Deep Search] Attempting fallback to Gemini...');
+    // Multi-tier fallback system: Try Gemini -> Claude Haiku
+    const fallbackModels = [
+      { id: 'scira-google', name: 'Gemini 2.0 Flash', available: serverEnv.GOOGLE_GENERATIVE_AI_API_KEY },
+      { id: 'scira-anthropic', name: 'Claude Haiku', available: serverEnv.ANTHROPIC_API_KEY },
+    ];
+    
+    // Filter out the model that just failed and unavailable models
+    const availableFallbacks = fallbackModels.filter(
+      (fb) => fb.id !== model.modelId && fb.available
+    );
+    
+    if (availableFallbacks.length === 0) {
+      console.log('[Deep Search] No fallback models available');
+      throw error;
+    }
+    
+    // Try each fallback in order
+    for (const fallback of availableFallbacks) {
+      console.log(`[Deep Search] Attempting fallback to ${fallback.name}...`);
       if (dataStream) {
         dataStream.write({
           type: 'data-extreme_search',
           data: {
             kind: 'plan',
-            status: { title: 'Retrying with fallback model...' },
+            status: { title: `Retrying with ${fallback.name}...` },
           },
         });
       }
       
       try {
-        const fallbackModel = scira.languageModel('scira-google');
+        const fallbackModel = scira.languageModel(fallback.id);
         result = await generateObject({
           model: fallbackModel,
           schema: planningSchema,
           prompt: planningPrompt,
         });
         usedFallback = true;
-        console.log('[Deep Search] Fallback to Gemini succeeded');
+        console.log(`[Deep Search] Fallback to ${fallback.name} succeeded`);
+        break; // Success! Exit the loop
       } catch (fallbackError) {
         lastError = fallbackError;
-        console.error('[Deep Search] Fallback also failed:', fallbackError);
-        throw fallbackError;
+        console.error(`[Deep Search] ${fallback.name} fallback failed:`, fallbackError);
+        // Continue to next fallback
       }
-    } else {
-      // No fallback available, throw original error
-      console.log('[Deep Search] No fallback available (Google API key not configured)');
-      throw error;
+    }
+    
+    // If all fallbacks failed, throw the last error
+    if (!result) {
+      console.error('[Deep Search] All fallback models failed');
+      throw lastError;
     }
   }
   

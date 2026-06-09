@@ -258,17 +258,80 @@ export default function FAQPage() {
                 <ProAccordionTrigger>
                   <div className="flex items-center gap-2">
                     <Zap className="h-4 w-4" />
-                    <span>Extreme Mode (Pro)</span>
+                    <span>Deep Research / Extreme Mode (Pro)</span>
                   </div>
                 </ProAccordionTrigger>
                 <ProAccordionContent>
-                  <p className="text-muted-foreground leading-relaxed mb-3">
-                    Advanced multi-source research that combines multiple search strategies and analyzes results 
-                    from various sources for comprehensive answers.
+                  <p className="text-muted-foreground leading-relaxed mb-4">
+                    Advanced multi-source research that creates a structured research plan, executes 10-20+ targeted searches, 
+                    and can even run Python code for data analysis. Think of it as hiring a research assistant for 30 minutes.
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    <strong>Best for:</strong> Deep research, complex topics, comprehensive analysis, thesis research
-                  </p>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-2">How it works:</p>
+                      <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
+                        <li>AI creates a structured research plan</li>
+                        <li>Executes 10-20+ targeted searches from multiple angles</li>
+                        <li>Fetches full content from each source</li>
+                        <li>Can run Python code for data analysis</li>
+                        <li>Synthesizes everything into a comprehensive answer</li>
+                      </ol>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-2">Deep Research vs Web Search:</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                        <div className="bg-blue-50/30 dark:bg-blue-950/10 p-3 rounded-lg">
+                          <p className="font-medium text-foreground mb-2">Deep Research</p>
+                          <ul className="space-y-1 text-muted-foreground">
+                            <li>• 10-20+ sources</li>
+                            <li>• 30-60 seconds</li>
+                            <li>• Comprehensive analysis</li>
+                            <li>• Code execution</li>
+                            <li>• Multiple perspectives</li>
+                          </ul>
+                        </div>
+                        <div className="bg-muted/30 p-3 rounded-lg">
+                          <p className="font-medium text-foreground mb-2">Web Search</p>
+                          <ul className="space-y-1 text-muted-foreground">
+                            <li>• 3-5 sources</li>
+                            <li>• 5-10 seconds</li>
+                            <li>• Quick answers</li>
+                            <li>• No code execution</li>
+                            <li>• Single query</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-2">When to use Deep Research:</p>
+                      <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                        <li>"Analyze the impact of X on Y"</li>
+                        <li>"Compare A vs B across multiple dimensions"</li>
+                        <li>"What are all the factors affecting Z?"</li>
+                        <li>"Give me a comprehensive overview of..."</li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-2">When to use Web Search:</p>
+                      <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                        <li>"What happened with X today?"</li>
+                        <li>"Who is Y?"</li>
+                        <li>"What's the latest news about Z?"</li>
+                        <li>"Quick fact check: ..."</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-blue-50/30 dark:bg-blue-950/10 border border-blue-200 dark:border-blue-900 p-3 rounded-lg">
+                      <p className="text-xs text-muted-foreground">
+                        💡 <strong className="text-foreground">Cost-effective models:</strong> Deep Research uses efficient AI models 
+                        (Gemini, Claude Haiku, GPT-4o Mini, DeepSeek, Llama) to keep it affordable while maintaining high quality.
+                      </p>
+                    </div>
+                  </div>
                 </ProAccordionContent>
               </ProAccordionItem>
             </ProAccordion>

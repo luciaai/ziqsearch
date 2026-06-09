@@ -339,7 +339,7 @@ class ParallelSearchStrategyForExtreme implements SearchProviderStrategy {
 const ALLOWED_DEEP_SEARCH_MODELS = [
   'scira-google', // Gemini 2.0 Flash - FREE
   'scira-deepseek-chat', // DeepSeek - $0.14/$0.28 per 1M tokens
-  'scira-nano', // Llama 3.3 70B - $0.05/$0.08 per 1M tokens (via Groq)
+  // 'scira-nano', // Llama 3.3 70B - DISABLED: Groq has broken tool calling (puts params in tool name)
   'scira-anthropic', // Claude 3.5 Haiku - $0.80/$4 per 1M tokens
   'scira-gpt4o-mini', // GPT-4o Mini - $0.15/$0.6 per 1M tokens
 ];
@@ -452,8 +452,8 @@ Plan Guidelines:
     lastError = error;
     console.error('[Deep Search] Planning failed with selected model:', error);
     
-    // Try fallback to Gemini (free and reliable)
-    if (model.modelId !== 'scira-google') {
+    // Try fallback to Gemini (free and reliable) only if Google API key is available
+    if (model.modelId !== 'scira-google' && serverEnv.GOOGLE_GENERATIVE_AI_API_KEY) {
       console.log('[Deep Search] Attempting fallback to Gemini...');
       if (dataStream) {
         dataStream.write({
@@ -480,6 +480,8 @@ Plan Guidelines:
         throw fallbackError;
       }
     } else {
+      // No fallback available, throw original error
+      console.log('[Deep Search] No fallback available (Google API key not configured)');
       throw error;
     }
   }

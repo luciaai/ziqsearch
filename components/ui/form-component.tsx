@@ -497,10 +497,10 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = React.memo(
 
         // Notify user if they selected an expensive model in deep search mode
         if (selectedGroup === 'extreme') {
-          const allowedModels = ['scira-google', 'scira-deepseek-chat', 'scira-nano'];
+          const allowedModels = ['scira-google', 'scira-deepseek-chat', 'scira-nano', 'scira-anthropic', 'scira-gpt4o-mini'];
           if (!allowedModels.includes(model.value)) {
-            toast.info('Deep Search uses cost-effective models (Gemini, DeepSeek, Llama) to stay free', {
-              description: 'Your selected model will be used for other search modes.',
+            toast.info('Deep Search uses cost-effective models to stay affordable', {
+              description: 'Allowed: Gemini, Claude Haiku, GPT-4o Mini, DeepSeek, Llama. Your selected model will be used for other modes.',
             });
           }
         }
@@ -1866,7 +1866,7 @@ const GroupModeToggle: React.FC<GroupSelectorProps> = React.memo(
             Deep research with multiple sources and in-depth analysis with 3x sources.
           </p>
           <p className="text-[11px] text-muted-foreground/70 border-l-2 border-primary/30 pl-2">
-            💡 Deep Search uses cost-effective models (Gemini, DeepSeek, Llama) to keep it free and sustainable.
+            💡 Deep Search uses cost-effective models (Gemini, Claude Haiku, GPT-4o Mini, DeepSeek, Llama) to keep it affordable.
           </p>
           {!isProUser && usageData && (
             <p className="text-[11px] text-muted-foreground/80">

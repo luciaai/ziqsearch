@@ -340,6 +340,8 @@ const ALLOWED_DEEP_SEARCH_MODELS = [
   'scira-google', // Gemini 2.0 Flash - FREE
   'scira-deepseek-chat', // DeepSeek - $0.14/$0.28 per 1M tokens
   'scira-nano', // Llama 3.3 70B - $0.05/$0.08 per 1M tokens (via Groq)
+  'scira-anthropic', // Claude 3.5 Haiku - $0.80/$4 per 1M tokens
+  'scira-gpt4o-mini', // GPT-4o Mini - $0.15/$0.6 per 1M tokens
 ];
 
 async function extremeSearch(

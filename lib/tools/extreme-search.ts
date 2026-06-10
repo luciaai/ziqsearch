@@ -411,12 +411,11 @@ async function extremeSearch(
     plan: z
       .array(
         z.object({
-          title: z.string().min(10).max(70).describe('A title for the research topic'),
-          todos: z.array(z.string()).min(3).max(5).describe('A list of what to research for the given title'),
+          title: z.string().describe('A concise title for the research topic (10-70 characters)'),
+          todos: z.array(z.string()).describe('A list of 3-5 specific things to research for this topic'),
         }),
       )
-      .min(1)
-      .max(5),
+      .describe('Research plan with 1-5 key aspects to investigate'),
   });
   
   const planningPrompt = `
@@ -452,10 +451,11 @@ Plan Guidelines:
     lastError = error;
     console.error('[Deep Search] Planning failed with selected model:', error);
     
-    // Multi-tier fallback system: Try Gemini -> Claude Haiku
+    // Multi-tier fallback system: Try Gemini (free) -> Claude (cheap) -> Grok (reliable)
     const fallbackModels = [
       { id: 'scira-google', name: 'Gemini 2.0 Flash', available: serverEnv.GOOGLE_GENERATIVE_AI_API_KEY },
       { id: 'scira-anthropic', name: 'Claude Haiku', available: serverEnv.ANTHROPIC_API_KEY },
+      { id: 'scira-grok-2', name: 'Grok 2', available: serverEnv.XAI_API_KEY },
     ];
     
     // Filter out the model that just failed and unavailable models
@@ -660,57 +660,84 @@ ${JSON.stringify(plan)}
         }),
         execute: async ({ title, code }) => {
           console.log('Running code:', code);
-          // check if the code has any imports other than the pythonLibsAvailable
-          // and then install the missing libraries
-          const imports = code.match(/import\s+([\w\s,]+)/);
-          const importLibs = imports ? imports[1].split(',').map((lib: string) => lib.trim()) : [];
-          const missingLibs = importLibs.filter((lib: string) => !pythonLibsAvailable.includes(lib));
+          
+          try {
+            // check if the code has any imports other than the pythonLibsAvailable
+            // and then install the missing libraries
+            const imports = code.match(/import\s+([\w\s,]+)/);
+            const importLibs = imports ? imports[1].split(',').map((lib: string) => lib.trim()) : [];
+            const missingLibs = importLibs.filter((lib: string) => !pythonLibsAvailable.includes(lib));
 
-          if (dataStream) {
-            dataStream.write({
-              type: 'data-extreme_search',
-              data: {
-                kind: 'code',
-                codeId: `code-${Date.now()}`,
-                title: title,
-                code: code,
-                status: 'running',
-              },
-            });
+            if (dataStream) {
+              dataStream.write({
+                type: 'data-extreme_search',
+                data: {
+                  kind: 'code',
+                  codeId: `code-${Date.now()}`,
+                  title: title,
+                  code: code,
+                  status: 'running',
+                },
+              });
+            }
+            const response = await runCode(code, missingLibs);
+
+            // Extract chart data if present, and if so then map and remove the png with chart.png
+            const charts =
+              response.artifacts?.charts?.map((chart) => {
+                if (chart.png) {
+                  const { png, ...chartWithoutPng } = chart;
+                  return chartWithoutPng;
+                }
+                return chart;
+              }) || [];
+
+            console.log('Charts:', response.artifacts?.charts);
+
+            if (dataStream) {
+              dataStream.write({
+                type: 'data-extreme_search',
+                data: {
+                  kind: 'code',
+                  codeId: `code-${Date.now()}`,
+                  title: title,
+                  code: code,
+                  status: 'completed',
+                  result: response.result,
+                  charts: charts,
+                },
+              });
+            }
+
+            return {
+              result: response.result,
+              charts: charts,
+            };
+          } catch (error) {
+            console.error('[Code Execution] Failed:', error);
+            const errorMessage = error instanceof Error ? error.message : 'Code execution failed';
+            
+            // Notify UI of code execution failure
+            if (dataStream) {
+              dataStream.write({
+                type: 'data-extreme_search',
+                data: {
+                  kind: 'code',
+                  codeId: `code-${Date.now()}`,
+                  title: title,
+                  code: code,
+                  status: 'error',
+                  result: `Code execution unavailable: ${errorMessage}`,
+                },
+              });
+            }
+            
+            // Return error message instead of throwing - allows research to continue
+            return {
+              result: `Code execution skipped due to quota limit. Research continues without data analysis.`,
+              charts: [],
+            };
           }
-          const response = await runCode(code, missingLibs);
-
-          // Extract chart data if present, and if so then map and remove the png with chart.png
-          const charts =
-            response.artifacts?.charts?.map((chart) => {
-              if (chart.png) {
-                const { png, ...chartWithoutPng } = chart;
-                return chartWithoutPng;
-              }
-              return chart;
-            }) || [];
-
-          console.log('Charts:', response.artifacts?.charts);
-
-          if (dataStream) {
-            dataStream.write({
-              type: 'data-extreme_search',
-              data: {
-                kind: 'code',
-                codeId: `code-${Date.now()}`,
-                title: title,
-                code: code,
-                status: 'completed',
-                result: response.result,
-                charts: charts,
-              },
-            });
-          }
-
-          return {
-            result: response.result,
-            charts: charts,
-          };
         },
       },
       webSearch: {

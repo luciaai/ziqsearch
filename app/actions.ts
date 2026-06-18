@@ -693,6 +693,9 @@ data.mean()  # NO PRINT
 - ⚠️ **IMMEDIATE PLACEMENT**: Citations go immediately after the sentence containing the information
 - ⚠️ **NO EXCEPTIONS**: Even obvious facts need citations (e.g., "The sky is blue" needs a citation)
 - ⚠️ **MINIMUM CITATION REQUIREMENT**: Every part of the answer must have more than 3 citations - this ensures comprehensive source coverage
+- ⚠️ **SOURCE DIVERSITY - CRITICAL**: You MUST cite from as many DIFFERENT sources as possible across the entire response. The research gathered dozens of distinct sources - USE THEM. Do NOT repeatedly cite the same 2-3 sources throughout the answer.
+- ⚠️ **DISTINCT DOMAINS**: Aim to reference at least 10-15 different source domains across the full response. Spread citations across the breadth of research gathered, not just the first few results.
+- ⚠️ **NO SOURCE TUNNEL VISION**: If you find yourself citing the same source more than 2-3 times, actively look for other sources in the research that support the same or related points.
 - ⚠️ **ZERO TOLERANCE FOR END CITATIONS**: NEVER put citations at the end of responses, paragraphs, or sections
 - ⚠️ **SENTENCE-LEVEL INTEGRATION**: Each sentence with factual content must have its own citation immediately after
 - ⚠️ **GROUPED CITATIONS ALLOWED**: Multiple citations can be grouped together when supporting the same statement
@@ -1994,6 +1997,9 @@ ${LINK_FORMAT_EXAMPLES}`,
 - ⚠️ **IMMEDIATE PLACEMENT**: Citations go immediately after the sentence containing the information
 - ⚠️ **NO EXCEPTIONS**: Even obvious facts need citations (e.g., "The sky is blue" needs a citation)
 - ⚠️ **MINIMUM CITATION REQUIREMENT**: Every part of the answer must have more than 3 citations - this ensures comprehensive source coverage
+- ⚠️ **SOURCE DIVERSITY - CRITICAL**: You MUST cite from as many DIFFERENT sources as possible across the entire response. The research gathered dozens of distinct sources - USE THEM. Do NOT repeatedly cite the same 2-3 sources throughout the answer.
+- ⚠️ **DISTINCT DOMAINS**: Aim to reference at least 10-15 different source domains across the full response. Spread citations across the breadth of research gathered, not just the first few results.
+- ⚠️ **NO SOURCE TUNNEL VISION**: If you find yourself citing the same source more than 2-3 times, actively look for other sources in the research that support the same or related points.
 - ⚠️ **ZERO TOLERANCE FOR END CITATIONS**: NEVER put citations at the end of responses, paragraphs, or sections
 - ⚠️ **SENTENCE-LEVEL INTEGRATION**: Each sentence with factual content must have its own citation immediately after
 - ⚠️ **GROUPED CITATIONS ALLOWED**: Multiple citations can be grouped together when supporting the same statement
@@ -2121,13 +2127,22 @@ $$
 - Custom operators: $\\operatorname{softmax}(x)$ or $\\operatorname{argmax}(x)$
 
 ### Research Paper Structure
+- **Required Opening (MANDATORY - in this exact order before anything else)**:
+  1. **Scope note** (one italicized sentence at the very top): State how many sources and roughly how many distinct domains were reviewed, and remind the reader to verify primary claims against the cited sources. Example: *This report synthesizes findings from N sources across M domains; verify key claims against the cited sources before relying on them.*
+  2. **Key Findings** (a \`## Key Findings\` section immediately after the scope note): 3-5 concise bullet points summarizing the most important takeaways, each with its own inline citation. This is a scannable TL;DR so researchers get the answer in seconds before reading the full analysis.
 - **Introduction** (2-3 paragraphs): Context, significance, research objectives
 - **Main Sections** (3-5 sections): Each with 2-4 detailed paragraphs
   - Use ## for section headers, ### for subsections
   - Each paragraph should be 4-6 sentences minimum
   - Every sentence with facts must have inline citations
+- **Comparative Analysis (MANDATORY)**: Include a dedicated section that compares and contrasts what different sources say
+  - ⚠️ **REQUIRED**: Explicitly compare and contrast perspectives, findings, and claims ACROSS different sources
+  - Highlight where sources AGREE and where they DISAGREE or present conflicting data
+  - When sources differ, present both viewpoints each with its own descriptive inline citation immediately after the relevant claim (follow the standard citation format - use descriptive text, never generic labels)
+  - Use a comparison table when comparing multiple options, tools, or perspectives across criteria
+  - Do NOT just summarize one source after another - actively synthesize and weigh them against each other
 - **Analysis and Synthesis**: Cross-reference findings, identify patterns
-- **Limitations**: Discuss reliability and constraints of sources
+- **Limitations**: Discuss reliability and constraints of sources, noting any source bias or consensus gaps
 - **Conclusion** (2-3 paragraphs): Summary of key findings and implications
 
 ---

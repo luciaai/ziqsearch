@@ -280,7 +280,27 @@ class ExaSearchStrategy implements SearchProviderStrategy {
       });
       console.log(`[Exa] searchWeb received ${results.length} results from Exa API`);
 
-      const mappedResults = results.map((r) => ({
+      // Cap results per domain so no single source (e.g. medium.com) dominates the mix
+      const MAX_PER_DOMAIN = 4;
+      const domainCounts: Record<string, number> = {};
+      const getRootDomain = (url: string): string => {
+        try {
+          const host = new URL(url).hostname.replace(/^www\./, '');
+          const parts = host.split('.');
+          return parts.length > 2 ? parts.slice(-2).join('.') : host;
+        } catch {
+          return url;
+        }
+      };
+
+      const diverseResults = results.filter((r) => {
+        if (!r.url) return true;
+        const domain = getRootDomain(r.url);
+        domainCounts[domain] = (domainCounts[domain] || 0) + 1;
+        return domainCounts[domain] <= MAX_PER_DOMAIN;
+      });
+
+      const mappedResults = diverseResults.map((r) => ({
         title: r.title,
         url: r.url,
         content: r.text,
@@ -288,7 +308,7 @@ class ExaSearchStrategy implements SearchProviderStrategy {
         favicon: r.favicon,
       })) as SearchResult[];
 
-      console.log(`[Exa] searchWeb returning ${mappedResults.length} results`);
+      console.log(`[Exa] searchWeb returning ${mappedResults.length} results (capped from ${results.length}, max ${MAX_PER_DOMAIN}/domain)`);
       return mappedResults;
     } catch (error) {
       console.error('[Exa] Error in searchWeb:', error);
@@ -335,30 +355,16 @@ class ParallelSearchStrategyForExtreme implements SearchProviderStrategy {
   }
 }
 
-// Whitelist of cheap/free models allowed for deep search
-const ALLOWED_DEEP_SEARCH_MODELS = [
-  'scira-google', // Gemini 2.0 Flash - FREE
-  'scira-deepseek-chat', // DeepSeek - $0.14/$0.28 per 1M tokens
-  // 'scira-nano', // Llama 3.3 70B - DISABLED: Groq has broken tool calling (puts params in tool name)
-  'scira-anthropic', // Claude 3.5 Haiku - $0.80/$4 per 1M tokens
-  'scira-gpt4o-mini', // GPT-4o Mini - $0.15/$0.6 per 1M tokens
-];
-
 async function extremeSearch(
   prompt: string,
   dataStream: UIMessageStreamWriter<ChatMessage> | undefined,
   contentProvider: 'exa' | 'parallel' = 'exa',
-  userSelectedModel?: any, // User's selected model (will be validated)
+  userSelectedModel?: any, // User's selected model (unused - always use Grok for reliability)
 ): Promise<Research> {
-  // Only allow cheap/free models for deep search
-  // If user selected an expensive model, fall back to free Gemini
-  const model = userSelectedModel && ALLOWED_DEEP_SEARCH_MODELS.some(allowed => 
-    userSelectedModel.modelId?.includes(allowed.replace('scira-', ''))
-  ) 
-    ? userSelectedModel 
-    : scira.languageModel('scira-google'); // Default to FREE Gemini 2.0 Flash
+  // Use GPT-4.1 Mini for deep search - cheap, fast, reliable tool calling, no thinking overhead
+  const model = scira.languageModel('scira-gpt-4.1-mini');
   
-  console.log('[Deep Search] Using model:', model.modelId || 'scira-google');
+  console.log('[Deep Search] Using model:', model.modelId || 'scira-gpt-4.1-mini');
   const allSources: SearchResult[] = [];
 
   // Initialize clients
@@ -428,14 +434,11 @@ Plan Guidelines:
 - Generate specific, diverse search queries for each aspect
 - Search for relevant information using the web search tool
 - Analyze the results and identify important facts and insights
-- The plan is limited to 15 actions, do not exceed this limit!
+- The plan is limited to 10 actions, do not exceed this limit!
 - Follow up with more specific queries as you learn more
-- Add todos for code execution if it is asked for by the user
 - No need to synthesize your findings into a comprehensive response, just return the results
 - The plan should be concise and to the point, no more than 10 items
 - Keep the titles concise and to the point, no more than 70 characters
-- Mention if the topic needs to use the xSearch tool
-- Mention any need for visualizations in the plan
 - Make the plan technical and specific to the topic`;
   
   try {
@@ -451,11 +454,11 @@ Plan Guidelines:
     lastError = error;
     console.error('[Deep Search] Planning failed with selected model:', error);
     
-    // Multi-tier fallback system: Try Gemini (free) -> Claude (cheap) -> Grok (reliable)
+    // Multi-tier fallback system: Grok 4 Fast -> Gemini Flash -> Claude Haiku
     const fallbackModels = [
-      { id: 'scira-google', name: 'Gemini 2.0 Flash', available: serverEnv.GOOGLE_GENERATIVE_AI_API_KEY },
-      { id: 'scira-anthropic', name: 'Claude Haiku', available: serverEnv.ANTHROPIC_API_KEY },
-      { id: 'scira-grok-2', name: 'Grok 2', available: serverEnv.XAI_API_KEY },
+      { id: 'scira-grok-4-fast', name: 'Grok 4 Fast', available: serverEnv.XAI_API_KEY },
+      { id: 'scira-google', name: 'Gemini 2.5 Flash', available: serverEnv.GOOGLE_GENERATIVE_AI_API_KEY },
+      { id: 'scira-anthropic-small', name: 'Claude Haiku 4.5', available: serverEnv.ANTHROPIC_API_KEY },
     ];
     
     // Filter out the model that just failed and unavailable models
@@ -532,8 +535,12 @@ Plan Guidelines:
 
   const plan = result.object.plan;
 
-  // calculate the total number of todos
-  const totalTodos = plan.reduce((acc, curr) => acc + curr.todos.length, 0);
+  // calculate the total number of todos, cap at 15 to match advertised deep search depth (3x web search)
+  let totalTodos = plan.reduce((acc, curr) => acc + curr.todos.length, 0);
+  if (totalTodos > 15) {
+    console.log(`[Deep Search] Capping todos from ${totalTodos} to 15`);
+    totalTodos = 15;
+  }
   console.log(`Total todos: ${totalTodos}`);
 
   if (dataStream) {
@@ -553,7 +560,7 @@ Plan Guidelines:
   const { text } = await generateText({
     model: model,
     stopWhen: stepCountIs(totalTodos),
-    activeTools: ['codeRunner', 'webSearch', 'xSearch'],
+    activeTools: ['webSearch'],
     system: `
 You are an autonomous deep research analyst. Your goal run a focused research plan thoroughly with the given tools.
 
@@ -575,7 +582,9 @@ The best way to do this is that all information you gather is not completely com
 DO NOT BELIEVE THE SOURCES YOU FIND ARE CORRECT OR ACCURATE, JUST KEEP GATHERING MORE AND MORE INFORMATION.
 YOUR KNOWLEDGE BASE IS ZERO, SO YOU MUST GATHER AS MUCH INFORMATION AS POSSIBLE FROM THE TOOLS YOU HAVE.
 
-⚠️ IMP: Total Assistant function-call turns limit: at most ${totalTodos}! You must reach this limit and not exceed it!
+⚠️ CRITICAL - MANDATORY SEARCH COUNT: You MUST perform EXACTLY ${totalTodos} separate web searches before writing any final answer. This is NOT optional and NOT a maximum to avoid - it is a REQUIRED minimum.
+⚠️ DO NOT STOP EARLY: Even if you feel you have enough information after a few searches, you MUST keep searching until you have completed all ${totalTodos} searches. Each search must explore a different angle, subtopic, or todo from the research plan.
+⚠️ NEVER write your final response or conclusion until ALL ${totalTodos} searches are done. Stopping early is a critical failure.
 ⚠️ IMP: DO NOT RUN PARALLEL TOOL CALLS FOR SEARCHING!
 
 For searching:
@@ -637,9 +646,10 @@ Code guidelines (when absolutely necessary):
 6. Continue searching to fill any gaps in understanding
 
 For research:
+- ⚠️ You MUST execute ${totalTodos} searches total - one for each todo in the plan. Work through every todo systematically, do NOT skip any.
 - Carefully follow the plan, do not skip any steps
 - Do not use the same query twice to avoid duplicates
-- Plan is limited to ${totalTodos} actions with 2 extra actions in case of errors, do not exceed this limit but use to the fullest to get the most information!
+- You have ${totalTodos} searches available - USE ALL OF THEM. Do not stop until every one is exhausted. The more you search, the better the research.
 
 Research Plan:
 ${JSON.stringify(plan)}

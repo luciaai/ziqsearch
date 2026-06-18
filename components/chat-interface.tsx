@@ -594,14 +594,14 @@ const ChatInterface = ({
     // Monitor for hung requests and show warning
     useEffect(() => {
       if (status === 'streaming' || status === 'submitted') {
-        // Set 90 second timeout for deep search
+        // Set warning timeout for deep search (15 searches can take ~3-3.5 min)
         if (effectiveSelectedGroup === 'extreme' && !requestTimeoutRef.current) {
           requestTimeoutRef.current = setTimeout(() => {
             toast.warning('Deep search is taking longer than expected', {
               description: 'The AI model may be slow or unavailable. You can click Stop to cancel.',
               duration: 10000,
             });
-          }, 90000); // 90 seconds
+          }, 240000); // 240 seconds
         }
       } else {
         // Clear timeout when not streaming
